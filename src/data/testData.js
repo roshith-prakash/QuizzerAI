@@ -63,63 +63,63 @@ export const demonSlayer = [
 
 export const harryPotter = [
     {
-        "question": "Who is the author of the Harry Potter series?",
-        "answer": "J.K. Rowling"
+        "question": "What is the full name of the witch who becomes the Hogwarts librarian after Madam Pince?",
+        "answer": "Irma Pince"
     },
     {
-        "question": "What is the name of Harry Potter's pet owl?",
-        "answer": "Hedwig"
+        "question": "What spell did Hermione use to erase her parents' memories of her?",
+        "answer": "Obliviate"
     },
     {
-        "question": "Who are Harry Potter's two best friends?",
-        "answer": "Ron Weasley and Hermione Granger"
+        "question": "What is the name of the goblin who helps Harry break into Gringotts?",
+        "answer": "Griphook"
     },
     {
-        "question": "What house at Hogwarts does Harry belong to?",
-        "answer": "Gryffindor"
+        "question": "Who was the original owner of the Elder Wand?",
+        "answer": "Antioch Peverell"
     },
     {
-        "question": "Who is the headmaster of Hogwarts during most of the series?",
-        "answer": "Albus Dumbledore"
+        "question": "What is the name of the potion that grants good luck?",
+        "answer": "Felix Felicis"
     },
     {
-        "question": "What position does Harry play on his Quidditch team?",
-        "answer": "Seeker"
+        "question": "Which wizarding prison does Gellert Grindelwald get imprisoned in?",
+        "answer": "Nurmengard"
     },
     {
-        "question": "What is the name of the dark wizard Harry must defeat?",
-        "answer": "Lord Voldemort"
+        "question": "What is the name of the house elf who worked for Hepzibah Smith before being passed to the Malfoys?",
+        "answer": "Hokey"
     },
     {
-        "question": "What magical object shows the deepest desires of a person's heart?",
-        "answer": "The Mirror of Erised"
+        "question": "What does S.P.E.W. stand for in the series?",
+        "answer": "Society for the Promotion of Elfish Welfare"
     },
     {
-        "question": "Who is the potions master at Hogwarts for most of the series?",
+        "question": "Who was the Defence Against the Dark Arts professor in Harry's sixth year?",
         "answer": "Severus Snape"
     },
     {
-        "question": "What platform do students use to board the Hogwarts Express?",
-        "answer": "Platform 9 3/4"
+        "question": "What is the name of the book that Dumbledore leaves to Hermione in his will?",
+        "answer": "The Tales of Beedle the Bard"
     },
     {
-        "question": "What is the name of the house elf Harry frees from the Malfoys?",
-        "answer": "Dobby"
+        "question": "Who is the ghost of Ravenclaw Tower?",
+        "answer": "The Grey Lady (Helena Ravenclaw)"
     },
     {
-        "question": "What is the name of the wizarding newspaper?",
-        "answer": "The Daily Prophet"
+        "question": "What is the name of the black family house-elf who serves Sirius Black?",
+        "answer": "Kreacher"
     },
     {
-        "question": "What spell is used to disarm an opponent?",
-        "answer": "Expelliarmus"
+        "question": "What ingredient is used in Polyjuice Potion to transform into another person?",
+        "answer": "A piece of the person (such as hair)"
     },
     {
-        "question": "Who is the Half-Blood Prince?",
-        "answer": "Severus Snape"
+        "question": "What magical object did Harry use to view Snape's memories?",
+        "answer": "The Pensieve"
     },
     {
-        "question": "What are the names of Harry's parents?",
-        "answer": "James and Lily Potter"
+        "question": "What is the name of the plant that screams when it is pulled out of the ground?",
+        "answer": "Mandrake"
     }
 ]
