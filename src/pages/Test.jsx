@@ -10,8 +10,10 @@ const Test = () => {
   // The difficulty for the questions
   const [difficulty, setDifficulty] = useState("easy");
 
+  // The questions array that is mapped for the flashcards
   const [questions, setQuestions] = useState([]);
 
+  // Fetch Questions from the API
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["getQuestions", searchTerm, difficulty],
     queryFn: () => {
@@ -24,21 +26,22 @@ const Test = () => {
     enabled: false,
   });
 
+  // Set questions only if new ones are fetched - stops blank screen when parameters are changed
   useEffect(() => {
     if (data?.data?.questions?.length > 0) {
       setQuestions(data?.data?.questions);
     }
   }, [data?.data]);
 
+  // Fetch data on click of the button
   const handleClick = () => {
     console.log(searchTerm, difficulty);
     refetch();
   };
 
-  console.log(isLoading);
-
   return (
     <div>
+      {/* Input for parameters */}
       <div>
         <input
           type="text"
@@ -86,6 +89,7 @@ const Test = () => {
         </button>
       </div>
 
+      {/* Mapping flashcards */}
       <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
         {questions?.length > 0 &&
           questions?.map((item, index) => {

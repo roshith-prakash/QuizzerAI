@@ -15,7 +15,7 @@ function App() {
             {/* Home Page */}
             <Route path="/" element={<FlashCardQuiz />} />
 
-            {/* Home Page */}
+            {/* Test Page */}
             <Route path="/test" element={<Test />} />
 
             {/* 404 error page */}
