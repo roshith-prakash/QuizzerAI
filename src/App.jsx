@@ -1,4 +1,4 @@
-import { FlashCardQuiz, NotFound } from "./pages";
+import { FlashCardQuiz, NotFound, Test } from "./pages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -14,6 +14,9 @@ function App() {
           <Routes>
             {/* Home Page */}
             <Route path="/" element={<FlashCardQuiz />} />
+
+            {/* Home Page */}
+            <Route path="/test" element={<Test />} />
 
             {/* 404 error page */}
             <Route path="*" element={<NotFound />} />
