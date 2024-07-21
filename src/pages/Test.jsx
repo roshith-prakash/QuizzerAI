@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
-import { FlashCard } from "@/components";
+import { FlashCard, CTAButton } from "@/components";
 import { SyncLoader } from "react-spinners";
 
 const Test = () => {
@@ -56,6 +56,7 @@ const Test = () => {
           <div className="flex gap-x-2 justify-center">
             <input
               type="radio"
+              className="accent-cta"
               name="difficulty"
               value={"easy"}
               checked={difficulty == "easy"}
@@ -66,6 +67,7 @@ const Test = () => {
           <div className="flex gap-x-2 justify-center">
             <input
               type="radio"
+              className="accent-cta"
               name="difficulty"
               value={"medium"}
               checked={difficulty == "medium"}
@@ -76,6 +78,7 @@ const Test = () => {
           <div className="flex gap-x-2 justify-center">
             <input
               type="radio"
+              className="accent-cta"
               name="difficulty"
               value={"hard"}
               checked={difficulty == "hard"}
@@ -85,13 +88,12 @@ const Test = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <button
-            className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
+          <CTAButton
+            // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
             onClick={handleClick}
             disabled={searchTerm?.length == 0 || isLoading}
-          >
-            Create FlashCards
-          </button>
+            text="Create FlashCards"
+          ></CTAButton>
         </div>
       </div>
 
