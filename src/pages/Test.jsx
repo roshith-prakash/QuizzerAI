@@ -153,9 +153,8 @@ const Test = () => {
 
       {questions?.length > 0 && !isLoading && (
         <div className="pt-8 pb-12 flex justify-center">
-          <CTAButton
-            className="bg-white text-hovercta hover:bg-white hover:scale-105"
-            text={"Go Back up?"}
+          <button
+            className="bg-white p-2 px-4 rounded-lg transition-all text-cta hover:text-hovercta hover:scale-105"
             onClick={() => {
               window.scrollTo({
                 top: 0,
@@ -163,7 +162,9 @@ const Test = () => {
                 behavior: "smooth",
               });
             }}
-          />
+          >
+            Go Back Up?
+          </button>
         </div>
       )}
     </div>

@@ -8,7 +8,7 @@ module.exports = {
         "hovercta": "#7123b0",
       },
       backgroundImage: {
-        "wave": "url('src/assets/wave.png')"
+        "wave": "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721567185/wave_y0fpoc.png')"
       }
     },
   },
