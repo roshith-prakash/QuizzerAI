@@ -96,19 +96,24 @@ const Test = () => {
       </div>
 
       {/* Mapping flashcards */}
-      {!isLoading && (
-        <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
-          {questions?.length > 0 &&
-            questions?.map((item, index) => {
-              return (
-                <FlashCard
-                  key={item?.question}
-                  question={item?.question}
-                  answer={item?.answer}
-                />
-              );
-            })}
-        </div>
+      {!isLoading && questions?.length > 0 && (
+        <>
+          <p className="text-center mt-14">
+            Note : Questions & answers may be wrong.
+          </p>
+          <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
+            {questions?.length > 0 &&
+              questions?.map((item, index) => {
+                return (
+                  <FlashCard
+                    key={item?.question}
+                    question={item?.question}
+                    answer={item?.answer}
+                  />
+                );
+              })}
+          </div>
+        </>
       )}
 
       {isLoading && (
