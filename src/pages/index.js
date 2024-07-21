@@ -1,5 +1,5 @@
-import FlashCardQuiz from "./FlashCardQuiz";
+import Home from "./Home";
 import NotFound from "./NotFound";
 import Test from "./Test";
 
-export { FlashCardQuiz, NotFound, Test }
+export { Home, NotFound, Test }

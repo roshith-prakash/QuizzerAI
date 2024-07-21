@@ -10,6 +10,7 @@ const FlashCard = ({ question, answer }) => {
     <div className="relative h-80 w-80">
       {/* The rotate icon on the top right of the card. */}
       <FaArrowsRotate className="absolute top-5 right-5" />
+
       {/* The Flip Card which can be rotated. */}
       <div
         onClick={() => setFlipped((prev) => !prev)}
@@ -21,6 +22,7 @@ const FlashCard = ({ question, answer }) => {
         <div className="absolute top-0 h-full w-full p-5 text-center flex justify-center items-center">
           {!flipped && <p>{question}</p>}
         </div>
+
         {/* The Back face of the card - displays the answer. */}
         <div className="absolute top-0 h-full w-full p-5 text-center flex justify-center items-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
           {flipped && <p className="font-medium">{answer}</p>}
