@@ -56,7 +56,7 @@ function App() {
           <Navbar />
           <Routes>
             {/* Home Page */}
-            <Route path="/" element={<FlashCardQuiz />} />
+            <Route path="/" element={<Home />} />
 
             {/* FlashCard Quiz Page */}
             <Route path="/flashcard" element={<FlashCardQuiz />} />

@@ -11,7 +11,21 @@ const Navbar = () => {
           FlashCard Quiz
         </p>
       </Link>
-      <RxHamburgerMenu className="text-xl cursor-pointer hover:text-cta transition-all" />
+      <div className="hidden pr-10 md:flex items-center gap-x-10 font-medium">
+        <Link
+          to="/flashcard"
+          className="flex gap-x-3 items-center hover:text-cta transition-all"
+        >
+          FlashCards
+        </Link>
+        <Link
+          to="/mcq"
+          className="flex gap-x-3 items-center hover:text-cta transition-all"
+        >
+          MCQs
+        </Link>
+      </div>
+      <RxHamburgerMenu className="md:hidden text-xl cursor-pointer hover:text-cta transition-all" />
     </div>
   );
 };
