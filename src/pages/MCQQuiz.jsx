@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axios";
-import { FlashCard, CTAButton } from "@/components";
+import { CTAButton, MCQ } from "@/components";
+import { mcqData } from "../data/MCQ";
 import { SyncLoader } from "react-spinners";
 import { FaArrowDown } from "react-icons/fa6";
 
-const Test = () => {
+const MCQQuiz = () => {
   // The topic for which flashcards need to be created
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -15,11 +16,14 @@ const Test = () => {
   // The questions array that is mapped for the flashcards
   const [questions, setQuestions] = useState([]);
 
+  // State to maintain how many questions were "correct"
+  // const [correctCount, setCorrectCount] = useState(0);
+
   // Fetch Questions from the API
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["getQuestions", searchTerm, difficulty],
+    queryKey: ["getMCQQuestions", searchTerm, difficulty],
     queryFn: () => {
-      return axiosInstance.post("/getQuestions", {
+      return axiosInstance.post("/getMCQs", {
         topic: searchTerm,
         difficulty: difficulty,
       });
@@ -40,11 +44,21 @@ const Test = () => {
     refetch();
   };
 
+  console.log(questions);
+
   return (
     <div className="bg-wave bg-no-repeat bg-cover min-h-screen">
       {/* Input for parameters */}
-      <div className="py-10 flex justify-center ">
+      <div className="py-10 flex justify-center">
         <div className="flex w-[95%] md:w-fit py-10 px-10 flex-col items-center gap-y-8 bg-white rounded-xl shadow-xl">
+          {/* Page Title */}
+          <div className="flex items-center gap-x-2">
+            <p className="bg-gradient-to-br from-cta to-hovercta bg-clip-text text-transparent text-2xl font-semibold">
+              MCQ Quiz
+            </p>
+            <span className="text-xl">✅❌</span>
+          </div>
+
           {/* Topic input text */}
           <p className="text-center font-medium">Enter your topic :</p>
 
@@ -52,7 +66,7 @@ const Test = () => {
           <input
             type="text"
             value={searchTerm}
-            placeholder="Enter the topic for the flashcards!"
+            placeholder="Enter the topic for the MCQ quiz!"
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full lg:w-96 border-b-2 p-1 text-center bg-transparent outline-none"
           />
@@ -106,40 +120,46 @@ const Test = () => {
               // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
               onClick={handleClick}
               disabled={searchTerm?.length == 0 || isLoading}
-              text="Create FlashCards"
+              text="Get Questions"
             ></CTAButton>
           </div>
 
+          {/* Note for informing that MCQs are ready */}
           {questions?.length > 0 && !isLoading && (
             <p className="text-cta font-medium flex gap-x-2 items-center">
-              Your flashcards are ready! <FaArrowDown />
+              Your MCQs are ready! <FaArrowDown />
             </p>
           )}
         </div>
       </div>
 
-      {/* Mapping flashcards */}
+      {/* Div for MCQs */}
       {!isLoading && questions?.length > 0 && (
         <>
           <p className="text-center mt-14">
-            Note : Questions & answers may be wrong.
+            Note : Questions & answers are created using AI and may be
+            incorrect.
           </p>
-          <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
-            {questions?.length > 0 &&
-              questions?.map((item, index) => {
-                return (
-                  <FlashCard
-                    key={item?.question}
-                    question={item?.question}
-                    answer={item?.answer}
-                  />
-                );
-              })}
+
+          <div className="flex flex-wrap gap-5 justify-center py-10">
+            {questions?.map((item) => {
+              return (
+                <MCQ
+                  key={item?.question}
+                  question={item?.question}
+                  answer={item?.answer}
+                  options={item?.options}
+                  // setCount={setCorrectCount}
+                />
+              );
+            })}
           </div>
         </>
       )}
 
+      {/* Loading Indicator */}
       {isLoading && (
+        // Loading indicator for questions
         <div className="mt-16 lg:mt-20 flex justify-center items-center">
           <SyncLoader
             color={"#ffffff"}
@@ -151,7 +171,11 @@ const Test = () => {
         </div>
       )}
 
-      {questions?.length > 0 && !isLoading && (
+      {/* <p className="text-center">{correctCount}</p> */}
+
+      {/* Button to go back to top */}
+      {!isLoading && questions?.length > 0 && (
+        // Button to go back to the input Div
         <div className="pt-8 pb-12 flex justify-center">
           <button
             className="bg-white p-2 px-4 rounded-lg transition-all text-cta hover:text-hovercta hover:scale-105"
@@ -171,4 +195,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default MCQQuiz;
