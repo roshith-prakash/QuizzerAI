@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { axiosInstance } from "./utils/axios";
 import { SyncLoader } from "react-spinners";
 import Navbar from "./components/Navbar";
+import { Typewriter } from "react-simple-typewriter";
 
 function App() {
   // Check if server is active
@@ -20,14 +21,32 @@ function App() {
     <>
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
-        <div className="h-screen w-full flex justify-center items-center">
+        <div className="h-screen w-full flex flex-col gap-y-10 justify-center items-center">
+          {/* Three dots loading indicator */}
           <SyncLoader
             color={"#9b0ced"}
             loading={isLoading}
-            size={60}
+            size={65}
             aria-label="Loading Spinner"
             data-testid="loader"
           />
+          {/* Typewriter effect to show 4 different texts. Gradient text */}
+          <p className="bg-gradient-to-br ml-3 text-transparent bg-clip-text from-cta to-hovercta font-medium text-xl">
+            <Typewriter
+              words={[
+                "Waking up the Quizzer !",
+                "Turning on the Lights !",
+                "Brewing some coffee !",
+                "Suit up !",
+              ]}
+              loop={false}
+              cursor
+              cursorStyle="_"
+              typeSpeed={70}
+              deleteSpeed={50}
+              delaySpeed={1000}
+            />
+          </p>
         </div>
       )}
 
