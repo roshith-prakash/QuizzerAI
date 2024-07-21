@@ -25,7 +25,9 @@ const FlashCard = ({ question, answer }) => {
 
         {/* The Back face of the card - displays the answer. */}
         <div className="absolute top-0 h-full w-full p-5 text-center flex justify-center items-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
-          {flipped && <p className="font-medium">{answer}</p>}
+          {flipped && (
+            <p className="font-medium text-hovercta text-lg">{answer}</p>
+          )}
         </div>
       </div>
     </div>
