@@ -9,14 +9,14 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   return (
-    <div className="relative w-full flex p-5 shadow-md z-5 justify-between items-center">
+    <div className="font-poppins relative w-full flex p-5 shadow-md z-5 justify-between items-center">
       <Link to="/" className="flex gap-x-3 items-center">
         <img
           src={quizlogo}
           alt="FlashCardQuiz"
           className="h-10 pointer-events-none"
         />
-        <p className="font-medium bg-gradient-to-t text-transparent bg-clip-text from-cta to-hovercta text-lg">
+        <p className="font-semibold bg-gradient-to-t text-transparent bg-clip-text from-cta to-hovercta text-lg">
           Quizzer - FlashCard Quiz
         </p>
       </Link>
@@ -41,7 +41,7 @@ const Navbar = () => {
 
       {/* Pop out div - displayed when hamburger is clicked  */}
       <div
-        className={`bg-home h-screen w-full text-xl md:text-lg fixed top-0 right-0 z-10 bg-white pb-6 text-center shadow-md ${
+        className={`bg-home h-screen w-full text-xl md:text-lg fixed top-0 right-0 z-50 bg-white pb-6 text-center shadow-md ${
           open ? "translate-x-0" : "translate-x-[100%]"
         } transition-all duration-500`}
       >
@@ -55,7 +55,7 @@ const Navbar = () => {
             className="flex items-center gap-x-2 cursor-pointer"
           >
             <img src={quizlogo} className="h-10 pointer-events-none" />
-            <p className="text-lg text-white font-semibold italic pr-2">
+            <p className="text-lg text-white font-semibold  pr-2">
               Quizzer - FlashCard Quiz
             </p>
           </div>

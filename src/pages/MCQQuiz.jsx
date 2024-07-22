@@ -17,10 +17,10 @@ const MCQQuiz = () => {
   const [questions, setQuestions] = useState([]);
 
   // State to maintain how many questions were "correct"
-  // const [correctCount, setCorrectCount] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
 
   // Fetch Questions from the API
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, error, isFetching, refetch } = useQuery({
     queryKey: ["getMCQQuestions", searchTerm, difficulty],
     queryFn: () => {
       return axiosInstance.post("/getMCQs", {
@@ -28,6 +28,9 @@ const MCQQuiz = () => {
         difficulty: difficulty,
       });
     },
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
     staleTime: 60 * 1000 * 10,
     enabled: false,
   });
@@ -35,6 +38,7 @@ const MCQQuiz = () => {
   // Set questions only if new ones are fetched - stops blank screen when parameters are changed
   useEffect(() => {
     if (data?.data?.questions?.length > 0) {
+      setCorrectCount(0);
       setQuestions(data?.data?.questions);
     }
   }, [data?.data]);
@@ -44,10 +48,8 @@ const MCQQuiz = () => {
     refetch();
   };
 
-  console.log(questions);
-
   return (
-    <div className="bg-wave bg-no-repeat bg-cover min-h-screen">
+    <div className="bg-wave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
       <div className="py-10 flex justify-center">
         <div className="flex w-[95%] md:w-fit py-10 px-10 flex-col items-center gap-y-8 bg-white rounded-xl shadow-xl">
@@ -119,15 +121,17 @@ const MCQQuiz = () => {
             <CTAButton
               // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
               onClick={handleClick}
-              disabled={searchTerm?.length == 0 || isLoading}
+              disabled={searchTerm?.length == 0 || isLoading || isFetching}
               text="Get Questions"
             ></CTAButton>
           </div>
 
           {/* Note for informing that MCQs are ready */}
           {questions?.length > 0 && !isLoading && (
-            <p className="text-cta font-medium flex gap-x-2 items-center">
-              Your MCQs are ready! <FaArrowDown />
+            <p className="text-cta font-medium animate-bounce mt-5 flex gap-x-2 items-center">
+              {!isFetching
+                ? "Your MCQs are ready!"
+                : "Fetching new questions..."}
             </p>
           )}
         </div>
@@ -149,12 +153,20 @@ const MCQQuiz = () => {
                   question={item?.question}
                   answer={item?.answer}
                   options={item?.options}
-                  // setCount={setCorrectCount}
+                  setCount={setCorrectCount}
                 />
               );
             })}
           </div>
         </>
+      )}
+
+      {/* Error statement */}
+      {error && (
+        <p className="text-center font-medium text-xl text-white drop-shadow-lg">
+          Uh oh! Couldn't create questions about "{searchTerm}". Maybe try a
+          different topic?
+        </p>
       )}
 
       {/* Loading Indicator */}
@@ -171,7 +183,15 @@ const MCQQuiz = () => {
         </div>
       )}
 
-      {/* <p className="text-center">{correctCount}</p> */}
+      {/* Show Score */}
+      {!isLoading && questions?.length > 0 && (
+        <div className="flex justify-center">
+          <p className="font-medium bg-white w-[95%] rounded-xl text-center border-2 p-5 text-2xl">
+            Your Score : <span className="text-hovercta">{correctCount}</span> /{" "}
+            {questions?.length}
+          </p>
+        </div>
+      )}
 
       {/* Button to go back to top */}
       {!isLoading && questions?.length > 0 && (

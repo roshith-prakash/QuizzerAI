@@ -2,11 +2,17 @@ import { useEffect, useState } from "react";
 import { SiTicktick } from "react-icons/si";
 import { ImCross } from "react-icons/im";
 
-const MCQ = ({ question, answer, options }) => {
+const MCQ = ({ question, answer, options, setCount }) => {
   const [selected, setSelected] = useState(null);
 
+  useEffect(() => {
+    if (selected == answer) {
+      setCount((prev) => Number(prev) + 1);
+    }
+  }, [selected]);
+
   return (
-    <div className="w-full border-2 p-4 max-w-[95%] shadow-xl rounded-lg bg-white">
+    <div className="font-poppins w-full border-2 p-4 max-w-[95%] shadow-xl rounded-lg bg-white">
       {/* Display the question */}
       <span className="font-medium">Q . {question}</span>
 
@@ -28,6 +34,11 @@ const MCQ = ({ question, answer, options }) => {
                 ${selected == option && "border-cta"} 
                 ${
                   selected && (answer == option ? "bg-green-100" : "bg-red-100")
+                }
+                ${
+                  selected &&
+                  selected != option &&
+                  (answer == option ? "border-green-100" : "border-red-100")
                 }`}
             >
               <p>

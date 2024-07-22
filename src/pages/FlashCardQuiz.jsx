@@ -16,7 +16,7 @@ const FlashCardQuiz = () => {
   const [questions, setQuestions] = useState([]);
 
   // Fetch Questions from the API
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: ["getQuestions", searchTerm, difficulty],
     queryFn: () => {
       return axiosInstance.post("/getQuestions", {
@@ -41,7 +41,7 @@ const FlashCardQuiz = () => {
   };
 
   return (
-    <div className="bg-wave bg-no-repeat bg-cover min-h-screen">
+    <div className="bg-wave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
       <div className="py-10 flex justify-center ">
         <div className="flex w-[95%] md:w-fit py-10 px-10 flex-col items-center gap-y-8 bg-white rounded-xl shadow-xl">
@@ -119,8 +119,10 @@ const FlashCardQuiz = () => {
           </div>
 
           {questions?.length > 0 && !isLoading && (
-            <p className="text-cta font-medium flex gap-x-2 items-center">
-              Your flashcards are ready! <FaArrowDown />
+            <p className="text-cta font-medium animate-bounce mt-5 flex gap-x-2 items-center">
+              {!isFetching
+                ? "Your MCQs are ready!"
+                : "Fetching new questions..."}
             </p>
           )}
         </div>
@@ -160,6 +162,14 @@ const FlashCardQuiz = () => {
             data-testid="loader"
           />
         </div>
+      )}
+
+      {/* Error statement */}
+      {error && (
+        <p className="text-center font-medium text-xl text-white drop-shadow-lg">
+          Uh oh! Couldn't create flashcards about "{searchTerm}". Maybe try a
+          different topic?
+        </p>
       )}
 
       {/* Button to go back to top */}

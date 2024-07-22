@@ -7,7 +7,7 @@ const FlashCard = ({ question, answer }) => {
 
   return (
     // Main container
-    <div className="relative h-80 w-80 rounded-xl">
+    <div className="relative font-poppins h-80 w-80 rounded-xl">
       {/* The rotate icon on the top right of the card. */}
       <FaArrowsRotate className="absolute z-10 top-5 right-5" />
 

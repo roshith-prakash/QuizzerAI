@@ -10,6 +10,9 @@ module.exports = {
       backgroundImage: {
         "wave": "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721567185/wave_y0fpoc.png')",
         "home": "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721589661/homeWave_p0ym5f.png')"
+      },
+      fontFamily: {
+        "poppins": ["Poppins"]
       }
     },
   },
