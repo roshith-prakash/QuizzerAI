@@ -53,7 +53,7 @@ const MCQ = ({ question, answer, options, setCount, reason }) => {
                 )}
               </p>
               {/* Display option text */}
-              <p>{option}</p>
+              <p>{String(option)}</p>
             </button>
           );
         })}
