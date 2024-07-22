@@ -26,7 +26,7 @@ const Home = () => {
       </p>
 
       {/* Choose either FlashCards or MCQs  */}
-      <p className="text-white drop-shadow-lg mt-10 text-xl font-medium text-center underline">
+      <p className="text-white drop-shadow-2xlxl mt-10 text-xl font-semibold text-center">
         Challenge Modes:
       </p>
 
