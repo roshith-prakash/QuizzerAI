@@ -67,14 +67,20 @@ const Navbar = () => {
           <div className="mt-5 flex flex-col items-center gap-y-8">
             <CTAButton
               text={"FlashCards"}
-              onClick={() => navigate("/flashcard")}
+              onClick={() => {
+                navigate("/flashcard");
+                setOpen(false);
+              }}
               className="text-lg w-52 bg-hovercta"
             >
               FlashCards
             </CTAButton>
             <CTAButton
               text={"Multiple Choice"}
-              onClick={() => navigate("/mcq")}
+              onClick={() => {
+                navigate("/mcq");
+                setOpen(false);
+              }}
               className="text-lg w-52 bg-hovercta"
             >
               MCQs
