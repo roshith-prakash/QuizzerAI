@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { axiosInstance } from "./utils/axios";
 import { SyncLoader } from "react-spinners";
-import Navbar from "./components/Navbar";
+import { Navbar } from "./components";
 import { Typewriter } from "react-simple-typewriter";
+import sleeping from "./assets/sleep.png";
 
 function App() {
   // Check if server is active
@@ -22,6 +23,7 @@ function App() {
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
         <div className="h-screen w-full flex flex-col gap-y-10 justify-center items-center">
+          <img src={sleeping} className="w-52" />
           {/* Three dots loading indicator */}
           <SyncLoader
             color={"#9b0ced"}
