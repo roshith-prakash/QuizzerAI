@@ -3,9 +3,11 @@ import quizlogo from "../assets/quiz.png";
 import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
 import { useState } from "react";
 import CTAButton from "./CTAButton";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   return (
     <div className="relative w-full flex p-5 shadow-md z-5 justify-between items-center">
       <Link to="/" className="flex gap-x-3 items-center">
@@ -64,15 +66,15 @@ const Navbar = () => {
           </p>
           <div className="mt-5 flex flex-col items-center gap-y-8">
             <CTAButton
-              to="/flashcard"
               text={"FlashCards"}
+              onClick={() => navigate("/flashcard")}
               className="text-lg w-52 bg-hovercta"
             >
               FlashCards
             </CTAButton>
             <CTAButton
-              to="/mcq"
               text={"Multiple Choice"}
+              onClick={() => navigate("/mcq")}
               className="text-lg w-52 bg-hovercta"
             >
               MCQs
