@@ -47,7 +47,13 @@ const Navbar = () => {
       >
         <div className="flex justify-between items-center pt-5 px-5 lg:px-10 mb-14">
           {/* Title */}
-          <div className="flex items-center gap-x-2">
+          <div
+            onClick={() => {
+              navigate("/");
+              setOpen(false);
+            }}
+            className="flex items-center gap-x-2 cursor-pointer"
+          >
             <img src={quizlogo} className="h-10 pointer-events-none" />
             <p className="text-lg text-white font-semibold italic pr-2">
               Quizzer - FlashCard Quiz
