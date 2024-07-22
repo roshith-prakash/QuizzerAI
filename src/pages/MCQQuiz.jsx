@@ -19,6 +19,8 @@ const MCQQuiz = () => {
   // State to maintain how many questions were "correct"
   const [correctCount, setCorrectCount] = useState(0);
 
+  const [inputError, setInputError] = useState(0);
+
   // Fetch Questions from the API
   const { data, isLoading, error, isFetching, refetch } = useQuery({
     queryKey: ["getMCQQuestions", searchTerm, difficulty],
@@ -45,6 +47,17 @@ const MCQQuiz = () => {
 
   // Fetch data on click of the button
   const handleClick = () => {
+    setInputError(0);
+    let search = searchTerm?.replaceAll(" ", "");
+
+    if (search?.length == 0) {
+      setInputError(1);
+      return;
+    } else if (searchTerm?.length > 50) {
+      setInputError(2);
+      return;
+    }
+
     refetch();
   };
 
@@ -66,12 +79,25 @@ const MCQQuiz = () => {
 
           {/* Input box for topic */}
           <input
+            disabled={isLoading || isFetching}
             type="text"
             value={searchTerm}
             placeholder="Enter the topic for the MCQ quiz!"
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full lg:w-96 border-b-2 p-1 text-center bg-transparent outline-none"
           />
+
+          {/* Error for not providing topic */}
+          {inputError == 1 && (
+            <p className="text-center text-red-500">Please enter a topic.</p>
+          )}
+
+          {/* Error for maximum length exceeded. */}
+          {inputError == 2 && (
+            <p className="text-center text-red-500">
+              Topic must not exceed 50 characters.
+            </p>
+          )}
 
           {/* Difficulty text */}
           <p className="text-center font-medium">Choose Difficulty :</p>
@@ -81,8 +107,9 @@ const MCQQuiz = () => {
             {/* Radio Button for difficulty : EASY */}
             <div className="flex gap-x-2 justify-center">
               <input
+                disabled={isLoading || isFetching}
                 type="radio"
-                className="accent-cta"
+                className="accent-cta w-4"
                 name="difficulty"
                 value={"easy"}
                 checked={difficulty == "easy"}
@@ -94,7 +121,8 @@ const MCQQuiz = () => {
             <div className="flex gap-x-2 justify-center">
               <input
                 type="radio"
-                className="accent-cta"
+                disabled={isLoading || isFetching}
+                className="accent-cta w-4"
                 name="difficulty"
                 value={"medium"}
                 checked={difficulty == "medium"}
@@ -105,8 +133,9 @@ const MCQQuiz = () => {
             {/* Radio Button for difficulty : HARD */}
             <div className="flex gap-x-2 justify-center">
               <input
+                disabled={isLoading || isFetching}
                 type="radio"
-                className="accent-cta"
+                className="accent-cta w-4"
                 name="difficulty"
                 value={"hard"}
                 checked={difficulty == "hard"}

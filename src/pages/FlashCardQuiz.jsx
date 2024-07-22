@@ -15,6 +15,8 @@ const FlashCardQuiz = () => {
   // The questions array that is mapped for the flashcards
   const [questions, setQuestions] = useState([]);
 
+  const [inputError, setInputError] = useState(0);
+
   // Fetch Questions from the API
   const { data, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: ["getQuestions", searchTerm, difficulty],
@@ -37,6 +39,17 @@ const FlashCardQuiz = () => {
 
   // Fetch data on click of the button
   const handleClick = () => {
+    setInputError(0);
+    let search = searchTerm?.replaceAll(" ", "");
+
+    if (search?.length == 0) {
+      setInputError(1);
+      return;
+    } else if (searchTerm?.length > 50) {
+      setInputError(2);
+      return;
+    }
+
     refetch();
   };
 
@@ -58,12 +71,23 @@ const FlashCardQuiz = () => {
 
           {/* Input box for topic */}
           <input
+            disabled={isLoading || isFetching}
             type="text"
             value={searchTerm}
             placeholder="Enter the topic for the flashcards!"
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full lg:w-96 border-b-2 p-1 text-center bg-transparent outline-none"
           />
+
+          {inputError == 1 && (
+            <p className="text-center text-red-500">Please enter a topic.</p>
+          )}
+
+          {inputError == 2 && (
+            <p className="text-center text-red-500">
+              Topic must not exceed 50 characters.
+            </p>
+          )}
 
           {/* Difficulty text */}
           <p className="text-center font-medium">Choose Difficulty :</p>
@@ -73,8 +97,9 @@ const FlashCardQuiz = () => {
             {/* Radio Button for difficulty : EASY */}
             <div className="flex gap-x-2 justify-center">
               <input
+                disabled={isLoading || isFetching}
                 type="radio"
-                className="accent-cta"
+                className="accent-cta w-4"
                 name="difficulty"
                 value={"easy"}
                 checked={difficulty == "easy"}
@@ -85,8 +110,9 @@ const FlashCardQuiz = () => {
             {/* Radio Button for difficulty : MEDIUM */}
             <div className="flex gap-x-2 justify-center">
               <input
+                disabled={isLoading || isFetching}
                 type="radio"
-                className="accent-cta"
+                className="accent-cta w-4"
                 name="difficulty"
                 value={"medium"}
                 checked={difficulty == "medium"}
@@ -97,8 +123,9 @@ const FlashCardQuiz = () => {
             {/* Radio Button for difficulty : HARD */}
             <div className="flex gap-x-2 justify-center">
               <input
+                disabled={isLoading || isFetching}
                 type="radio"
-                className="accent-cta"
+                className="accent-cta w-4"
                 name="difficulty"
                 value={"hard"}
                 checked={difficulty == "hard"}
@@ -113,7 +140,7 @@ const FlashCardQuiz = () => {
             <CTAButton
               // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
               onClick={handleClick}
-              disabled={searchTerm?.length == 0 || isLoading}
+              disabled={searchTerm?.length == 0 || isLoading || isFetching}
               text="Create FlashCards"
             ></CTAButton>
           </div>
@@ -131,7 +158,7 @@ const FlashCardQuiz = () => {
       {/* Mapping flashcards */}
       {!isLoading && questions?.length > 0 && (
         <>
-          <p className="text-center mt-14">
+          <p className="text-center mt-14 px-4">
             Note : Questions & answers are created using AI and may be
             incorrect.
           </p>

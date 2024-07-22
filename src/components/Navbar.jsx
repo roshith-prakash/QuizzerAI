@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
   return (
     <div className="font-poppins relative w-full flex p-5 shadow-md z-5 justify-between items-center">
       <Link to="/" className="flex gap-x-3 items-center">
@@ -68,7 +69,7 @@ const Navbar = () => {
         <div className="px-8 mt-14 text-2xl flex flex-col items-center gap-y-5">
           <img src={quizlogo} className="w-40 pointer-events-none" />
           <p className="font-medium text-white w-[70%]">
-            Hey! The Quizzer is ready to quiz you!
+            Hey! Quizzer is ready to quiz you!
           </p>
           <div className="mt-5 flex flex-col items-center gap-y-8">
             <CTAButton
