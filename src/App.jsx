@@ -1,4 +1,4 @@
-import { Home, NotFound, FlashCardQuiz, MCQQuiz } from "./pages";
+import { Home, NotFound, FlashCardQuiz, MCQQuiz, FactOrNot } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { axiosInstance } from "./utils/axios";
@@ -65,6 +65,9 @@ function App() {
 
             {/* MCQ Quiz Page */}
             <Route path="/mcq" element={<MCQQuiz />} />
+
+            {/* Fact or Not Page */}
+            <Route path="/fact-or-not" element={<FactOrNot />} />
 
             {/* Test Page */}
             {/* <Route path="/test" element={<Test />} /> */}

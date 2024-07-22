@@ -48,6 +48,15 @@ const Home = () => {
             navigate("/mcq");
           }}
         />
+
+        {/* MCQ Button */}
+        <CTAButton
+          text={"Fact OR Not"}
+          className="w-52 hover:scale-105"
+          onClick={() => {
+            navigate("/fact-or-not");
+          }}
+        />
       </div>
     </div>
   );

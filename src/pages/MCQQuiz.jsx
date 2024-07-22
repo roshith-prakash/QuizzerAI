@@ -2,9 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axios";
 import { CTAButton, MCQ } from "@/components";
-import { mcqData } from "../data/MCQ";
 import { SyncLoader } from "react-spinners";
-import { FaArrowDown } from "react-icons/fa6";
 
 const MCQQuiz = () => {
   // The topic for which flashcards need to be created
@@ -44,6 +42,11 @@ const MCQQuiz = () => {
       setQuestions(data?.data?.questions);
     }
   }, [data?.data]);
+
+  //   Scroll to top
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
   // Fetch data on click of the button
   const handleClick = () => {

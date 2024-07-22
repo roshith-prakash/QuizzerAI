@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axios";
-import { FlashCard, CTAButton } from "@/components";
+import { CTAButton, MCQ } from "@/components";
 import { SyncLoader } from "react-spinners";
 
-const FlashCardQuiz = () => {
+const FactOrNot = () => {
   // The topic for which flashcards need to be created
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -14,13 +14,16 @@ const FlashCardQuiz = () => {
   // The questions array that is mapped for the flashcards
   const [questions, setQuestions] = useState([]);
 
+  // State to maintain how many questions were "correct"
+  const [correctCount, setCorrectCount] = useState(0);
+
   const [inputError, setInputError] = useState(0);
 
   // Fetch Questions from the API
-  const { data, isLoading, isFetching, error, refetch } = useQuery({
-    queryKey: ["getQuestions", searchTerm, difficulty],
+  const { data, isLoading, error, isFetching, refetch } = useQuery({
+    queryKey: ["getFactOrNot", searchTerm, difficulty],
     queryFn: () => {
-      return axiosInstance.post("/getQuestions", {
+      return axiosInstance.post("/getFactOrNot", {
         topic: searchTerm,
         difficulty: difficulty,
       });
@@ -35,6 +38,7 @@ const FlashCardQuiz = () => {
   // Set questions only if new ones are fetched - stops blank screen when parameters are changed
   useEffect(() => {
     if (data?.data?.questions?.length > 0) {
+      setCorrectCount(0);
       setQuestions(data?.data?.questions);
     }
   }, [data?.data]);
@@ -60,17 +64,18 @@ const FlashCardQuiz = () => {
     refetch();
   };
 
+  console.log(data?.data);
+
   return (
     <div className="bg-wave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
-      <div className="py-10 flex justify-center ">
+      <div className="py-10 flex justify-center">
         <div className="flex w-[95%] md:w-fit py-10 px-10 flex-col items-center gap-y-8 bg-white rounded-xl shadow-xl">
           {/* Page Title */}
           <div className="flex items-center gap-x-2">
             <p className="bg-gradient-to-br from-cta to-hovercta bg-clip-text text-transparent text-2xl font-semibold">
-              FlashCard Quiz
+              Fact Or Not?
             </p>
-            <span className="text-xl">📇</span>
           </div>
 
           {/* Topic input text */}
@@ -81,15 +86,17 @@ const FlashCardQuiz = () => {
             disabled={isLoading || isFetching}
             type="text"
             value={searchTerm}
-            placeholder="Enter the topic for the flashcards!"
+            placeholder="Enter the topic for the true/false quiz!"
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full lg:w-96 border-b-2 p-1 text-center bg-transparent outline-none"
           />
 
+          {/* Error for not providing topic */}
           {inputError == 1 && (
             <p className="text-center text-red-500">Please enter a topic.</p>
           )}
 
+          {/* Error for maximum length exceeded. */}
           {inputError == 2 && (
             <p className="text-center text-red-500">
               Topic must not exceed 50 characters.
@@ -117,8 +124,8 @@ const FlashCardQuiz = () => {
             {/* Radio Button for difficulty : MEDIUM */}
             <div className="flex gap-x-2 justify-center">
               <input
-                disabled={isLoading || isFetching}
                 type="radio"
+                disabled={isLoading || isFetching}
                 className="accent-cta w-4"
                 name="difficulty"
                 value={"medium"}
@@ -142,46 +149,58 @@ const FlashCardQuiz = () => {
             </div>
           </div>
 
-          {/* Button to fetch flashcards */}
+          {/* Button to fetch questions */}
           <div className="mt-5 flex justify-center">
             <CTAButton
               // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
               onClick={handleClick}
               disabled={searchTerm?.length == 0 || isLoading || isFetching}
-              text="Create FlashCards"
+              text="Get Questions"
             ></CTAButton>
           </div>
 
+          {/* Note for informing that MCQs are ready */}
           {questions?.length > 0 && !isLoading && (
             <p className="text-cta font-medium animate-bounce mt-5 flex gap-x-2 items-center">
               {!isFetching
-                ? "Your MCQs are ready!"
+                ? "Your questions are ready!"
                 : "Fetching new questions..."}
             </p>
           )}
         </div>
       </div>
 
-      {/* Mapping flashcards */}
+      {/* Div for questions */}
       {!isLoading && questions?.length > 0 && (
         <>
-          <p className="text-center mt-14 px-4">
+          <p className="text-center mt-14">
             Note : Questions & answers are created using AI and may be
             incorrect.
           </p>
-          <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
-            {questions?.length > 0 &&
-              questions?.map((item, index) => {
-                return (
-                  <FlashCard
-                    key={item?.question}
-                    question={item?.question}
-                    answer={item?.answer}
-                  />
-                );
-              })}
+
+          <div className="flex flex-wrap gap-5 justify-center py-10">
+            {questions?.map((item) => {
+              return (
+                <MCQ
+                  key={item?.question}
+                  question={item?.question}
+                  answer={item?.answer}
+                  options={item?.options}
+                  reason={item?.reason}
+                  setCount={setCorrectCount}
+                />
+              );
+            })}
           </div>
         </>
+      )}
+
+      {/* Error statement */}
+      {error && (
+        <p className="text-center font-medium text-xl text-white drop-shadow-lg">
+          Uh oh! Couldn't create questions about "{searchTerm}". Maybe try a
+          different topic?
+        </p>
       )}
 
       {/* Loading Indicator */}
@@ -198,16 +217,18 @@ const FlashCardQuiz = () => {
         </div>
       )}
 
-      {/* Error statement */}
-      {error && (
-        <p className="text-center font-medium text-xl text-white drop-shadow-lg">
-          Uh oh! Couldn't create flashcards about "{searchTerm}". Maybe try a
-          different topic?
-        </p>
+      {/* Show Score */}
+      {!isLoading && questions?.length > 0 && (
+        <div className="flex justify-center">
+          <p className="font-medium bg-white w-[95%] rounded-xl text-center border-2 p-5 text-2xl">
+            Your Score : <span className="text-hovercta">{correctCount}</span> /{" "}
+            {questions?.length}
+          </p>
+        </div>
       )}
 
       {/* Button to go back to top */}
-      {questions?.length > 0 && !isLoading && (
+      {!isLoading && questions?.length > 0 && (
         // Button to go back to the input Div
         <div className="pt-8 pb-12 flex justify-center">
           <button
@@ -228,4 +249,4 @@ const FlashCardQuiz = () => {
   );
 };
 
-export default FlashCardQuiz;
+export default FactOrNot;

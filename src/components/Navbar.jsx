@@ -34,6 +34,12 @@ const Navbar = () => {
         >
           MCQs
         </Link>
+        <Link
+          to="/fact-or-not"
+          className="flex gap-x-3 items-center hover:text-cta transition-all"
+        >
+          Fact OR Not
+        </Link>
       </div>
       <RxHamburgerMenu
         onClick={() => setOpen(true)}
@@ -79,9 +85,7 @@ const Navbar = () => {
                 setOpen(false);
               }}
               className="text-lg w-52 bg-hovercta"
-            >
-              FlashCards
-            </CTAButton>
+            />
             <CTAButton
               text={"Multiple Choice"}
               onClick={() => {
@@ -89,9 +93,16 @@ const Navbar = () => {
                 setOpen(false);
               }}
               className="text-lg w-52 bg-hovercta"
-            >
-              MCQs
-            </CTAButton>
+            />
+
+            <CTAButton
+              text={"Fact OR Not"}
+              onClick={() => {
+                navigate("/fact-or-not");
+                setOpen(false);
+              }}
+              className="text-lg w-52 bg-hovercta"
+            />
           </div>
         </div>
       </div>

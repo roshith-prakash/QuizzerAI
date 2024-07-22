@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { SiTicktick } from "react-icons/si";
 import { ImCross } from "react-icons/im";
 
-const MCQ = ({ question, answer, options, setCount }) => {
+const MCQ = ({ question, answer, options, setCount, reason }) => {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
@@ -58,6 +58,8 @@ const MCQ = ({ question, answer, options, setCount }) => {
           );
         })}
       </div>
+
+      {reason && selected && <p className="mt-4 px-1">{reason}</p>}
     </div>
   );
 };
