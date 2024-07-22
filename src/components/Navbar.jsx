@@ -36,7 +36,7 @@ const Navbar = () => {
       </div>
       <RxHamburgerMenu
         onClick={() => setOpen(true)}
-        className="md:hidden text-xl cursor-pointer hover:text-cta transition-all"
+        className="md:hidden text-xl cursor-pointer text-cta transition-all"
       />
 
       {/* Pop out div - displayed when hamburger is clicked  */}
@@ -48,7 +48,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center pt-5 px-5 lg:px-10 mb-14">
           {/* Title */}
           <div className="flex items-center gap-x-2">
-            <img src={quizlogo} className="h-10" />
+            <img src={quizlogo} className="h-10 pointer-events-none" />
             <p className="text-lg text-white font-semibold italic pr-2">
               Quizzer - FlashCard Quiz
             </p>
@@ -60,7 +60,7 @@ const Navbar = () => {
           />
         </div>
         <div className="px-8 mt-14 text-2xl flex flex-col items-center gap-y-5">
-          <img src={quizlogo} className="w-40" />
+          <img src={quizlogo} className="w-40 pointer-events-none" />
           <p className="font-medium text-white w-[70%]">
             Hey! The Quizzer is ready to quiz you!
           </p>
