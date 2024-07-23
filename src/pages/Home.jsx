@@ -6,14 +6,14 @@ const Home = () => {
   const navigate = useNavigate();
   return (
     <div
-      className={`bg-home flex flex-col justify-center  font-poppins pb-10 bg-cover bg-no-repeat min-h-screen pt-10 px-5`}
+      className={`bg-home font-poppins pb-10 bg-cover bg-no-repeat min-h-screen pt-10 px-5`}
     >
       {/* Owl */}
       <div className="flex justify-center">
         <img
           src={quizlogo}
           alt="Quiz Owl"
-          className="w-48 pointer-events-none spinner"
+          className="w-48 pointer-events-noneW"
         />
       </div>
       {/* Title */}
