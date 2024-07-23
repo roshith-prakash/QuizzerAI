@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axios";
-import { CTAButton, MCQ } from "@/components";
+import { MCQ } from "@/components";
 import { SyncLoader } from "react-spinners";
+import { InputBox } from "../components";
 
 const MCQQuiz = () => {
   // The topic for which flashcards need to be created
@@ -67,112 +68,24 @@ const MCQQuiz = () => {
   return (
     <div className="bg-wave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
-      <div className="py-10 flex justify-center">
-        <div className="flex w-[95%] md:w-fit py-10 px-10 flex-col items-center gap-y-8 bg-white rounded-xl shadow-xl">
-          {/* Page Title */}
-          <div className="flex items-center gap-x-2">
-            <p className="bg-gradient-to-br from-cta to-hovercta bg-clip-text text-transparent text-2xl font-semibold">
-              MCQ Quiz
-            </p>
-            <span className="text-xl">✅❌</span>
-          </div>
-
-          {/* Topic input text */}
-          <p className="text-center font-medium">Enter your topic :</p>
-
-          {/* Input box for topic */}
-          <input
-            disabled={isLoading || isFetching}
-            type="text"
-            value={searchTerm}
-            placeholder="Enter the topic for the MCQ quiz!"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full lg:w-96 border-b-2 p-1 text-center bg-transparent outline-none"
-          />
-
-          {/* Error for not providing topic */}
-          {inputError == 1 && (
-            <p className="text-center text-red-500">Please enter a topic.</p>
-          )}
-
-          {/* Error for maximum length exceeded. */}
-          {inputError == 2 && (
-            <p className="text-center text-red-500">
-              Topic must not exceed 50 characters.
-            </p>
-          )}
-
-          {/* Difficulty text */}
-          <p className="text-center font-medium">Choose Difficulty :</p>
-
-          {/* Radio Button Group for difficulty */}
-          <div className="flex justify-evenly gap-x-10">
-            {/* Radio Button for difficulty : EASY */}
-            <div className="flex gap-x-2 justify-center">
-              <input
-                disabled={isLoading || isFetching}
-                type="radio"
-                className="accent-cta w-4"
-                name="difficulty"
-                value={"easy"}
-                checked={difficulty == "easy"}
-                onChange={(e) => setDifficulty(e.target.value)}
-              />{" "}
-              Easy
-            </div>
-            {/* Radio Button for difficulty : MEDIUM */}
-            <div className="flex gap-x-2 justify-center">
-              <input
-                type="radio"
-                disabled={isLoading || isFetching}
-                className="accent-cta w-4"
-                name="difficulty"
-                value={"medium"}
-                checked={difficulty == "medium"}
-                onChange={(e) => setDifficulty(e.target.value)}
-              />{" "}
-              Medium
-            </div>
-            {/* Radio Button for difficulty : HARD */}
-            <div className="flex gap-x-2 justify-center">
-              <input
-                disabled={isLoading || isFetching}
-                type="radio"
-                className="accent-cta w-4"
-                name="difficulty"
-                value={"hard"}
-                checked={difficulty == "hard"}
-                onChange={(e) => setDifficulty(e.target.value)}
-              />{" "}
-              Hard
-            </div>
-          </div>
-
-          {/* Button to fetch flashcards */}
-          <div className="mt-5 flex justify-center">
-            <CTAButton
-              // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
-              onClick={handleClick}
-              disabled={searchTerm?.length == 0 || isLoading || isFetching}
-              text="Get Questions"
-            ></CTAButton>
-          </div>
-
-          {/* Note for informing that MCQs are ready */}
-          {questions?.length > 0 && !isLoading && (
-            <p className="text-cta font-medium animate-bounce mt-5 flex gap-x-2 items-center">
-              {!isFetching
-                ? "Your MCQs are ready!"
-                : "Fetching new questions..."}
-            </p>
-          )}
-        </div>
-      </div>
+      <InputBox
+        difficulty={difficulty}
+        handleClick={handleClick}
+        inputError={inputError}
+        isFetching={isFetching}
+        isLoading={isLoading}
+        questions={questions}
+        searchTerm={searchTerm}
+        setDifficulty={setDifficulty}
+        setSearchTerm={setSearchTerm}
+        title={"MCQ Quiz"}
+        text={"Your MCQs are ready!"}
+      />
 
       {/* Div for MCQs */}
       {!isLoading && questions?.length > 0 && (
         <>
-          <p className="text-center mt-14">
+          <p className="text-center mt-14 px-2">
             Note : Questions & answers are created using AI and may be
             incorrect.
           </p>
