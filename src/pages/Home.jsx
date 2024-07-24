@@ -13,7 +13,7 @@ const Home = () => {
         <img
           src={quizlogo}
           alt="Quiz Owl"
-          className="w-48 pointer-events-noneW"
+          className="w-48 pointer-events-none"
         />
       </div>
       {/* Title */}

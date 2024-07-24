@@ -65,10 +65,13 @@ const MCQQuiz = () => {
     refetch();
   };
 
+  console.log(data?.data);
+
   return (
     <div className="bg-wave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
       <InputBox
+        buttonText={"Generate MCQs"}
         difficulty={difficulty}
         handleClick={handleClick}
         inputError={inputError}
@@ -107,12 +110,13 @@ const MCQQuiz = () => {
       )}
 
       {/* Error statement */}
-      {error && (
-        <p className="text-center font-medium text-xl text-white drop-shadow-lg">
-          Uh oh! Couldn't create questions about "{searchTerm}". Maybe try a
-          different topic?
-        </p>
-      )}
+      {error ||
+        (data?.data?.questions.length == 0 && (
+          <p className="text-center font-medium text-xl text-white drop-shadow-lg">
+            Uh oh! Couldn't create questions about "{searchTerm}". Maybe try a
+            different topic?
+          </p>
+        ))}
 
       {/* Loading Indicator */}
       {isLoading && (

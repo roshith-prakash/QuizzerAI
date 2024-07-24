@@ -65,12 +65,11 @@ const FactOrNot = () => {
     refetch();
   };
 
-  console.log(data?.data);
-
   return (
     <div className="bg-wave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
       <InputBox
+        buttonText={"Generate Questions"}
         difficulty={difficulty}
         handleClick={handleClick}
         inputError={inputError}

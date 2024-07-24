@@ -2,6 +2,7 @@ import React from "react";
 import CTAButton from "./CTAButton";
 
 const InputBox = ({
+  buttonText,
   searchTerm,
   setSearchTerm,
   difficulty,
@@ -22,7 +23,6 @@ const InputBox = ({
           <p className="bg-gradient-to-br from-cta to-hovercta bg-clip-text text-transparent text-2xl font-semibold">
             {title}
           </p>
-          <span className="text-xl">📇</span>
         </div>
 
         {/* Topic input text */}
@@ -100,7 +100,7 @@ const InputBox = ({
             // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
             onClick={handleClick}
             disabled={searchTerm?.length == 0 || isLoading || isFetching}
-            text="Create FlashCards"
+            text={buttonText}
           ></CTAButton>
         </div>
 
