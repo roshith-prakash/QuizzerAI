@@ -66,7 +66,7 @@ const FactOrNot = () => {
   };
 
   return (
-    <div className="bg-wave bg-no-repeat bg-cover font-poppins min-h-screen">
+    <div className="bg-fullwave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
       <InputBox
         buttonText={"Generate Questions"}
@@ -86,7 +86,7 @@ const FactOrNot = () => {
       {/* Div for questions */}
       {!isLoading && questions?.length > 0 && (
         <>
-          <p className="text-center mt-14 px-2">
+          <p className="text-center mt-10 text-white px-2">
             Note : Questions & answers are created using AI and may be
             incorrect.
           </p>
@@ -119,7 +119,7 @@ const FactOrNot = () => {
       {/* Loading Indicator */}
       {isLoading && (
         // Loading indicator for questions
-        <div className="mt-16 lg:mt-20 flex justify-center items-center">
+        <div className="mt-12 flex justify-center items-center">
           <SyncLoader
             color={"#ffffff"}
             loading={isLoading}

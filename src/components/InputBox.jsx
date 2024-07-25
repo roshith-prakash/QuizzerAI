@@ -33,7 +33,7 @@ const InputBox = ({
           disabled={isLoading || isFetching}
           type="text"
           value={searchTerm}
-          placeholder="Enter the topic for the flashcards!"
+          placeholder="Enter the topic for the questions!"
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full lg:w-96 border-b-2 p-1 text-center bg-transparent outline-none"
         />

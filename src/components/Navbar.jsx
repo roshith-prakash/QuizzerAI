@@ -48,7 +48,7 @@ const Navbar = () => {
 
       {/* Pop out div - displayed when hamburger is clicked  */}
       <div
-        className={`bg-home h-screen w-full text-xl md:text-lg fixed top-0 right-0 z-50 bg-white pb-6 text-center shadow-md ${
+        className={`bg-home bg-cover bg-no-repeat h-screen w-full text-xl md:text-lg fixed top-0 right-0 z-50 bg-white pb-6 text-center shadow-md ${
           open ? "translate-x-0" : "translate-x-[100%]"
         } transition-all duration-500`}
       >
