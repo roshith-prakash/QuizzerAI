@@ -65,8 +65,6 @@ const MCQQuiz = () => {
     refetch();
   };
 
-  console.log(data?.data);
-
   return (
     <div className="bg-fullwave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
