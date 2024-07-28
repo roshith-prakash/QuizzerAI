@@ -23,7 +23,7 @@ function App() {
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
         <div className="h-screen w-full flex flex-col gap-y-10 justify-center items-center">
-          <img src={sleeping} className="w-52" />
+          <img src={sleeping} className="w-52 pointer-events-none" />
           {/* Three dots loading indicator */}
           <SyncLoader
             color={"#9b0ced"}
