@@ -1,0 +1,13 @@
+{
+	"appId": "com.example.app",
+	"appName": "Quizzer",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"cordova": {},
+	"server": {
+		"cleartext": true,
+		"allowNavigation": [
+			"https://flashcardquiz-backend.onrender.com/api/v1/*"
+		]
+	}
+}
