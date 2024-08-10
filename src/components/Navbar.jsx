@@ -14,11 +14,11 @@ const Navbar = () => {
       <Link to="/" className="flex gap-x-3 items-center">
         <img
           src={quizlogo}
-          alt="FlashCardQuiz"
+          alt="Quizzer AI"
           className="h-10 pointer-events-none"
         />
         <p className="font-semibold bg-gradient-to-t text-transparent bg-clip-text from-cta to-hovercta text-lg">
-          Quizzer - FlashCard Quiz
+          Quizzer AI
         </p>
       </Link>
       <div className="hidden pr-10 md:flex items-center gap-x-10 font-medium">
@@ -61,10 +61,12 @@ const Navbar = () => {
             }}
             className="flex items-center gap-x-2 cursor-pointer"
           >
-            <img src={quizlogo} className="h-10 pointer-events-none" />
-            <p className="text-lg text-white font-semibold  pr-2">
-              Quizzer - FlashCard Quiz
-            </p>
+            <img
+              src={quizlogo}
+              alt="Quizzer AI"
+              className="h-10 pointer-events-none"
+            />
+            <p className="text-lg text-white font-semibold  pr-2">Quizzer AI</p>
           </div>
           {/* Close drawer */}
           <RxCross2

@@ -1,1 +1,1 @@
-The frontend React (Vite) Application for the flashcard quiz application.
+Quizzer AI - A quiz application that uses the Gemini API to generate questions on the user's specified topic.
