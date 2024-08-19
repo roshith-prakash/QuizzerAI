@@ -9,8 +9,8 @@ module.exports = {
       },
       backgroundImage: {
         "wave": "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721567185/wave_y0fpoc.png')",
-        "home": "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721589661/homeWave_p0ym5f.png')",
-        "fullwave":"url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721903719/stacked-waves-haikei_hbx8fr.svg')"
+        "home": "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1724056003/homeWave_q0kg6s.webp')",
+        "fullwave": "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721903719/stacked-waves-haikei_hbx8fr.svg')"
       },
       fontFamily: {
         "poppins": ["Poppins"]
