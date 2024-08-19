@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { CTAButton } from "../components";
-import quizlogo from "../assets/quiz.png";
+import quizlogo from "../assets/quiz.webp";
 
 const Home = () => {
   const navigate = useNavigate();

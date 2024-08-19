@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import quizlogo from "../assets/quiz.png";
+import quizlogo from "../assets/quiz.webp";
 import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
 import { useState } from "react";
 import CTAButton from "./CTAButton";
