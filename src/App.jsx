@@ -5,7 +5,6 @@ import { axiosInstance } from "./utils/axios";
 import { SyncLoader } from "react-spinners";
 import { Navbar } from "./components";
 import { Typewriter } from "react-simple-typewriter";
-import sleeping from "./assets/sleep.png";
 
 function App() {
   // Check if server is active
@@ -23,7 +22,10 @@ function App() {
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
         <div className="h-screen w-full flex flex-col gap-y-10 justify-center items-center">
-          <img src={sleeping} className="w-52 pointer-events-none" />
+          <img
+            src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1724056376/sleep_hyhact.webp"
+            className="w-52 pointer-events-none"
+          />
           {/* Three dots loading indicator */}
           <SyncLoader
             color={"#9b0ced"}
