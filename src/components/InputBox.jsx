@@ -58,7 +58,7 @@ const InputBox = ({
             <input
               disabled={isLoading || isFetching}
               type="radio"
-              className="accent-cta w-4"
+              className="accent-cta w-4 cursor-pointer"
               name="difficulty"
               value={"easy"}
               checked={difficulty == "easy"}
@@ -71,7 +71,7 @@ const InputBox = ({
             <input
               disabled={isLoading || isFetching}
               type="radio"
-              className="accent-cta w-4"
+              className="accent-cta w-4 cursor-pointer"
               name="difficulty"
               value={"medium"}
               checked={difficulty == "medium"}
@@ -84,7 +84,7 @@ const InputBox = ({
             <input
               disabled={isLoading || isFetching}
               type="radio"
-              className="accent-cta w-4"
+              className="accent-cta w-4 cursor-pointer"
               name="difficulty"
               value={"hard"}
               checked={difficulty == "hard"}
