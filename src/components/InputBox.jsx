@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import CTAButton from "./CTAButton";
 
 const InputBox = ({
