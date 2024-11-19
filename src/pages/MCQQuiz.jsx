@@ -1,5 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axios";
 import { MCQ } from "@/components";
 import { SyncLoader } from "react-spinners";

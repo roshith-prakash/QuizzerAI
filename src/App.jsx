@@ -1,14 +1,22 @@
-import { Home, NotFound, FlashCardQuiz, MCQQuiz, FactOrNot } from "./pages";
+import {
+  Home,
+  NotFound,
+  FlashCardQuiz,
+  MCQQuiz,
+  FactOrNot,
+  SocketPage,
+} from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { axiosInstance } from "./utils/axios";
 import { SyncLoader } from "react-spinners";
 import { Navbar } from "./components";
 import { Typewriter } from "react-simple-typewriter";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   // Check if server is active
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["check"],
     queryFn: () => {
       return axiosInstance.get("/");
@@ -19,6 +27,8 @@ function App() {
 
   return (
     <>
+      <Toaster />
+
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
         <div className="h-screen w-full flex flex-col gap-y-10 justify-center items-center">
@@ -72,7 +82,7 @@ function App() {
             <Route path="/fact-or-not" element={<FactOrNot />} />
 
             {/* Test Page */}
-            {/* <Route path="/test" element={<Test />} /> */}
+            <Route path="/socket" element={<SocketPage />} />
 
             {/* 404 error page */}
             <Route path="*" element={<NotFound />} />

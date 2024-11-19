@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react/no-unescaped-entities */
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
 import { FlashCard } from "@/components";
@@ -88,7 +89,7 @@ const FlashCardQuiz = () => {
           </p>
           <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
             {questions?.length > 0 &&
-              questions?.map((item, index) => {
+              questions?.map((item) => {
                 return (
                   <FlashCard
                     key={item?.question}
