@@ -6,16 +6,55 @@ import { MCQ } from "../components";
 const socket = io("http://localhost:4000");
 
 const SocketPage = () => {
+  // Room input state
   const [roomId, setRoomId] = useState("");
+  // To enter topic
   const [topic, setTopic] = useState("");
+  // To enter difficulty
   const [difficulty, setDifficulty] = useState("");
+  // To disable room input
   const [disabled, setDisabled] = useState(false);
-
   // The questions array that is mapped for the flashcards
   const [questions, setQuestions] = useState([]);
-
   // State to maintain how many questions were "correct"
   const [correctCount, setCorrectCount] = useState(0);
+  // State to check if submitted
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    // Receive Room Id (after creation)
+    socket.on("sendRoomId", ({ roomId }) => {
+      setRoomId(roomId);
+      setDisabled(true);
+    });
+
+    // On successfully joining room
+    socket.on("roomJoined", ({ roomId }) => {
+      toast.success(`Joined Room : ${roomId}`);
+      setRoomId(roomId);
+      setDisabled(true);
+    });
+
+    // To receive questions
+    socket.on("sendQuestions", ({ questions, topic, difficulty }) => {
+      setTopic(topic);
+      setDifficulty(difficulty);
+      setSubmitted(false);
+      setCorrectCount(0);
+      setQuestions(questions);
+    });
+
+    // Acknowledgment for submission
+    socket.on("submitted", () => {
+      setSubmitted(true);
+      toast.success("Submitted");
+    });
+
+    // Cleanup the socket listener on unmount
+    return () => {
+      socket.off("receiveMessage");
+    };
+  }, []);
 
   const createRoom = () => {
     socket.emit("createRoom");
@@ -29,39 +68,18 @@ const SocketPage = () => {
     socket.emit("getQuestions", { roomId, topic, difficulty });
   };
 
-  useEffect(() => {
-    // Receive Room Id (after creation)
-    socket.on("sendRoomId", ({ roomId }) => {
-      setRoomId(roomId);
-      setDisabled(true);
-    });
-
-    // On successfully joining room
-    socket.on("roomJoined", ({ roomId }) => {
-      toast.success("Joined Room : ", roomId);
-      setRoomId(roomId);
-      setDisabled(true);
-    });
-
-    // To receive questions
-    socket.on("sendQuestions", ({ questions, topic, difficulty }) => {
-      console.log(topic, difficulty);
-      console.log(questions);
-      setQuestions(questions);
-    });
-
-    // Cleanup the socket listener on unmount
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, []);
+  const submitScore = () => {
+    socket.emit("sendScore", { correctCount });
+  };
 
   return (
-    <>
-      <h1>React Socket.IO Chat</h1>
+    <main className="bg-fullwave bg-no-repeat pb-20 bg-cover font-poppins min-h-screen">
+      <h1 className="text-white text-center py-5 text-2xl font-medium italic">
+        Quizzer AI Multi-Player (TEST)
+      </h1>
 
       {/* Inputs */}
-      <div className="flex flex-col gap-y-4 my-5">
+      <div className="flex justify-center items-center p-10 bg-white flex-col gap-y-4 my-5">
         <span>
           <label htmlFor="room">Room ID : </label>
           <input
@@ -99,19 +117,39 @@ const SocketPage = () => {
           />
         </span>
 
-        <button onClick={createRoom}>Create Room</button>
+        {/* Buttons */}
+        <div className="flex gap-x-8 py-5">
+          <button
+            className="w-fit px-10 py-2 border-2 rounded"
+            onClick={createRoom}
+          >
+            Create Room
+          </button>
 
-        <button onClick={joinRoom}>Join Room</button>
+          <button
+            className="w-fit px-10 py-2 border-2 rounded"
+            onClick={joinRoom}
+          >
+            Join Room
+          </button>
 
-        <button onClick={getQuestions}>Get Questions</button>
+          <button
+            className="w-fit px-10 py-2 border-2 rounded"
+            onClick={getQuestions}
+          >
+            Get Questions
+          </button>
+        </div>
       </div>
 
       {/* MCQs */}
-      {questions && questions?.length > 0 && (
+      {!submitted && questions && questions?.length > 0 && (
         <div className="flex flex-wrap gap-5 justify-center py-10">
           {questions?.map((item) => {
             return (
               <MCQ
+                // showAnswer={false}
+                // allowReSelection={true}
                 key={item?.question}
                 question={item?.question}
                 answer={item?.answer}
@@ -124,7 +162,7 @@ const SocketPage = () => {
       )}
 
       {/* Score */}
-      {questions && questions?.length > 0 && (
+      {!submitted && questions && questions?.length > 0 && (
         <div className="flex justify-center">
           <p className="font-medium bg-white w-[95%] rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
             Your Score : <span className="text-hovercta">{correctCount}</span> /{" "}
@@ -132,7 +170,22 @@ const SocketPage = () => {
           </p>
         </div>
       )}
-    </>
+
+      {/* Submit Button */}
+      {!submitted && questions && questions?.length > 0 && (
+        <div className="flex py-10 justify-center">
+          <button
+            onClick={submitScore}
+            className="shadow-xl bg-white px-10 py-2 rounded-lg"
+          >
+            Submit
+          </button>
+        </div>
+      )}
+
+      {/* Submitted text */}
+      {submitted && <p className="text-white py-10 text-center">Submitted</p>}
+    </main>
   );
 };
 
