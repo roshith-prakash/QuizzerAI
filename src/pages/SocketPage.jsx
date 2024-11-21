@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
-import { MCQ } from "../components";
+import { MCQ, Timer } from "../components";
 
 const socket = io("http://localhost:4000");
 
@@ -12,6 +12,8 @@ const SocketPage = () => {
   const [topic, setTopic] = useState("");
   // To enter difficulty
   const [difficulty, setDifficulty] = useState("");
+  // To enter topic
+  const [username, setUsername] = useState("");
   // To disable room input
   const [disabled, setDisabled] = useState(false);
   // The questions array that is mapped for the flashcards
@@ -22,20 +24,25 @@ const SocketPage = () => {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    // Receive Room Id (after creation)
+    // Establish a socket connection
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    // When room has been created
     socket.on("sendRoomId", ({ roomId }) => {
       setRoomId(roomId);
       setDisabled(true);
     });
 
-    // On successfully joining room
+    // When room has been joined (non-creator)
     socket.on("roomJoined", ({ roomId }) => {
       toast.success(`Joined Room : ${roomId}`);
       setRoomId(roomId);
       setDisabled(true);
     });
 
-    // To receive questions
+    // Receiving questions
     socket.on("sendQuestions", ({ questions, topic, difficulty }) => {
       setTopic(topic);
       setDifficulty(difficulty);
@@ -44,30 +51,49 @@ const SocketPage = () => {
       setQuestions(questions);
     });
 
-    // Acknowledgment for submission
+    // When the score has been submitted
     socket.on("submitted", () => {
       setSubmitted(true);
       toast.success("Submitted");
     });
 
-    // Cleanup the socket listener on unmount
+    // Listener to submit score (signalled from server)
+    socket.on("submit", () => {
+      submitScore();
+      toast("Time Over!");
+    });
+
+    // Listener to submit score (signalled from server)
+    socket.on("err", () => {
+      toast.error("Something went wrong!");
+    });
+
+    // Disconnect socket when user leaves this page.
     return () => {
-      socket.off("receiveMessage");
+      if (socket.connected) {
+        socket.disconnect();
+      }
     };
   }, []);
 
+  console.log(socket.id);
+
+  // Create a new Room
   const createRoom = () => {
     socket.emit("createRoom");
   };
 
+  // Join an existing room
   const joinRoom = () => {
     socket.emit("joinRoom", { roomId });
   };
 
+  // Send topic and difficulty to get questions
   const getQuestions = () => {
     socket.emit("getQuestions", { roomId, topic, difficulty });
   };
 
+  // Submit Score
   const submitScore = () => {
     socket.emit("sendScore", { correctCount });
   };
@@ -79,68 +105,118 @@ const SocketPage = () => {
       </h1>
 
       {/* Inputs */}
-      <div className="flex justify-center items-center p-10 bg-white flex-col gap-y-4 my-5">
-        <span>
-          <label htmlFor="room">Room ID : </label>
-          <input
-            type="text"
-            id="room"
-            className="border-2 rounded px-2 py-1"
-            disabled={disabled}
-            placeholder="Room ID"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-          />
-        </span>
+      <div className="flex justify-center">
+        <div className="flex justify-center  rounded-md items-center p-10 bg-white flex-col gap-y-4 my-5">
+          {/* Room ID */}
+          <span>
+            <label htmlFor="room">Room ID : </label>
+            <input
+              type="text"
+              id="room"
+              className="border-2 rounded px-2 py-1"
+              disabled={disabled}
+              placeholder="Room ID"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+            />
+          </span>
 
-        <span>
-          <label htmlFor="topic">Topic : </label>
-          <input
-            type="text"
-            id="topic"
-            className="border-2 rounded px-2 py-1"
-            placeholder="Topic"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-          />
-        </span>
+          {/* Username */}
+          <span>
+            <label htmlFor="username">Username : </label>
+            <input
+              type="text"
+              id="username"
+              className="border-2 rounded px-2 py-1"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </span>
 
-        <span>
-          <label htmlFor="difficulty">Difficulty : </label>
-          <input
-            type="text"
-            id="difficulty"
-            className="border-2 rounded px-2 py-1"
-            placeholder="Difficulty"
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-          />
-        </span>
+          {/* Topic */}
+          <span>
+            <label htmlFor="topic">Topic : </label>
+            <input
+              type="text"
+              id="topic"
+              className="border-2 rounded px-2 py-1"
+              placeholder="Topic"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+            />
+          </span>
 
-        {/* Buttons */}
-        <div className="flex gap-x-8 py-5">
-          <button
-            className="w-fit px-10 py-2 border-2 rounded"
-            onClick={createRoom}
-          >
-            Create Room
-          </button>
+          {/* Radio Button Group for difficulty */}
+          <div className="flex justify-evenly pt-5 gap-x-10">
+            {/* Radio Button for difficulty : EASY */}
+            <div className="flex gap-x-2 justify-center">
+              <input
+                type="radio"
+                className="accent-cta w-4 cursor-pointer"
+                name="difficulty"
+                value={"easy"}
+                checked={difficulty == "easy"}
+                onChange={(e) => setDifficulty(e.target.value)}
+              />{" "}
+              Easy
+            </div>
+            {/* Radio Button for difficulty : MEDIUM */}
+            <div className="flex gap-x-2 justify-center">
+              <input
+                type="radio"
+                className="accent-cta w-4 cursor-pointer"
+                name="difficulty"
+                value={"medium"}
+                checked={difficulty == "medium"}
+                onChange={(e) => setDifficulty(e.target.value)}
+              />{" "}
+              Medium
+            </div>
+            {/* Radio Button for difficulty : HARD */}
+            <div className="flex gap-x-2 justify-center">
+              <input
+                type="radio"
+                className="accent-cta w-4 cursor-pointer"
+                name="difficulty"
+                value={"hard"}
+                checked={difficulty == "hard"}
+                onChange={(e) => setDifficulty(e.target.value)}
+              />{" "}
+              Hard
+            </div>
+          </div>
 
-          <button
-            className="w-fit px-10 py-2 border-2 rounded"
-            onClick={joinRoom}
-          >
-            Join Room
-          </button>
+          {/* Buttons */}
+          <div className="flex flex-wrap gap-x-8 py-5">
+            <button
+              className="w-fit px-10 py-2 border-2 rounded"
+              onClick={createRoom}
+            >
+              Create Room
+            </button>
 
-          <button
-            className="w-fit px-10 py-2 border-2 rounded"
-            onClick={getQuestions}
-          >
-            Get Questions
-          </button>
+            <button
+              className="w-fit px-10 py-2 border-2 rounded"
+              onClick={joinRoom}
+            >
+              Join Room
+            </button>
+
+            <button
+              className="w-fit px-10 py-2 border-2 rounded"
+              onClick={getQuestions}
+            >
+              Get Questions
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Timer */}
+      {!submitted && questions && questions?.length > 0 && (
+        <Timer duration={300} onTimeUp={submitScore} />
+      )}
 
       {/* MCQs */}
       {!submitted && questions && questions?.length > 0 && (

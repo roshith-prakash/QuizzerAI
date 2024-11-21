@@ -22,11 +22,12 @@ const Home = () => {
       </p>
       {/* Subtitle */}
       <p className="text-white drop-shadow-lg font-medium text-lg text-center mt-8">
-        Want a challenge? Give him a topic and he'll quiz you as best as he can!
+        Want a challenge? Give him a topic and he&apos;ll quiz you as best as he
+        can!
       </p>
 
       {/* Choose either FlashCards or MCQs  */}
-      <p className="text-white drop-shadow-2xlxl mt-10 text-xl font-semibold text-center">
+      <p className="text-white drop-shadow-2xl mt-10 text-xl font-semibold text-center">
         Challenge Modes:
       </p>
 
