@@ -457,7 +457,10 @@ const SocketPage = () => {
                 <button
                   className="w-fit px-10 py-2 border-2 rounded"
                   onClick={() => {
-                    leaveRoom();
+                    if (disabled && roomId) {
+                      leaveRoom();
+                    }
+
                     setStage(2);
                   }}
                 >
