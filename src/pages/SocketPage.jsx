@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { MCQ, Timer } from "../components";
 
-const socket = io("http://localhost:4000");
+const socket = io("https://flashcardquiz-backend.onrender.com");
 
 const SocketPage = () => {
   // Room input state
@@ -16,12 +16,16 @@ const SocketPage = () => {
   const [username, setUsername] = useState("");
   // To disable room input
   const [disabled, setDisabled] = useState(false);
+  // To disable other inputs
+  const [disableInputs, setDisableInputs] = useState(false);
   // The questions array that is mapped for the flashcards
   const [questions, setQuestions] = useState([]);
   // State to maintain how many questions were "correct"
   const [correctCount, setCorrectCount] = useState(0);
   // State to check if submitted
   const [submitted, setSubmitted] = useState(false);
+  // Leaderboard state
+  const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     // Establish a socket connection
@@ -48,6 +52,8 @@ const SocketPage = () => {
       setDifficulty(difficulty);
       setSubmitted(false);
       setCorrectCount(0);
+      setDisableInputs(true);
+      setLeaderboard([]);
       setQuestions(questions);
     });
 
@@ -59,7 +65,11 @@ const SocketPage = () => {
 
     // Listener to submit score (signalled from server)
     socket.on("submit", () => {
-      submitScore();
+      socket.emit("submitScore", {
+        name: username,
+        score: correctCount,
+        roomId,
+      });
       toast("Time Over!");
     });
 
@@ -68,24 +78,46 @@ const SocketPage = () => {
       toast.error("Something went wrong!");
     });
 
+    // Room does note exist in DB
+    socket.on("roomDoesNotExist", () => {
+      toast.error("Room Does Not Exist!");
+    });
+
+    // Room has been locked
+    socket.on("roomLocked", () => {
+      toast.error("Quiz has already been started!");
+    });
+
+    // Leaderboard
+    socket.on("leaderboard", ({ scoreTable }) => {
+      setLeaderboard(scoreTable);
+      setDisableInputs(false);
+      setTopic("");
+      setDifficulty("");
+      setQuestions([]);
+      setSubmitted(false);
+      setCorrectCount(0);
+    });
+
     // Disconnect socket when user leaves this page.
     return () => {
       if (socket.connected) {
         socket.disconnect();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(socket.id);
 
   // Create a new Room
   const createRoom = () => {
-    socket.emit("createRoom");
+    socket.emit("createRoom", { name: username });
   };
 
   // Join an existing room
   const joinRoom = () => {
-    socket.emit("joinRoom", { roomId });
+    socket.emit("joinRoom", { roomId, name: username });
   };
 
   // Send topic and difficulty to get questions
@@ -95,7 +127,7 @@ const SocketPage = () => {
 
   // Submit Score
   const submitScore = () => {
-    socket.emit("sendScore", { correctCount });
+    socket.emit("submitScore", { name: username, score: correctCount, roomId });
   };
 
   return (
@@ -126,6 +158,7 @@ const SocketPage = () => {
             <label htmlFor="username">Username : </label>
             <input
               type="text"
+              disabled={disabled}
               id="username"
               className="border-2 rounded px-2 py-1"
               placeholder="Username"
@@ -140,6 +173,7 @@ const SocketPage = () => {
             <input
               type="text"
               id="topic"
+              disabled={disableInputs}
               className="border-2 rounded px-2 py-1"
               placeholder="Topic"
               value={topic}
@@ -153,6 +187,7 @@ const SocketPage = () => {
             <div className="flex gap-x-2 justify-center">
               <input
                 type="radio"
+                disabled={disableInputs}
                 className="accent-cta w-4 cursor-pointer"
                 name="difficulty"
                 value={"easy"}
@@ -165,6 +200,7 @@ const SocketPage = () => {
             <div className="flex gap-x-2 justify-center">
               <input
                 type="radio"
+                disabled={disableInputs}
                 className="accent-cta w-4 cursor-pointer"
                 name="difficulty"
                 value={"medium"}
@@ -177,6 +213,7 @@ const SocketPage = () => {
             <div className="flex gap-x-2 justify-center">
               <input
                 type="radio"
+                disabled={disableInputs}
                 className="accent-cta w-4 cursor-pointer"
                 name="difficulty"
                 value={"hard"}
@@ -190,6 +227,7 @@ const SocketPage = () => {
           {/* Buttons */}
           <div className="flex flex-wrap gap-x-8 py-5">
             <button
+              disabled={disableInputs}
               className="w-fit px-10 py-2 border-2 rounded"
               onClick={createRoom}
             >
@@ -197,6 +235,7 @@ const SocketPage = () => {
             </button>
 
             <button
+              disabled={disableInputs}
               className="w-fit px-10 py-2 border-2 rounded"
               onClick={joinRoom}
             >
@@ -204,6 +243,7 @@ const SocketPage = () => {
             </button>
 
             <button
+              disabled={disableInputs}
               className="w-fit px-10 py-2 border-2 rounded"
               onClick={getQuestions}
             >
@@ -260,7 +300,32 @@ const SocketPage = () => {
       )}
 
       {/* Submitted text */}
-      {submitted && <p className="text-white py-10 text-center">Submitted</p>}
+      {submitted && leaderboard.length == 0 && (
+        <p className="text-white py-10 text-center">Submitted</p>
+      )}
+
+      {/* Leaderboard table */}
+      {leaderboard.length > 0 && (
+        <section className="px-5">
+          <h2 className="text-center text-white text-2xl font-medium py-5">
+            LeaderBoard
+          </h2>
+          <table className="overflow-hidden w-full bg-white rounded-lg">
+            <tr className="border-b-2 text-center">
+              <th className="p-2">Name</th>
+              <th className="p-2">Score</th>
+            </tr>
+            {leaderboard.map((row) => {
+              return (
+                <tr className="border-b-2 text-center" key={row?.id}>
+                  <td className="p-2">{row?.name}</td>
+                  <td className="p-2">{row?.score}</td>
+                </tr>
+              );
+            })}
+          </table>
+        </section>
+      )}
     </main>
   );
 };
