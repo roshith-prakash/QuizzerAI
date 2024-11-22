@@ -1,7 +1,9 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { CTAButton, MCQ, Timer } from "../components";
+import { SyncLoader } from "react-spinners";
 
 const socket = io("https://flashcardquiz-backend.onrender.com");
 // const socket = io("http://localhost:4000");
@@ -12,7 +14,7 @@ const SocketPage = () => {
   // To enter topic
   const [topic, setTopic] = useState("");
   // To enter difficulty
-  const [difficulty, setDifficulty] = useState("");
+  const [difficulty, setDifficulty] = useState("easy");
   // To enter topic
   const [username, setUsername] = useState("");
   // To disable room input
@@ -29,6 +31,15 @@ const SocketPage = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   // Stage to be displayed
   const [stage, setStage] = useState(1);
+  // Errors
+  const [error, setError] = useState({
+    stage1: 0,
+    stage2: 0,
+    stage3: 0,
+    stage4: 0,
+  });
+  // To check if questions are being fetched
+  const [loading, setLoading] = useState(false);
 
   // Socket listeners
   useEffect(() => {
@@ -59,7 +70,12 @@ const SocketPage = () => {
       setCorrectCount(0);
       setDisableInputs(true);
       setLeaderboard([]);
+      setLoading(false);
       setQuestions(questions);
+
+      if (stage == 4) {
+        toast("Quiz has started!");
+      }
     });
 
     // When the score has been submitted
@@ -81,6 +97,8 @@ const SocketPage = () => {
     // Listener to submit score (signalled from server)
     socket.on("err", () => {
       toast.error("Something went wrong!");
+      setDisableInputs(false);
+      setLoading(false);
     });
 
     // Room does note exist in DB
@@ -98,7 +116,7 @@ const SocketPage = () => {
       setLeaderboard(scoreTable);
       setDisableInputs(false);
       setTopic("");
-      setDifficulty("");
+      setDifficulty("easy");
       setQuestions([]);
       setSubmitted(false);
       setCorrectCount(0);
@@ -113,9 +131,21 @@ const SocketPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Reset when stage changes
+  useEffect(() => {
+    setLoading(false);
+    setQuestions([]);
+    setLeaderboard([]);
+    setTopic("");
+    setDisableInputs(false);
+    setCorrectCount(0);
+    setDisabled(false);
+  }, [stage]);
+
   // Create a new Room
   const createRoom = () => {
     socket.emit("createRoom", { name: username });
+    toast.success("Room Created Successfully!");
   };
 
   // Join an existing room
@@ -130,6 +160,16 @@ const SocketPage = () => {
 
   // Send topic and difficulty to get questions
   const getQuestions = () => {
+    setError((prev) => ({ ...prev, stage3: 0 }));
+
+    if (!topic || topic?.length == 0) {
+      setError((prev) => ({ ...prev, stage3: 1 }));
+      return;
+    }
+
+    setLoading(true);
+    setDisableInputs(true);
+
     socket.emit("getQuestions", { roomId, topic, difficulty });
   };
 
@@ -139,32 +179,60 @@ const SocketPage = () => {
   };
 
   return (
-    <main className="bg-fullwave bg-no-repeat flex flex-col pb-20 bg-cover font-poppins min-h-screen">
-      <h1 className="text-white text-center py-5 text-2xl font-medium italic">
-        Quizzer AI Multi-Player (TEST)
+    <main className="bg-animatedWave bg-no-repeat flex flex-col pb-20 bg-cover font-poppins min-h-screen">
+      {/* Title */}
+      <h1 className="text-white text-center py-10 text-3xl md:text-4xl font-medium">
+        Quizzer AI <span className="text-nowrap">Multi-Player</span>
       </h1>
+
+      {/* Subtitle */}
+      {(stage == 1 || stage == 2) && (
+        <div className="flex justify-center pb-10">
+          <h2 className="text-white text-center md:text-xl lg:max-w-[70%] px-2">
+            Challenge your friends and level up the fun with{" "}
+            <b>Quizzer AI's Multiplayer Mode!</b> <br />
+            Compete in real-time, track your progress on live leaderboards, and
+            prove who's the ultimate quiz master. Are you ready to take the
+            crown?
+          </h2>
+        </div>
+      )}
 
       {/* Enter your username */}
       {stage == 1 && (
-        <div className="flex flex-1 justify-center items-center">
-          <div className="bg-white flex flex-col gap-y-6 w-fit px-10 rounded py-10 -translate-y-10">
+        <div className="flex flex-col flex-1 gap-y-10 items-center">
+          <div className="bg-white flex flex-col gap-y-6 w-fit px-10 rounded-xl hover:scale-105 transition-all py-10 ">
             {/* Username */}
-            <span className="flex gap-2 items-center">
-              <label htmlFor="username">Username : </label>
+            <label htmlFor="username" className="text-xl">
+              Enter your username{" "}
+            </label>
+            <span>
               <input
                 type="text"
                 disabled={disabled}
                 id="username"
-                className="border-2 rounded px-2 py-1"
+                className="border-2 rounded px-2 py-1.5 md:min-w-80"
                 placeholder="Username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
               />
             </span>
 
+            {error.stage1 == 1 && (
+              <p className="text-red-500">Please enter your username.</p>
+            )}
+
             <CTAButton
               onClick={() => {
-                setStage(2);
+                if (username?.length == 0 || !username) {
+                  setError((prev) => ({ ...prev, stage1: 1 }));
+                  return;
+                } else {
+                  setError((prev) => ({ ...prev, stage1: 0 }));
+                  setStage(2);
+                }
               }}
               text={"Next"}
             ></CTAButton>
@@ -174,10 +242,18 @@ const SocketPage = () => {
 
       {/* Choose to join a room or create a new one */}
       {stage == 2 && (
-        <div className="flex flex-1 justify-center items-center">
-          <div className="bg-white flex flex-col gap-y-6 w-fit px-10 rounded py-10 -translate-y-10">
-            <CTAButton onClick={createRoom} text="Create Room"></CTAButton>
+        <div className="flex flex-col flex-1 justify-center items-center">
+          <div className="bg-white flex flex-col gap-y-6 w-fit px-10 rounded py-10 -translate-y-10 hover:scale-105 transition-all">
+            <label className="text-lg font-medium">
+              Join an existing room or create a new one!
+            </label>
             <CTAButton
+              className="min-w-80 py-2"
+              onClick={createRoom}
+              text="Create Room"
+            ></CTAButton>
+            <CTAButton
+              className="min-w-80 py-2"
               onClick={() => {
                 setStage(4);
               }}
@@ -187,7 +263,7 @@ const SocketPage = () => {
               onClick={() => {
                 setStage(1);
               }}
-              className="shadow-lg py-2 border-2 rounded-lg"
+              className="shadow-lg hover:bg-gray-100 transition-all py-2 border-2 rounded-lg"
             >
               Go Back
             </button>
@@ -200,22 +276,14 @@ const SocketPage = () => {
         <>
           {/* Inputs */}
           <div className="flex justify-center">
-            <div className="flex justify-center  rounded-md items-center p-10 bg-white flex-col gap-y-4 my-5">
-              <span>
+            <div className="flex justify-center rounded-lg items-center p-10 bg-white flex-col gap-y-4 my-5 hover:scale-105 transition-all">
+              <span className="flex gap-x-2 items-center text-lg font-medium">
                 <label htmlFor="room">Room ID : </label>
-                <input
-                  type="text"
-                  id="room"
-                  className="border-2 rounded px-2 py-1"
-                  disabled={disabled}
-                  placeholder="Room ID"
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
-                />
+                <p>{roomId}</p>
               </span>
 
               {/* Topic */}
-              <span>
+              <span className="mt-5">
                 <label htmlFor="topic">Topic : </label>
                 <input
                   type="text"
@@ -271,10 +339,17 @@ const SocketPage = () => {
                 </div>
               </div>
 
+              {/* Error */}
+              {error?.stage3 == 1 && (
+                <p className="text-red-500">
+                  Please enter the topic for the quiz.
+                </p>
+              )}
+
               {/* Buttons */}
               <div className="flex flex-wrap gap-x-8 py-5">
                 <button
-                  className="w-fit px-10 py-2 border-2 rounded"
+                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
                   onClick={() => {
                     leaveRoom();
                     setStage(2);
@@ -283,8 +358,8 @@ const SocketPage = () => {
                   Leave Room
                 </button>
                 <button
-                  disabled={disableInputs}
-                  className="w-fit px-10 py-2 border-2 rounded"
+                  disabled={disableInputs || loading}
+                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 disabled:border-gray-300 rounded-lg disabled:bg-gray-300"
                   onClick={getQuestions}
                 >
                   Get Questions
@@ -293,79 +368,17 @@ const SocketPage = () => {
             </div>
           </div>
 
-          {/* Timer */}
-          {!submitted && questions && questions?.length > 0 && (
-            <Timer duration={300} onTimeUp={submitScore} />
-          )}
-
-          {/* MCQs */}
-          {!submitted && questions && questions?.length > 0 && (
-            <div className="flex flex-wrap gap-5 justify-center py-10">
-              {questions?.map((item) => {
-                return (
-                  <MCQ
-                    // showAnswer={false}
-                    // allowReSelection={true}
-                    key={item?.question}
-                    question={item?.question}
-                    answer={item?.answer}
-                    options={item?.options}
-                    setCount={setCorrectCount}
-                  />
-                );
-              })}
+          {loading && (
+            // Loading indicator for questions
+            <div className="mt-12 flex justify-center items-center">
+              <SyncLoader
+                color={"#9b0ced"}
+                loading={loading}
+                size={60}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
             </div>
-          )}
-
-          {/* Score */}
-          {!submitted && questions && questions?.length > 0 && (
-            <div className="flex justify-center">
-              <p className="font-medium bg-white w-[95%] rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
-                Your Score :{" "}
-                <span className="text-hovercta">{correctCount}</span> /{" "}
-                {questions?.length}
-              </p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          {!submitted && questions && questions?.length > 0 && (
-            <div className="flex py-10 justify-center">
-              <button
-                onClick={submitScore}
-                className="shadow-xl bg-white px-10 py-2 rounded-lg"
-              >
-                Submit
-              </button>
-            </div>
-          )}
-
-          {/* Submitted text */}
-          {submitted && leaderboard.length == 0 && (
-            <p className="text-white py-10 text-center">Submitted</p>
-          )}
-
-          {/* Leaderboard table */}
-          {leaderboard.length > 0 && (
-            <section className="px-5">
-              <h2 className="text-center text-white text-2xl font-medium py-5">
-                LeaderBoard
-              </h2>
-              <table className="overflow-hidden w-full bg-white rounded-lg">
-                <tr className="border-b-2 text-center">
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Score</th>
-                </tr>
-                {leaderboard.map((row) => {
-                  return (
-                    <tr className="border-b-2 text-center" key={row?.id}>
-                      <td className="p-2">{row?.name}</td>
-                      <td className="p-2">{row?.score}</td>
-                    </tr>
-                  );
-                })}
-              </table>
-            </section>
           )}
         </>
       )}
@@ -391,76 +404,28 @@ const SocketPage = () => {
               </span>
 
               {/* Topic and difficulty */}
-              {disabled && (
+              {questions.length > 0 && (
                 <>
                   {/* Topic */}
-                  <span>
+                  <span className="flex gap-x-2 mt-5 text-xl font-medium items-center">
                     <label htmlFor="topic">Topic : </label>
-                    <input
-                      type="text"
-                      id="topic"
-                      disabled
-                      className="border-2 rounded px-2 py-1"
-                      placeholder="Topic"
-                      value={topic}
-                      onChange={(e) => setTopic(e.target.value)}
-                    />
+                    <p>{topic}</p>
                   </span>
 
-                  {/* Radio Button Group for difficulty */}
-                  <div className="flex justify-evenly pt-5 gap-x-10">
-                    {/* Radio Button for difficulty : EASY */}
-                    <div className="flex gap-x-2 justify-center">
-                      <input
-                        type="radio"
-                        disabled
-                        className="accent-cta w-4 cursor-pointer"
-                        name="difficulty"
-                        value={"easy"}
-                        checked={difficulty == "easy"}
-                        onChange={(e) => setDifficulty(e.target.value)}
-                      />{" "}
-                      Easy
-                    </div>
-                    {/* Radio Button for difficulty : MEDIUM */}
-                    <div className="flex gap-x-2 justify-center">
-                      <input
-                        type="radio"
-                        disabled
-                        className="accent-cta w-4 cursor-pointer"
-                        name="difficulty"
-                        value={"medium"}
-                        checked={difficulty == "medium"}
-                        onChange={(e) => setDifficulty(e.target.value)}
-                      />{" "}
-                      Medium
-                    </div>
-                    {/* Radio Button for difficulty : HARD */}
-                    <div className="flex gap-x-2 justify-center">
-                      <input
-                        type="radio"
-                        disabled
-                        className="accent-cta w-4 cursor-pointer"
-                        name="difficulty"
-                        value={"hard"}
-                        checked={difficulty == "hard"}
-                        onChange={(e) => setDifficulty(e.target.value)}
-                      />{" "}
-                      Hard
-                    </div>
-                  </div>
+                  {/* Difficulty */}
+                  <span className="flex gap-x-2 text-xl font-medium items-center">
+                    <label htmlFor="topic">Difficulty : </label>
+                    <p>{difficulty}</p>
+                  </span>
                 </>
               )}
 
               {/* Buttons */}
               <div className="flex flex-wrap gap-x-8 py-5">
                 <button
-                  className="w-fit px-10 py-2 border-2 rounded"
+                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
                   onClick={() => {
-                    if (disabled && roomId) {
-                      leaveRoom();
-                    }
-
+                    leaveRoom();
                     setStage(2);
                   }}
                 >
@@ -468,15 +433,26 @@ const SocketPage = () => {
                 </button>
                 <button
                   disabled={disabled}
-                  className="w-fit px-10 py-2 border-2 rounded"
+                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 disabled:border-gray-300 rounded-lg disabled:bg-gray-300"
                   onClick={joinRoom}
                 >
                   Join Room
                 </button>
               </div>
+
+              {disabled && (
+                <p>
+                  The Room creator will select the topic and start the Quiz!
+                </p>
+              )}
             </div>
           </div>
+        </>
+      )}
 
+      {/* Everything else */}
+      {(stage == 3 || stage == 4) && (
+        <>
           {/* Timer */}
           {!submitted && questions && questions?.length > 0 && (
             <Timer duration={300} onTimeUp={submitScore} />
@@ -517,7 +493,7 @@ const SocketPage = () => {
             <div className="flex py-10 justify-center">
               <button
                 onClick={submitScore}
-                className="shadow-xl bg-white px-10 py-2 rounded-lg"
+                className="shadow-xl text-xl border-2 bg-white text-hovercta font-medium px-10 py-2 rounded-lg hover:scale-110 transition-all"
               >
                 Submit
               </button>
@@ -530,9 +506,9 @@ const SocketPage = () => {
           )}
 
           {/* Leaderboard table */}
-          {leaderboard.length > 0 && (
+          {!loading && leaderboard.length > 0 && (
             <section className="px-5">
-              <h2 className="text-center text-white text-2xl font-medium py-5">
+              <h2 className="text-center drop-shadow-lg text-hovercta text-4xl font-medium py-5">
                 LeaderBoard
               </h2>
               <table className="overflow-hidden w-full bg-white rounded-lg">

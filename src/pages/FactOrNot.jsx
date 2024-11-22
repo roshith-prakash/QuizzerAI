@@ -68,7 +68,7 @@ const FactOrNot = () => {
   };
 
   return (
-    <div className="bg-fullwave bg-no-repeat bg-cover font-poppins min-h-screen">
+    <div className="bg-animatedWave bg-no-repeat bg-cover font-poppins min-h-screen">
       {/* Input for parameters */}
       <InputBox
         buttonText={"Generate Questions"}
