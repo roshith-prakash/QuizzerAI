@@ -40,6 +40,13 @@ const Navbar = () => {
         >
           Fact OR Not
         </Link>
+
+        <Link
+          to="/multiplayer"
+          className="flex gap-x-3 items-center hover:text-cta transition-all"
+        >
+          MultiPlayer
+        </Link>
       </div>
       <RxHamburgerMenu
         onClick={() => setOpen(true)}
@@ -101,6 +108,15 @@ const Navbar = () => {
               text={"Fact OR Not"}
               onClick={() => {
                 navigate("/fact-or-not");
+                setOpen(false);
+              }}
+              className="text-lg w-52 bg-hovercta"
+            />
+
+            <CTAButton
+              text={"MultiPlayer"}
+              onClick={() => {
+                navigate("/multiplayer");
                 setOpen(false);
               }}
               className="text-lg w-52 bg-hovercta"

@@ -82,7 +82,7 @@ function App() {
             <Route path="/fact-or-not" element={<FactOrNot />} />
 
             {/* Test Page */}
-            <Route path="/socket" element={<SocketPage />} />
+            <Route path="/multiplayer" element={<SocketPage />} />
 
             {/* 404 error page */}
             <Route path="*" element={<NotFound />} />

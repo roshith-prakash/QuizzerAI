@@ -51,12 +51,21 @@ const Home = () => {
           }}
         />
 
-        {/* MCQ Button */}
+        {/* Fact or not Button */}
         <CTAButton
           text={"Fact OR Not"}
           className="w-52 hover:scale-105"
           onClick={() => {
             navigate("/fact-or-not");
+          }}
+        />
+
+        {/* Multiplayer Button */}
+        <CTAButton
+          text={"MultiPlayer"}
+          className="w-52 hover:scale-105"
+          onClick={() => {
+            navigate("/multiplayer");
           }}
         />
       </div>
