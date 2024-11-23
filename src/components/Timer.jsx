@@ -28,7 +28,7 @@ const Timer = ({ duration, onTimeUp }) => {
   };
 
   return (
-    <div className="sticky w-fit top-5 py-3 px-5 rounded-xl shadow-lg left-5 bg-hovercta text-white font-semibold hover:scale-110 transition-all">
+    <div className="sticky w-fit top-10 lg:top-5 py-3 px-5 rounded-xl shadow-lg left-5 bg-hovercta text-white font-semibold hover:scale-110 transition-all">
       <h1>Time Left: {formatTime(timeLeft)}</h1>
     </div>
   );

@@ -4,9 +4,10 @@ import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { CTAButton, MCQ, Timer } from "../components";
 import { SyncLoader } from "react-spinners";
+import { MdOutlineContentCopy } from "react-icons/md";
 
-const socket = io("https://flashcardquiz-backend.onrender.com");
-// const socket = io("http://localhost:4000");
+// const socket = io("https://flashcardquiz-backend.onrender.com");
+const socket = io("http://localhost:4000");
 
 const SocketPage = () => {
   // Room input state
@@ -40,6 +41,8 @@ const SocketPage = () => {
   });
   // To check if questions are being fetched
   const [loading, setLoading] = useState(false);
+  // Players in Room
+  const [players, setPlayers] = useState([]);
 
   // Socket listeners
   useEffect(() => {
@@ -49,9 +52,11 @@ const SocketPage = () => {
     }
 
     // When room has been created
-    socket.on("sendRoomId", ({ roomId }) => {
+    socket.on("sendRoomId", ({ roomId, room }) => {
       setRoomId(roomId);
+      setPlayers(room?.playerAlias);
       setStage(3);
+      toast.success("Room Created Successfully!");
       setDisabled(true);
     });
 
@@ -122,6 +127,17 @@ const SocketPage = () => {
       setCorrectCount(0);
     });
 
+    // To promote user to Host
+    socket.on("promoteToHost", () => {
+      toast("You have been promoted to Host!");
+      setStage(3);
+    });
+
+    // To promote user to Host
+    socket.on("roomMembers", ({ room }) => {
+      setPlayers(room?.playerAlias);
+    });
+
     // Disconnect socket when user leaves this page.
     return () => {
       if (socket.connected) {
@@ -133,19 +149,21 @@ const SocketPage = () => {
 
   // Reset when stage changes
   useEffect(() => {
-    setLoading(false);
-    setQuestions([]);
-    setLeaderboard([]);
-    setTopic("");
-    setDisableInputs(false);
-    setCorrectCount(0);
-    setDisabled(false);
+    if (stage == 2) {
+      setRoomId();
+      setLoading(false);
+      setQuestions([]);
+      setLeaderboard([]);
+      setTopic("");
+      setDisableInputs(false);
+      setCorrectCount(0);
+      setDisabled(false);
+    }
   }, [stage]);
 
   // Create a new Room
   const createRoom = () => {
     socket.emit("createRoom", { name: username });
-    toast.success("Room Created Successfully!");
   };
 
   // Join an existing room
@@ -155,7 +173,9 @@ const SocketPage = () => {
 
   // To leave a room
   const leaveRoom = () => {
-    socket.emit("leaveRoom", { roomId });
+    if (disabled && roomId) {
+      socket.emit("leaveRoom", { roomId });
+    }
   };
 
   // Send topic and difficulty to get questions
@@ -178,6 +198,8 @@ const SocketPage = () => {
     socket.emit("submitScore", { name: username, score: correctCount, roomId });
   };
 
+  console.log(disabled, roomId);
+
   return (
     <main className="bg-animatedWave bg-no-repeat flex flex-col pb-20 bg-cover font-poppins min-h-screen">
       {/* Title */}
@@ -190,10 +212,9 @@ const SocketPage = () => {
         <div className="flex justify-center pb-10">
           <h2 className="text-white text-center md:text-xl lg:max-w-[70%] px-2">
             Challenge your friends and level up the fun with{" "}
-            <b>Quizzer AI's Multiplayer Mode!</b> <br />
-            Compete in real-time, track your progress on live leaderboards, and
-            prove who's the ultimate quiz master. Are you ready to take the
-            crown?
+            <b className="text-nowrap">Quizzer AI's Multiplayer Mode!</b> <br />
+            Compete in real-time and prove who's the ultimate quiz master. Are
+            you ready to take the crown?
           </h2>
         </div>
       )}
@@ -201,9 +222,9 @@ const SocketPage = () => {
       {/* Enter your username */}
       {stage == 1 && (
         <div className="flex flex-col flex-1 gap-y-10 items-center">
-          <div className="bg-white flex flex-col gap-y-6 w-fit px-10 rounded-xl hover:scale-105 transition-all py-10 ">
+          <div className="bg-white flex flex-col gap-y-6 w-full md:w-fit px-10 shadow-xl rounded-xl hover:scale-105 transition-all py-10 max-w-[90%]">
             {/* Username */}
-            <label htmlFor="username" className="text-xl">
+            <label htmlFor="username" className="text-xl font-medium">
               Enter your username{" "}
             </label>
             <span>
@@ -211,7 +232,7 @@ const SocketPage = () => {
                 type="text"
                 disabled={disabled}
                 id="username"
-                className="border-2 rounded px-2 py-1.5 md:min-w-80"
+                className="border-2 rounded px-2 py-1.5 md:min-w-80 w-full"
                 placeholder="Username"
                 value={username}
                 onChange={(e) => {
@@ -242,22 +263,23 @@ const SocketPage = () => {
 
       {/* Choose to join a room or create a new one */}
       {stage == 2 && (
-        <div className="flex flex-col flex-1 justify-center items-center">
-          <div className="bg-white flex flex-col gap-y-6 w-fit px-10 rounded py-10 -translate-y-10 hover:scale-105 transition-all">
-            <label className="text-lg font-medium">
-              Join an existing room or create a new one!
+        <div className="flex flex-col flex-1 gap-y-10 items-center">
+          <div className="bg-white flex flex-col gap-y-6 w-fit shadow-xl px-5 lg:px-10 rounded-xl py-10 max-w-[90%] hover:scale-105 transition-all">
+            <label className="text-lg text-center font-medium">
+              Join an existing room{" "}
+              <span className="text-nowrap">or create a new one!</span>
             </label>
             <CTAButton
               className="min-w-80 py-2"
               onClick={createRoom}
-              text="Create Room"
+              text="Create New Room"
             ></CTAButton>
             <CTAButton
               className="min-w-80 py-2"
               onClick={() => {
                 setStage(4);
               }}
-              text="Join Room"
+              text="Join Existing Room"
             ></CTAButton>
             <button
               onClick={() => {
@@ -276,28 +298,41 @@ const SocketPage = () => {
         <>
           {/* Inputs */}
           <div className="flex justify-center">
-            <div className="flex justify-center rounded-lg items-center p-10 bg-white flex-col gap-y-4 my-5 hover:scale-105 transition-all">
-              <span className="flex gap-x-2 items-center text-lg font-medium">
+            <div className="flex max-w-[90%] rounded-lg p-10 bg-white flex-col gap-y-4 my-5 hover:scale-105 transition-all">
+              {/* Room ID */}
+              <span className="flex justify-center gap-x-2 items-center text-lg font-medium">
                 <label htmlFor="room">Room ID : </label>
                 <p>{roomId}</p>
+                <button
+                  onClick={() => {
+                    navigator?.clipboard?.writeText(roomId);
+                    toast.success("Copied Room ID!");
+                  }}
+                  className="hover:text-cta transition-all"
+                >
+                  <MdOutlineContentCopy />
+                </button>
               </span>
 
               {/* Topic */}
-              <span className="mt-5">
-                <label htmlFor="topic">Topic : </label>
-                <input
-                  type="text"
-                  id="topic"
-                  disabled={disableInputs}
-                  className="border-2 rounded px-2 py-1"
-                  placeholder="Topic"
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                />
-              </span>
+              <label htmlFor="topic" className="text-center font-medium mt-5">
+                Enter your Topic :{" "}
+              </label>
+              <input
+                type="text"
+                id="topic"
+                disabled={disableInputs}
+                className="border-b-2 text-center outline-none rounded px-2 py-1 w-full md:flex-1"
+                placeholder="Topic"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+              />
 
               {/* Radio Button Group for difficulty */}
-              <div className="flex justify-evenly pt-5 gap-x-10">
+              <label className="pt-5 text-center font-medium">
+                Choose Difficulty :{" "}
+              </label>
+              <div className="flex justify-between pt-3">
                 {/* Radio Button for difficulty : EASY */}
                 <div className="flex gap-x-2 justify-center">
                   <input
@@ -388,35 +423,84 @@ const SocketPage = () => {
         <>
           {/* Inputs */}
           <div className="flex justify-center">
-            <div className="flex justify-center  rounded-md items-center p-10 bg-white flex-col gap-y-4 my-5">
-              {/* Room ID */}
-              <span>
-                <label htmlFor="room">Room ID : </label>
-                <input
-                  type="text"
-                  id="room"
-                  className="border-2 rounded px-2 py-1"
-                  disabled={disabled}
-                  placeholder="Room ID"
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
-                />
-              </span>
+            <div className="flex max-w-[90%] rounded-lg p-10 bg-white flex-col gap-y-4 my-5 hover:scale-105 transition-all">
+              {/* Topic */}
+              <label htmlFor="roomId" className="text-center font-medium">
+                Enter Room ID :{" "}
+              </label>
+              <input
+                type="text"
+                id="roomId"
+                disabled={disabled}
+                className="border-b-2 text-center outline-none rounded px-2 py-1 w-full md:flex-1"
+                placeholder="Room ID"
+                value={roomId}
+                onChange={(e) => {
+                  setRoomId(e.target.value);
+                }}
+              />
 
-              {/* Topic and difficulty */}
-              {questions.length > 0 && (
+              {disabled && (
                 <>
                   {/* Topic */}
-                  <span className="flex gap-x-2 mt-5 text-xl font-medium items-center">
-                    <label htmlFor="topic">Topic : </label>
-                    <p>{topic}</p>
-                  </span>
+                  <label
+                    htmlFor="topic"
+                    className="text-center font-medium mt-5"
+                  >
+                    Topic :{" "}
+                  </label>
 
-                  {/* Difficulty */}
-                  <span className="flex gap-x-2 text-xl font-medium items-center">
-                    <label htmlFor="topic">Difficulty : </label>
-                    <p>{difficulty}</p>
-                  </span>
+                  <input
+                    type="text"
+                    id="topic"
+                    disabled
+                    className="border-b-2 text-center outline-none rounded px-2 py-1 w-full md:flex-1"
+                    placeholder="Topic"
+                    value={topic}
+                  />
+
+                  {/* Radio Button Group for difficulty */}
+                  <label className="pt-5 text-center font-medium">
+                    Difficulty :{" "}
+                  </label>
+                  <div className="flex justify-between pt-3">
+                    {/* Radio Button for difficulty : EASY */}
+                    <div className="flex gap-x-2 justify-center">
+                      <input
+                        type="radio"
+                        disabled
+                        className="accent-cta w-4 cursor-pointer"
+                        name="difficulty"
+                        value={"easy"}
+                        checked={difficulty == "easy"}
+                      />{" "}
+                      Easy
+                    </div>
+                    {/* Radio Button for difficulty : MEDIUM */}
+                    <div className="flex gap-x-2 justify-center">
+                      <input
+                        type="radio"
+                        disabled
+                        className="accent-cta w-4 cursor-pointer"
+                        name="difficulty"
+                        value={"medium"}
+                        checked={difficulty == "medium"}
+                      />{" "}
+                      Medium
+                    </div>
+                    {/* Radio Button for difficulty : HARD */}
+                    <div className="flex gap-x-2 justify-center">
+                      <input
+                        type="radio"
+                        disabled
+                        className="accent-cta w-4 cursor-pointer"
+                        name="difficulty"
+                        value={"hard"}
+                        checked={difficulty == "hard"}
+                      />{" "}
+                      Hard
+                    </div>
+                  </div>
                 </>
               )}
 
@@ -432,7 +516,7 @@ const SocketPage = () => {
                   Leave Room
                 </button>
                 <button
-                  disabled={disabled}
+                  disabled={disableInputs || loading}
                   className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 disabled:border-gray-300 rounded-lg disabled:bg-gray-300"
                   onClick={joinRoom}
                 >
@@ -441,9 +525,7 @@ const SocketPage = () => {
               </div>
 
               {disabled && (
-                <p>
-                  The Room creator will select the topic and start the Quiz!
-                </p>
+                <p>Topic and Difficulty will be chosen by Room Host!</p>
               )}
             </div>
           </div>
@@ -453,6 +535,31 @@ const SocketPage = () => {
       {/* Everything else */}
       {(stage == 3 || stage == 4) && (
         <>
+          {!submitted &&
+            questions?.length == 0 &&
+            leaderboard?.length == 0 &&
+            !loading &&
+            players.length > 0 && (
+              <section className="flex flex-col items-center gap-y-10 mt-10">
+                <p className="text-3xl font-medium text-hovercta bg-clip-text">
+                  Players
+                </p>
+                <table className="overflow-hidden max-w-[90%] w-full bg-white rounded-lg">
+                  <tr className="border-b-2 text-center">
+                    <th>Sr No.</th>
+                    <th className="p-2">Name</th>
+                  </tr>
+                  {players.map((row, i) => {
+                    return (
+                      <tr className="border-b-2 text-center" key={row?.id}>
+                        <td className="p-2">{i + 1}</td>
+                        <td className="p-2">{row?.name}</td>
+                      </tr>
+                    );
+                  })}
+                </table>
+              </section>
+            )}
           {/* Timer */}
           {!submitted && questions && questions?.length > 0 && (
             <Timer duration={300} onTimeUp={submitScore} />

@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from "prop-types";
 
 const CTAButton = ({ text, onClick, disabled, className }) => {
   return (
@@ -10,6 +10,13 @@ const CTAButton = ({ text, onClick, disabled, className }) => {
       {text}
     </button>
   );
+};
+
+CTAButton.propTypes = {
+  text: PropTypes.string,
+  className: PropTypes.string,
+  onClick: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default CTAButton;
