@@ -6,8 +6,8 @@ import { CTAButton, MCQ, Timer } from "../components";
 import { SyncLoader } from "react-spinners";
 import { MdOutlineContentCopy } from "react-icons/md";
 
-// const socket = io("https://flashcardquiz-backend.onrender.com");
-const socket = io("http://localhost:4000");
+const socket = io("https://flashcardquiz-backend.onrender.com");
+// const socket = io("http://localhost:4000");
 
 const SocketPage = () => {
   // Room input state
