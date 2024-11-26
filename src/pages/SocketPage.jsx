@@ -1,16 +1,24 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { CTAButton, MCQ, Timer } from "../components";
 import { SyncLoader } from "react-spinners";
 import { MdOutlineContentCopy } from "react-icons/md";
+import {
+  Table,
+  TableCell,
+  TableHead,
+  TableBody,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const socket = io("https://flashcardquiz-backend.onrender.com");
 // const socket = io("http://localhost:4000");
 
 const SocketPage = () => {
-  // Room input state
+  // Room ID input state
   const [roomId, setRoomId] = useState("");
   // To enter topic
   const [topic, setTopic] = useState("");
@@ -32,6 +40,10 @@ const SocketPage = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   // Stage to be displayed
   const [stage, setStage] = useState(1);
+  // To check if questions are being fetched
+  const [loading, setLoading] = useState(false);
+  // Players in Room
+  const [players, setPlayers] = useState([]);
   // Errors
   const [error, setError] = useState({
     stage1: 0,
@@ -39,10 +51,8 @@ const SocketPage = () => {
     stage3: 0,
     stage4: 0,
   });
-  // To check if questions are being fetched
-  const [loading, setLoading] = useState(false);
-  // Players in Room
-  const [players, setPlayers] = useState([]);
+
+  const questionsRef = useRef();
 
   // Socket listeners
   useEffect(() => {
@@ -133,9 +143,38 @@ const SocketPage = () => {
       setStage(3);
     });
 
-    // To promote user to Host
+    // To show people who are present in the room
     socket.on("roomMembers", ({ room }) => {
       setPlayers(room?.playerAlias);
+    });
+
+    // Room has been locked
+    socket.on("newMember", ({ id, name }) => {
+      if (id != socket.id) {
+        toast.custom(
+          (t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } max-w-md w-fit p-4 bg-white shadow-lg rounded-lg pointer-events-auto flex`}
+            >
+              <div className="flex justify-center gap-x-3 items-center">
+                <img
+                  className="h-10 w-10 rounded-full"
+                  src="https://randomuser.me/api/portraits/lego/2.jpg"
+                  alt={name}
+                />
+                <p className="text-sm font-medium text-gray-900">
+                  {name} has entered the room!
+                </p>
+              </div>
+            </div>
+          ),
+          {
+            duration: 1500, // Auto close after 5 seconds
+          }
+        );
+      }
     });
 
     // Disconnect socket when user leaves this page.
@@ -151,15 +190,38 @@ const SocketPage = () => {
   useEffect(() => {
     if (stage == 2) {
       setRoomId();
-      setLoading(false);
-      setQuestions([]);
-      setLeaderboard([]);
+      setCorrectCount(0);
       setTopic("");
       setDisableInputs(false);
-      setCorrectCount(0);
+      setLoading(false);
       setDisabled(false);
+      setQuestions([]);
+      setLeaderboard([]);
+      setPlayers([]);
     }
   }, [stage]);
+
+  // Reset when reloaded
+  useEffect(() => {
+    setStage(1);
+    setRoomId();
+    setCorrectCount(0);
+    setTopic("");
+    setDisableInputs(false);
+    setLoading(false);
+    setDisabled(false);
+    setQuestions([]);
+    setLeaderboard([]);
+    setPlayers([]);
+  }, []);
+
+  // When questions are received
+  useEffect(() => {
+    if (questions?.current) {
+      questionsRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions?.length]);
 
   // Create a new Room
   const createRoom = () => {
@@ -197,8 +259,6 @@ const SocketPage = () => {
   const submitScore = () => {
     socket.emit("submitScore", { name: username, score: correctCount, roomId });
   };
-
-  console.log(disabled, roomId);
 
   return (
     <main className="bg-animatedWave bg-no-repeat flex flex-col pb-20 bg-cover font-poppins min-h-screen">
@@ -535,31 +595,50 @@ const SocketPage = () => {
       {/* Everything else */}
       {(stage == 3 || stage == 4) && (
         <>
+          {/* Show Players in the Room */}
           {!submitted &&
             questions?.length == 0 &&
             leaderboard?.length == 0 &&
             !loading &&
             players.length > 0 && (
-              <section className="flex flex-col items-center gap-y-10 mt-10">
-                <p className="text-3xl font-medium text-hovercta bg-clip-text">
-                  Players
-                </p>
-                <table className="overflow-hidden max-w-[90%] w-full bg-white rounded-lg">
-                  <tr className="border-b-2 text-center">
-                    <th>Sr No.</th>
-                    <th className="p-2">Name</th>
-                  </tr>
-                  {players.map((row, i) => {
-                    return (
-                      <tr className="border-b-2 text-center" key={row?.id}>
-                        <td className="p-2">{i + 1}</td>
-                        <td className="p-2">{row?.name}</td>
-                      </tr>
-                    );
-                  })}
-                </table>
+              <section className="flex flex-col items-center mt-10">
+                <div className="max-w-lg w-full bg-white shadow-lg rounded-lg py-10">
+                  <p className="text-3xl text-center font-medium text-hovercta bg-clip-text">
+                    Players
+                  </p>
+                  <Table className="overflow-hidden mt-10 w-full rounded-lg">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                          Sr No.
+                        </TableHead>
+                        <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                          Name
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {players.map((row, i) => {
+                        return (
+                          <TableRow
+                            // className="border-b-2 text-center"
+                            key={row?.id}
+                          >
+                            <TableCell className="text-center font-medium p-2 w-fit">
+                              {i + 1}
+                            </TableCell>
+                            <TableCell className="text-center font-medium p-2">
+                              {row?.name}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
               </section>
             )}
+
           {/* Timer */}
           {!submitted && questions && questions?.length > 0 && (
             <Timer duration={300} onTimeUp={submitScore} />
@@ -567,7 +646,10 @@ const SocketPage = () => {
 
           {/* MCQs */}
           {!submitted && questions && questions?.length > 0 && (
-            <div className="flex flex-wrap gap-5 justify-center py-10">
+            <div
+              ref={questionsRef}
+              className="flex flex-wrap gap-5 justify-center py-10"
+            >
               {questions?.map((item) => {
                 return (
                   <MCQ
@@ -587,7 +669,7 @@ const SocketPage = () => {
           {/* Score */}
           {!submitted && questions && questions?.length > 0 && (
             <div className="flex justify-center">
-              <p className="font-medium bg-white w-[95%] rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
+              <p className="font-medium bg-white w-full max-w-md rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
                 Your Score :{" "}
                 <span className="text-hovercta">{correctCount}</span> /{" "}
                 {questions?.length}
@@ -609,29 +691,112 @@ const SocketPage = () => {
 
           {/* Submitted text */}
           {submitted && leaderboard.length == 0 && (
-            <p className="text-white py-10 text-center">Submitted</p>
+            <section className="flex justify-center mt-10">
+              <div className="bg-white flex flex-col gap-y-4 items-center rounded-xl py-5 shadow-lg max-w-lg w-full">
+                <p className="text-cta text-xl text-center">Submitted!</p>
+                <p className="text-hovercta text-md text-center">
+                  Waiting for other players to finish!
+                </p>
+                <SyncLoader
+                  color={"#9b0ced"}
+                  loading={true}
+                  className="py-3"
+                  size={15}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              </div>
+            </section>
           )}
 
           {/* Leaderboard table */}
           {!loading && leaderboard.length > 0 && (
-            <section className="px-5">
-              <h2 className="text-center drop-shadow-lg text-hovercta text-4xl font-medium py-5">
-                LeaderBoard
-              </h2>
-              <table className="overflow-hidden w-full bg-white rounded-lg">
-                <tr className="border-b-2 text-center">
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Score</th>
-                </tr>
-                {leaderboard.map((row) => {
-                  return (
-                    <tr className="border-b-2 text-center" key={row?.id}>
-                      <td className="p-2">{row?.name}</td>
-                      <td className="p-2">{row?.score}</td>
-                    </tr>
-                  );
-                })}
-              </table>
+            <section className="flex flex-col items-center mt-10">
+              <div className="max-w-xl w-full bg-white shadow-lg rounded-lg py-5">
+                <h2 className="text-center drop-shadow-lg text-hovercta text-4xl font-medium py-5">
+                  LeaderBoard
+                </h2>
+                <Table className="overflow-hidden mt-10 w-full rounded-lg">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                        Position
+                      </TableHead>
+                      <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                        Name
+                      </TableHead>
+                      <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                        Score
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  {leaderboard.map((row, position) => {
+                    return (
+                      <TableRow
+                        className={`text-center ${
+                          position == 0 &&
+                          "bg-yellow-100 hover:bg-yellow-100 bg-opacity-50"
+                        }
+                        
+                        ${
+                          position == 1 &&
+                          "bg-slate-200 hover:bg-slate-200 bg-opacity-50"
+                        }
+
+                         ${
+                           position == 2 &&
+                           "bg-[#CD7F32] hover:bg-[#CD7F32] hover:bg-opacity-50 bg-opacity-30"
+                         }
+
+                        `}
+                        key={row?.id}
+                      >
+                        <TableCell className={`p-2`}>
+                          {/* First Place */}
+                          {position == 0 && (
+                            <img
+                              src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/first_sa8pmv.png"
+                              alt="First Place"
+                              className="h-8 mx-auto"
+                            />
+                          )}
+
+                          {/* Second Place */}
+                          {position == 1 && (
+                            <img
+                              src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/second_oebfev.png"
+                              alt="Second Place"
+                              className="h-8 mx-auto"
+                            />
+                          )}
+
+                          {/* Third Place */}
+                          {position == 2 && (
+                            <img
+                              src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/third_opteoq.png"
+                              alt="Third Place"
+                              className="h-8 mx-auto"
+                            />
+                          )}
+
+                          {/* Position - lower than third */}
+                          {position > 2 && (
+                            <p className="text-center font-medium">
+                              {position + 1}
+                            </p>
+                          )}
+                        </TableCell>
+                        <TableCell className="p-2 font-medium">
+                          {row?.name}
+                        </TableCell>
+                        <TableCell className="p-2 font-medium">
+                          {row?.score}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </Table>
+              </div>
             </section>
           )}
         </>
