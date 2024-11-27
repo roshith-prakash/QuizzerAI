@@ -88,9 +88,7 @@ const SocketPage = () => {
       setLoading(false);
       setQuestions(questions);
 
-      if (stage == 4) {
-        toast("Quiz has started!");
-      }
+      toast("Quiz has started!");
     });
 
     // When the score has been submitted
@@ -135,6 +133,12 @@ const SocketPage = () => {
       setQuestions([]);
       setSubmitted(false);
       setCorrectCount(0);
+
+      if (scoreTable[0].id == socket.id) {
+        toast.success(`You won the round!`);
+      } else {
+        toast(`${scoreTable[0].name} won the round!`);
+      }
     });
 
     // To promote user to Host
@@ -330,12 +334,12 @@ const SocketPage = () => {
               <span className="text-nowrap">or create a new one!</span>
             </label>
             <CTAButton
-              className="min-w-80 py-2"
+              className="w-full md:min-w-80 py-2"
               onClick={createRoom}
               text="Create New Room"
             ></CTAButton>
             <CTAButton
-              className="min-w-80 py-2"
+              className="w-full md:min-w-80 py-2"
               onClick={() => {
                 setStage(4);
               }}
@@ -442,9 +446,9 @@ const SocketPage = () => {
               )}
 
               {/* Buttons */}
-              <div className="flex flex-wrap gap-x-8 py-5">
+              <div className="flex flex-wrap gap-x-8 gap-y-4 py-5">
                 <button
-                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
+                  className="shadow-lg w-full md:w-fit hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
                   onClick={() => {
                     leaveRoom();
                     setStage(2);
@@ -454,10 +458,10 @@ const SocketPage = () => {
                 </button>
                 <button
                   disabled={disableInputs || loading}
-                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 disabled:border-gray-300 rounded-lg disabled:bg-gray-300"
+                  className="shadow-lg w-full md:w-fit px-10 text-white font-medium bg-cta hover:bg-hovercta transition-all py-2 border-2 disabled:border-gray-300 rounded-lg disabled:bg-gray-300"
                   onClick={getQuestions}
                 >
-                  Get Questions
+                  Start Quiz!
                 </button>
               </div>
             </div>
@@ -565,9 +569,9 @@ const SocketPage = () => {
               )}
 
               {/* Buttons */}
-              <div className="flex flex-wrap gap-x-8 py-5">
+              <div className="flex flex-wrap gap-y-4 gap-x-8 py-5">
                 <button
-                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
+                  className="shadow-lg w-full md:w-fit hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
                   onClick={() => {
                     leaveRoom();
                     setStage(2);
@@ -576,8 +580,8 @@ const SocketPage = () => {
                   Leave Room
                 </button>
                 <button
-                  disabled={disableInputs || loading}
-                  className="shadow-lg hover:bg-gray-100 px-10 transition-all py-2 border-2 disabled:border-gray-300 rounded-lg disabled:bg-gray-300"
+                  disabled={disabled}
+                  className="shadow-lg w-full md:w-fit px-10 text-white font-medium bg-cta hover:bg-hovercta transition-all py-2 border-2 disabled:border-gray-300 rounded-lg disabled:bg-gray-300"
                   onClick={joinRoom}
                 >
                   Join Room
@@ -585,7 +589,9 @@ const SocketPage = () => {
               </div>
 
               {disabled && (
-                <p>Topic and Difficulty will be chosen by Room Host!</p>
+                <p className="text-center">
+                  Topic and Difficulty will be chosen by Room Host!
+                </p>
               )}
             </div>
           </div>
