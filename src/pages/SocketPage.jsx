@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { CTAButton, MCQ, Timer } from "../components";
@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { FaTrophy } from "react-icons/fa6";
 
 const socket = io("https://flashcardquiz-backend.onrender.com");
 // const socket = io("http://localhost:4000");
@@ -51,8 +52,6 @@ const SocketPage = () => {
     stage3: 0,
     stage4: 0,
   });
-
-  const questionsRef = useRef();
 
   // Socket listeners
   useEffect(() => {
@@ -124,6 +123,11 @@ const SocketPage = () => {
       toast.error("Quiz has already been started!");
     });
 
+    // Room is full
+    socket.on("roomFull", () => {
+      toast.error("Room is Full");
+    });
+
     // Leaderboard
     socket.on("leaderboard", ({ scoreTable }) => {
       setLeaderboard(scoreTable);
@@ -135,9 +139,50 @@ const SocketPage = () => {
       setCorrectCount(0);
 
       if (scoreTable[0].id == socket.id) {
-        toast.success(`You won the round!`);
+        toast.custom(
+          (t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } max-w-md w-fit p-4 bg-cta  font-medium shadow-lg rounded-lg pointer-events-auto flex`}
+            >
+              <div className="flex justify-center gap-x-3 items-center">
+                <FaTrophy className="text-white" />
+                <p className="text-sm font-medium text-white">
+                  You have won the quiz!
+                </p>
+                <FaTrophy className="text-white" />
+              </div>
+            </div>
+          ),
+          {
+            duration: 1500, // Auto close after 5 seconds
+          }
+        );
       } else {
-        toast(`${scoreTable[0].name} won the round!`);
+        toast.custom(
+          (t) => (
+            <div
+              className={`${
+                t.visible ? "animate-enter" : "animate-leave"
+              } max-w-md w-fit p-4 bg-cta text-white font-medium shadow-lg rounded-lg pointer-events-auto flex`}
+            >
+              <div className="flex justify-center gap-x-3 items-center">
+                <img
+                  className="h-10 w-10 rounded-full"
+                  src="https://randomuser.me/api/portraits/lego/2.jpg"
+                  alt={scoreTable[0]?.name}
+                />
+                <p className="text-sm font-medium text-white">
+                  {scoreTable[0]?.name} has won the quiz!
+                </p>
+              </div>
+            </div>
+          ),
+          {
+            duration: 1500, // Auto close after 5 seconds
+          }
+        );
       }
     });
 
@@ -219,14 +264,6 @@ const SocketPage = () => {
     setPlayers([]);
   }, []);
 
-  // When questions are received
-  useEffect(() => {
-    if (questions?.current) {
-      questionsRef.current.scrollTo({ top: 0, behavior: "smooth" });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questions?.length]);
-
   // Create a new Room
   const createRoom = () => {
     socket.emit("createRoom", { name: username });
@@ -289,7 +326,7 @@ const SocketPage = () => {
           <div className="bg-white flex flex-col gap-y-6 w-full md:w-fit px-10 shadow-xl rounded-xl hover:scale-105 transition-all py-10 max-w-[90%]">
             {/* Username */}
             <label htmlFor="username" className="text-xl font-medium">
-              Enter your username{" "}
+              Enter your Name{" "}
             </label>
             <span>
               <input
@@ -297,7 +334,7 @@ const SocketPage = () => {
                 disabled={disabled}
                 id="username"
                 className="border-2 rounded px-2 py-1.5 md:min-w-80 w-full"
-                placeholder="Username"
+                placeholder="Please enter your name"
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value);
@@ -306,13 +343,22 @@ const SocketPage = () => {
             </span>
 
             {error.stage1 == 1 && (
-              <p className="text-red-500">Please enter your username.</p>
+              <p className="text-red-500">Please enter your name.</p>
+            )}
+
+            {error.stage1 == 2 && (
+              <p className="text-red-500">
+                Name cannot be longer than 20 characters.
+              </p>
             )}
 
             <CTAButton
               onClick={() => {
                 if (username?.length == 0 || !username) {
                   setError((prev) => ({ ...prev, stage1: 1 }));
+                  return;
+                } else if (username?.length > 20) {
+                  setError((prev) => ({ ...prev, stage1: 2 }));
                   return;
                 } else {
                   setError((prev) => ({ ...prev, stage1: 0 }));
@@ -641,6 +687,9 @@ const SocketPage = () => {
                       })}
                     </TableBody>
                   </Table>
+                  <p className="text-center mt-5">
+                    Maximum of 10 players can join the room.
+                  </p>
                 </div>
               </section>
             )}
@@ -652,10 +701,7 @@ const SocketPage = () => {
 
           {/* MCQs */}
           {!submitted && questions && questions?.length > 0 && (
-            <div
-              ref={questionsRef}
-              className="flex flex-wrap gap-5 justify-center py-10"
-            >
+            <div className="flex flex-wrap gap-5 justify-center py-10">
               {questions?.map((item) => {
                 return (
                   <MCQ
