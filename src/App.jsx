@@ -13,6 +13,7 @@ import { SyncLoader } from "react-spinners";
 import { Navbar } from "./components";
 import { Typewriter } from "react-simple-typewriter";
 import { Toaster } from "react-hot-toast";
+import { useDarkMode } from "./context/DarkModeContext";
 
 function App() {
   // Check if server is active
@@ -25,9 +26,18 @@ function App() {
     retry: 10,
   });
 
+  const { isDarkMode } = useDarkMode();
+
   return (
-    <>
-      <Toaster />
+    <div className="dark:bg-darkbg dark:text-darkmodetext">
+      <Toaster
+        toastOptions={{
+          style: {
+            background: isDarkMode ? "#333" : "#fff",
+            color: isDarkMode ? "#fff" : "#000",
+          },
+        }}
+      />
 
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
@@ -89,7 +99,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       )}
-    </>
+    </div>
   );
 }
 

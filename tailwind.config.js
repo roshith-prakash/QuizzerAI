@@ -1,11 +1,14 @@
 /* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	darkMode: ["class"],
+	darkMode: 'class',
 	content: ["./src/**/*.{html,js,jsx,tsx}"],
 	theme: {
 		extend: {
 			colors: {
+				"darkbg": "#181818",
+				"secondarydarkbg": "#211f1f",
+				"darkmodetext": "#E4E4E4",
 				'cta': '#9b0ced',
 				'hovercta': '#7123b0',
 				background: 'hsl(var(--background))',
@@ -50,10 +53,11 @@ module.exports = {
 				}
 			},
 			backgroundImage: {
-				'wave': "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721567185/wave_y0fpoc.png')",
+				// 'wave': "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721567185/wave_y0fpoc.png')",
+				// 'fullwave': "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721903719/stacked-waves-haikei_hbx8fr.svg')",
 				'home': "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1724056003/homeWave_q0kg6s.webp')",
-				'fullwave': "url('https://res.cloudinary.com/do8rpl9l4/image/upload/v1721903719/stacked-waves-haikei_hbx8fr.svg')",
-				'animatedWave': "url('./assets/animatedWave.svg')"
+				'animatedWave': "url('./assets/animatedWave.svg')",
+				'animatedWaveDark': "url('./assets/animatedWaveDark.svg')"
 			},
 			fontFamily: {
 				'poppins': ["Poppins"]

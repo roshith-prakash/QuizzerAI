@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axios";
 import { MCQ } from "@/components";
 import { SyncLoader } from "react-spinners";
-import { InputBox } from "../components";
+import { GoUpButton, InputBox } from "../components";
 import confetti from "../assets/confetti.gif";
+import { useDarkMode } from "../context/DarkModeContext";
 
 const FactOrNot = () => {
+  const { isDarkMode } = useDarkMode();
+
   // The topic for which flashcards need to be created
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -68,7 +71,11 @@ const FactOrNot = () => {
   };
 
   return (
-    <div className="bg-animatedWave bg-no-repeat bg-cover font-poppins min-h-screen">
+    <div
+      className={`${
+        isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
+      } bg-no-repeat bg-cover font-poppins min-h-screen`}
+    >
       {/* Input for parameters */}
       <InputBox
         buttonText={"Generate Questions"}
@@ -135,7 +142,7 @@ const FactOrNot = () => {
       {/* Show Score */}
       {!isLoading && questions?.length > 0 && (
         <div className="flex justify-center ">
-          <p className="font-medium bg-white w-[95%] rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
+          <p className="font-medium bg-white dark:bg-darkbg dark:border-2 dark:border-white w-[95%] rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
             {correctCount == questions?.length && (
               <img
                 src={confetti}
@@ -155,20 +162,7 @@ const FactOrNot = () => {
       {/* Button to go back to top */}
       {!isLoading && questions?.length > 0 && (
         // Button to go back to the input Div
-        <div className="pt-8 pb-12 flex justify-center">
-          <button
-            className="bg-white p-2 px-4 rounded-lg transition-all text-cta hover:text-hovercta hover:scale-105"
-            onClick={() => {
-              window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: "smooth",
-              });
-            }}
-          >
-            Go Back Up?
-          </button>
-        </div>
+        <GoUpButton />
       )}
     </div>
   );

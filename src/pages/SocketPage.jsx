@@ -14,11 +14,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FaTrophy } from "react-icons/fa6";
+import { useDarkMode } from "../context/DarkModeContext";
 
 const socket = io("https://flashcardquiz-backend.onrender.com");
 // const socket = io("http://localhost:4000");
 
 const SocketPage = () => {
+  const { isDarkMode } = useDarkMode();
+
   // Room ID input state
   const [roomId, setRoomId] = useState("");
   // To enter topic
@@ -302,7 +305,11 @@ const SocketPage = () => {
   };
 
   return (
-    <main className="bg-animatedWave bg-no-repeat flex flex-col pb-20 bg-cover font-poppins min-h-screen">
+    <main
+      className={`${
+        isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
+      }  bg-no-repeat flex flex-col pb-20 bg-cover font-poppins min-h-screen`}
+    >
       {/* Title */}
       <h1 className="text-white text-center py-10 text-3xl md:text-4xl font-medium">
         Quizzer AI <span className="text-nowrap">Multi-Player</span>
@@ -323,7 +330,7 @@ const SocketPage = () => {
       {/* Enter your username */}
       {stage == 1 && (
         <div className="flex flex-col flex-1 gap-y-10 items-center">
-          <div className="bg-white flex flex-col gap-y-6 w-full md:w-fit px-10 shadow-xl rounded-xl hover:scale-105 transition-all py-10 max-w-[90%]">
+          <div className="bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext flex flex-col gap-y-6 w-full md:w-fit px-10 shadow-xl rounded-xl hover:scale-105 transition-all py-10 max-w-[90%]">
             {/* Username */}
             <label htmlFor="username" className="text-xl font-medium">
               Enter your Name{" "}
@@ -333,7 +340,7 @@ const SocketPage = () => {
                 type="text"
                 disabled={disabled}
                 id="username"
-                className="border-2 rounded px-2 py-1.5 md:min-w-80 w-full"
+                className="bg-transparent outline-none border-b-2 dark:border-darkmodetext rounded px-2 py-1.5 md:min-w-80 w-full"
                 placeholder="Please enter your name"
                 value={username}
                 onChange={(e) => {
@@ -374,7 +381,7 @@ const SocketPage = () => {
       {/* Choose to join a room or create a new one */}
       {stage == 2 && (
         <div className="flex flex-col flex-1 gap-y-10 items-center">
-          <div className="bg-white flex flex-col gap-y-6 w-fit shadow-xl px-5 lg:px-10 rounded-xl py-10 max-w-[90%] hover:scale-105 transition-all">
+          <div className="bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext flex flex-col gap-y-6 w-fit shadow-xl px-5 lg:px-10 rounded-xl py-10 max-w-[90%] hover:scale-105 transition-all">
             <label className="text-lg text-center font-medium">
               Join an existing room{" "}
               <span className="text-nowrap">or create a new one!</span>
@@ -395,7 +402,7 @@ const SocketPage = () => {
               onClick={() => {
                 setStage(1);
               }}
-              className="shadow-lg hover:bg-gray-100 transition-all py-2 border-2 rounded-lg"
+              className="shadow-lg hover:bg-gray-100 dark:hover:bg-zinc-900 dark:border-white transition-all py-2 border-2 rounded-lg"
             >
               Go Back
             </button>
@@ -408,7 +415,7 @@ const SocketPage = () => {
         <>
           {/* Inputs */}
           <div className="flex justify-center">
-            <div className="flex max-w-[90%] rounded-lg p-10 bg-white flex-col gap-y-4 my-5 hover:scale-105 transition-all">
+            <div className="flex max-w-[90%] rounded-lg p-10 bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext flex-col gap-y-4 my-5 hover:scale-105 transition-all">
               {/* Room ID */}
               <span className="flex justify-center gap-x-2 items-center text-lg font-medium">
                 <label htmlFor="room">Room ID : </label>
@@ -432,7 +439,7 @@ const SocketPage = () => {
                 type="text"
                 id="topic"
                 disabled={disableInputs}
-                className="border-b-2 text-center outline-none rounded px-2 py-1 w-full md:flex-1"
+                className="bg-transparent active:bg-transparent border-b-2 text-center outline-none rounded px-2 py-1 w-full md:flex-1"
                 placeholder="Topic"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
@@ -494,7 +501,7 @@ const SocketPage = () => {
               {/* Buttons */}
               <div className="flex flex-wrap gap-x-8 gap-y-4 py-5">
                 <button
-                  className="shadow-lg w-full md:w-fit hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
+                  className="shadow-lg w-full md:w-fit px-10 hover:bg-gray-100 dark:hover:bg-zinc-900 dark:border-white transition-all py-2 border-2 rounded-lg"
                   onClick={() => {
                     leaveRoom();
                     setStage(2);
@@ -533,7 +540,7 @@ const SocketPage = () => {
         <>
           {/* Inputs */}
           <div className="flex justify-center">
-            <div className="flex max-w-[90%] rounded-lg p-10 bg-white flex-col gap-y-4 my-5 hover:scale-105 transition-all">
+            <div className="flex max-w-[90%] rounded-lg p-10 bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext flex-col gap-y-4 my-5 hover:scale-105 transition-all">
               {/* Topic */}
               <label htmlFor="roomId" className="text-center font-medium">
                 Enter Room ID :{" "}
@@ -542,7 +549,7 @@ const SocketPage = () => {
                 type="text"
                 id="roomId"
                 disabled={disabled}
-                className="border-b-2 text-center outline-none rounded px-2 py-1 w-full md:flex-1"
+                className="bg-transparent border-b-2 text-center outline-none rounded px-2 py-1 w-full md:flex-1"
                 placeholder="Room ID"
                 value={roomId}
                 onChange={(e) => {
@@ -617,7 +624,7 @@ const SocketPage = () => {
               {/* Buttons */}
               <div className="flex flex-wrap gap-y-4 gap-x-8 py-5">
                 <button
-                  className="shadow-lg w-full md:w-fit hover:bg-gray-100 px-10 transition-all py-2 border-2 rounded-lg"
+                  className="shadow-lg w-full md:w-fit px-10 hover:bg-gray-100 dark:hover:bg-zinc-900 dark:border-white transition-all py-2 border-2 rounded-lg"
                   onClick={() => {
                     leaveRoom();
                     setStage(2);
@@ -654,17 +661,17 @@ const SocketPage = () => {
             !loading &&
             players.length > 0 && (
               <section className="flex flex-col items-center mt-10">
-                <div className="max-w-lg w-full bg-white shadow-lg rounded-lg py-10">
+                <div className="max-w-lg w-full bg-white dark:bg-secondarydarkbg shadow-lg rounded-lg py-10">
                   <p className="text-3xl text-center font-medium text-hovercta bg-clip-text">
                     Players
                   </p>
                   <Table className="overflow-hidden mt-10 w-full rounded-lg">
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                        <TableHead className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
                           Sr No.
                         </TableHead>
-                        <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                        <TableHead className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
                           Name
                         </TableHead>
                       </TableRow>
@@ -721,10 +728,12 @@ const SocketPage = () => {
           {/* Score */}
           {!submitted && questions && questions?.length > 0 && (
             <div className="flex justify-center">
-              <p className="font-medium bg-white w-full max-w-md rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
+              <p className="font-medium bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext w-full max-w-md rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
                 Your Score :{" "}
-                <span className="text-hovercta">{correctCount}</span> /{" "}
-                {questions?.length}
+                <span className="text-hovercta dark:text-darkmodetext">
+                  {correctCount}
+                </span>{" "}
+                / {questions?.length}
               </p>
             </div>
           )}
@@ -734,7 +743,7 @@ const SocketPage = () => {
             <div className="flex py-10 justify-center">
               <button
                 onClick={submitScore}
-                className="shadow-xl text-xl border-2 bg-white text-hovercta font-medium px-10 py-2 rounded-lg hover:scale-110 transition-all"
+                className="shadow-xl text-xl border-2 bg-white dark:bg-secondarydarkbg dark:text-darkmodetext dark:border-darkmodetext text-hovercta font-medium px-10 py-2 rounded-lg hover:scale-110 transition-all"
               >
                 Submit
               </button>
@@ -744,9 +753,11 @@ const SocketPage = () => {
           {/* Submitted text */}
           {submitted && leaderboard.length == 0 && (
             <section className="flex justify-center mt-10">
-              <div className="bg-white flex flex-col gap-y-4 items-center rounded-xl py-5 shadow-lg max-w-lg w-full">
-                <p className="text-cta text-xl text-center">Submitted!</p>
-                <p className="text-hovercta text-md text-center">
+              <div className="bg-white dark:bg-secondarydarkbg flex flex-col gap-y-4 items-center rounded-xl py-5 shadow-lg max-w-lg w-full">
+                <p className="text-cta dark:text-darkmodetext text-xl text-center">
+                  Submitted!
+                </p>
+                <p className="text-hovercta dark:text-darkmodetext text-md text-center">
                   Waiting for other players to finish!
                 </p>
                 <SyncLoader
@@ -764,20 +775,20 @@ const SocketPage = () => {
           {/* Leaderboard table */}
           {!loading && leaderboard.length > 0 && (
             <section className="flex flex-col items-center mt-10">
-              <div className="max-w-xl w-full bg-white shadow-lg rounded-lg py-5">
+              <div className="max-w-xl w-full bg-white dark:bg-secondarydarkbg shadow-lg rounded-lg py-5">
                 <h2 className="text-center drop-shadow-lg text-hovercta text-4xl font-medium py-5">
                   LeaderBoard
                 </h2>
                 <Table className="overflow-hidden mt-10 w-full rounded-lg">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                      <TableHead className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
                         Position
                       </TableHead>
-                      <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                      <TableHead className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
                         Name
                       </TableHead>
-                      <TableHead className="text-center text-lg font-semibold text-black py-2 pl-3 text-nowrap">
+                      <TableHead className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
                         Score
                       </TableHead>
                     </TableRow>
@@ -787,12 +798,12 @@ const SocketPage = () => {
                       <TableRow
                         className={`text-center ${
                           position == 0 &&
-                          "bg-yellow-100 hover:bg-yellow-100 bg-opacity-50"
+                          "bg-yellow-100 hover:bg-yellow-100 dark:hover:bg-yellow-700 bg-opacity-50"
                         }
                         
                         ${
                           position == 1 &&
-                          "bg-slate-200 hover:bg-slate-200 bg-opacity-50"
+                          "bg-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 bg-opacity-50"
                         }
 
                          ${

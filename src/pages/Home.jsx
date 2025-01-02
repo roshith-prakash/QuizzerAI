@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { CTAButton } from "../components";
 import quizlogo from "../assets/quiz.webp";
+import { useDarkMode } from "../context/DarkModeContext";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useDarkMode();
   return (
     <div
-      className={`bg-home font-poppins pb-10 bg-cover bg-no-repeat min-h-screen pt-10 px-5`}
+      className={`${
+        isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
+      }  font-poppins pb-10 bg-cover bg-no-repeat min-h-screen pt-10 px-5`}
     >
       {/* Owl */}
       <div className="flex justify-center">
