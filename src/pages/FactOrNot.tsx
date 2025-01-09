@@ -5,7 +5,6 @@ import { axiosInstance } from "../utils/axios";
 import { MCQ } from "@/components";
 import { SyncLoader } from "react-spinners";
 import { GoUpButton, InputBox } from "../components";
-import confetti from "../assets/confetti.gif";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const FactOrNot = () => {
@@ -145,14 +144,21 @@ const FactOrNot = () => {
           <p className="font-medium bg-white dark:bg-darkbg dark:border-2 dark:border-white w-[95%] rounded-xl text-center border-2 p-5 text-lg md:text-2xl flex justify-center items-center gap-x-5">
             {correctCount == questions?.length && (
               <img
-                src={confetti}
+                src={
+                  "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427375/confetti_fmluma.gif"
+                }
                 className="w-10  [transform:rotateY(180deg)]"
               />
             )}
             Your Score : <span className="text-hovercta">{correctCount}</span> /{" "}
             {questions?.length}
             {correctCount == questions?.length && (
-              <img src={confetti} className="w-10" />
+              <img
+                src={
+                  "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427375/confetti_fmluma.gif"
+                }
+                className="w-10"
+              />
             )}
             {/* */}
           </p>

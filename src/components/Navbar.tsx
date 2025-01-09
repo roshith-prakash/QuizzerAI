@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import quizlogo from "../assets/quiz.webp";
 import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
 import { useState } from "react";
 import CTAButton from "./CTAButton";
@@ -16,7 +15,9 @@ const Navbar = () => {
     <div className="font-poppins dark:bg-darkbg relative w-full flex p-5 shadow-md z-5 justify-between items-center">
       <Link to="/" className="flex gap-x-3 items-center">
         <img
-          src={quizlogo}
+          src={
+            "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+          }
           alt="Quizzer AI"
           className="h-10 pointer-events-none"
         />
@@ -96,7 +97,9 @@ const Navbar = () => {
             className="flex items-center gap-x-2 cursor-pointer"
           >
             <img
-              src={quizlogo}
+              src={
+                "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+              }
               alt="Quizzer AI"
               className="h-10 pointer-events-none"
             />
@@ -109,7 +112,12 @@ const Navbar = () => {
           />
         </div>
         <div className="px-8 mt-14 text-2xl flex flex-col items-center gap-y-5">
-          <img src={quizlogo} className="w-40 pointer-events-none" />
+          <img
+            src={
+              "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+            }
+            className="w-40 pointer-events-none"
+          />
           <p className="font-medium text-white w-[70%]">
             Hey! Quizzer is ready to quiz you!
           </p>

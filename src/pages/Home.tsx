@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { CTAButton } from "../components";
-import quizlogo from "../assets/quiz.webp";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const Home = () => {
@@ -15,7 +14,9 @@ const Home = () => {
       {/* Owl */}
       <div className="flex justify-center">
         <img
-          src={quizlogo}
+          src={
+            "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+          }
           alt="Quiz Owl"
           className="w-48 pointer-events-none"
         />

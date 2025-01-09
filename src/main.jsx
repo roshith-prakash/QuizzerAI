@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
+import App from "./App.tsx";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { DarkModeProvider } from "./context/DarkModeContext.jsx";
+import { DarkModeProvider } from "./context/DarkModeContext.tsx";
 
 // Creating the Queryclient instance
 const client = new QueryClient();

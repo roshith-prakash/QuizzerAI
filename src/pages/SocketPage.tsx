@@ -241,7 +241,7 @@ const SocketPage = () => {
   // Reset when stage changes
   useEffect(() => {
     if (stage == 2) {
-      setRoomId();
+      setRoomId("");
       setCorrectCount(0);
       setTopic("");
       setDisableInputs(false);
@@ -256,7 +256,7 @@ const SocketPage = () => {
   // Reset when reloaded
   useEffect(() => {
     setStage(1);
-    setRoomId();
+    setRoomId("");
     setCorrectCount(0);
     setTopic("");
     setDisableInputs(false);

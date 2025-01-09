@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import * as PropTypes from "prop-types";
 import CTAButton from "./CTAButton";
 
 const InputBox = ({
@@ -112,6 +112,21 @@ const InputBox = ({
       </div>
     </div>
   );
+};
+
+InputBox.propTypes = {
+  buttonText: PropTypes.string,
+  searchTerm: PropTypes.string,
+  setSearchTerm: PropTypes.func,
+  difficulty: PropTypes.string,
+  setDifficulty: PropTypes.func,
+  title: PropTypes.string,
+  handleClick: PropTypes.func,
+  isLoading: PropTypes.bool,
+  isFetching: PropTypes.bool,
+  inputError: PropTypes.number,
+  questions: PropTypes.array,
+  text: PropTypes.string,
 };
 
 export default InputBox;
