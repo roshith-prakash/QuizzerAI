@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react/no-unescaped-entities */
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
 import { FlashCard } from "@/components";
 import { SyncLoader } from "react-spinners";
-import { InputBox } from "../components";
+import { GoUpButton, InputBox } from "../components";
+import { useDarkMode } from "../context/DarkModeContext";
 
 const FlashCardQuiz = () => {
+  const { isDarkMode } = useDarkMode();
+
   // The topic for which flashcards need to be created
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -62,7 +66,11 @@ const FlashCardQuiz = () => {
   };
 
   return (
-    <div className="bg-fullwave bg-no-repeat bg-cover font-poppins min-h-screen">
+    <div
+      className={`${
+        isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
+      } bg-no-repeat bg-cover font-poppins min-h-screen`}
+    >
       {/* Input for parameters */}
       <InputBox
         buttonText={"Generate FlashCards"}
@@ -88,7 +96,7 @@ const FlashCardQuiz = () => {
           </p>
           <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
             {questions?.length > 0 &&
-              questions?.map((item, index) => {
+              questions?.map((item) => {
                 return (
                   <FlashCard
                     key={item?.question}
@@ -126,20 +134,7 @@ const FlashCardQuiz = () => {
       {/* Button to go back to top */}
       {questions?.length > 0 && !isLoading && (
         // Button to go back to the input Div
-        <div className="pt-8 pb-12 flex justify-center">
-          <button
-            className="bg-white p-2 px-4 rounded-lg transition-all text-cta hover:text-hovercta hover:scale-105"
-            onClick={() => {
-              window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: "smooth",
-              });
-            }}
-          >
-            Go Back Up?
-          </button>
-        </div>
+        <GoUpButton />
       )}
     </div>
   );

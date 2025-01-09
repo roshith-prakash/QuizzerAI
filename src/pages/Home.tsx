@@ -1,17 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import { CTAButton } from "../components";
-import quizlogo from "../assets/quiz.webp";
+import { useDarkMode } from "../context/DarkModeContext";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useDarkMode();
   return (
     <div
-      className={`bg-home font-poppins pb-10 bg-cover bg-no-repeat min-h-screen pt-10 px-5`}
+      className={`${
+        isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
+      }  font-poppins pb-10 bg-cover bg-no-repeat min-h-screen pt-10 px-5`}
     >
       {/* Owl */}
       <div className="flex justify-center">
         <img
-          src={quizlogo}
+          src={
+            "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+          }
           alt="Quiz Owl"
           className="w-48 pointer-events-none"
         />
@@ -22,11 +27,12 @@ const Home = () => {
       </p>
       {/* Subtitle */}
       <p className="text-white drop-shadow-lg font-medium text-lg text-center mt-8">
-        Want a challenge? Give him a topic and he'll quiz you as best as he can!
+        Want a challenge? Give him a topic and he&apos;ll quiz you as best as he
+        can!
       </p>
 
       {/* Choose either FlashCards or MCQs  */}
-      <p className="text-white drop-shadow-2xlxl mt-10 text-xl font-semibold text-center">
+      <p className="text-white drop-shadow-2xl mt-10 text-xl font-semibold text-center">
         Challenge Modes:
       </p>
 
@@ -50,12 +56,21 @@ const Home = () => {
           }}
         />
 
-        {/* MCQ Button */}
+        {/* Fact or not Button */}
         <CTAButton
           text={"Fact OR Not"}
           className="w-52 hover:scale-105"
           onClick={() => {
             navigate("/fact-or-not");
+          }}
+        />
+
+        {/* Multiplayer Button */}
+        <CTAButton
+          text={"MultiPlayer"}
+          className="w-52 hover:scale-105"
+          onClick={() => {
+            navigate("/multiplayer");
           }}
         />
       </div>
