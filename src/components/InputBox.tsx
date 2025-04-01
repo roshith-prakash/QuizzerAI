@@ -17,10 +17,10 @@ const InputBox = ({
 }) => {
   return (
     <div className="py-10 flex justify-center ">
-      <div className="flex w-[95%] md:w-fit py-10 px-10 flex-col items-center gap-y-8 bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext rounded-xl shadow-xl">
+      <div className="flex max-w-[95%] w-full sm:max-w-lg py-10 px-10 flex-col items-center gap-y-8 bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext/25 rounded-xl shadow-xl">
         {/* Page Title */}
         <div className="flex items-center gap-x-2">
-          <p className="bg-gradient-to-br from-cta to-hovercta bg-clip-text text-transparent text-2xl font-semibold">
+          <p className="text-cta dark:text-darkmodeCTA text-2xl font-semibold">
             {title}
           </p>
         </div>
@@ -35,7 +35,7 @@ const InputBox = ({
           value={searchTerm}
           placeholder="Enter the topic for the questions!"
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full lg:w-96 border-b-2 dark:border-darkmodetext p-1 text-center bg-transparent outline-none"
+          className="w-full border-b-2 dark:border-darkmodetext p-1 text-center bg-transparent outline-none"
         />
 
         {inputError == 1 && (
@@ -71,7 +71,7 @@ const InputBox = ({
             <input
               disabled={isLoading || isFetching}
               type="radio"
-              className="accent-cta w-4 cursor-pointer"
+              className="accent-cta bg-transparent w-4 cursor-pointer"
               name="difficulty"
               value={"medium"}
               checked={difficulty == "medium"}
@@ -104,6 +104,7 @@ const InputBox = ({
           ></CTAButton>
         </div>
 
+        {/* Fetching */}
         {questions?.length > 0 && !isLoading && (
           <p className="text-cta dark:text-darkmodetext font-medium animate-bounce mt-5 flex gap-x-2 items-center">
             {!isFetching ? text : "Fetching new questions..."}

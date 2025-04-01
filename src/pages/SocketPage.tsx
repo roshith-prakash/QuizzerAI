@@ -662,7 +662,7 @@ const SocketPage = () => {
             players.length > 0 && (
               <section className="flex flex-col items-center mt-10">
                 <div className="max-w-lg w-full bg-white dark:bg-secondarydarkbg shadow-lg rounded-lg py-10">
-                  <p className="text-3xl text-center font-medium text-hovercta bg-clip-text">
+                  <p className="text-3xl text-center font-medium text-hovercta dark:text-darkmodeCTA bg-clip-text">
                     Players
                   </p>
                   <Table className="overflow-hidden mt-10 w-full rounded-lg">

@@ -29,7 +29,7 @@ const MCQ = ({
       {/* Display the options */}
       <div className="flex flex-col gap-y-3 mt-5">
         {/* Map the options */}
-        {options?.map((option, index) => {
+        {options?.map((option: string, index: number) => {
           return (
             <button
               key={option}
@@ -48,16 +48,16 @@ const MCQ = ({
                   showAnswer &&
                   selected &&
                   (answer == option
-                    ? "bg-green-100 dark:bg-green-800 dark:bg-opacity-50 dark:text-white"
-                    : "bg-red-100 dark:bg-red-700 dark:bg-opacity-50 dark:text-white")
+                    ? "bg-green-200/90 dark:bg-green-800/50  dark:text-white"
+                    : "bg-red-200/90 dark:bg-red-700/30  dark:text-white")
                 }
                 ${
                   showAnswer &&
                   selected &&
                   selected != option &&
                   (answer == option
-                    ? "border-green-100 dark:border-green-700"
-                    : "border-red-100 dark:border-red-700")
+                    ? "border-green-200/90 dark:border-green-800/50"
+                    : "border-red-200/90 dark:border-red-800/50")
                 }`}
             >
               <p>

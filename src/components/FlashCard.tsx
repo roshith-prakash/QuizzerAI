@@ -12,10 +12,10 @@ const FlashCard = ({ question, answer }) => {
       {/* The rotate icon on the top right of the card. */}
       <FaArrowsRotate
         onClick={() => setFlipped((prev) => !prev)}
-        className="absolute z-10 top-5 right-5 cursor-pointer"
+        className="absolute dark:text-darkmodeCTA z-10 top-5 right-5 cursor-pointer"
       />
 
-      <div className="absolute z-10 font-medium dark:text-darkmodetext top-3.5 left-5">
+      <div className="absolute dark:text-darkmodeCTA z-10 font-medium  top-3.5 left-5">
         {flipped ? "A." : "Q."}
       </div>
 

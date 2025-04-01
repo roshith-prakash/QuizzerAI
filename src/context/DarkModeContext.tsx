@@ -1,11 +1,19 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import * as PropTypes from "prop-types";
+
+export type ContextValue = {
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+};
 
 // Create the context
-const DarkModeContext = createContext(null);
+const DarkModeContext = createContext<null | ContextValue>(null);
 
 // Provide the context
-export const DarkModeProvider = ({ children }) => {
+export const DarkModeProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Load initial theme from localStorage or default to light mode
     return localStorage.getItem("theme") === "dark";
@@ -26,17 +34,11 @@ export const DarkModeProvider = ({ children }) => {
     setIsDarkMode((prev) => !prev);
   };
 
-  console.log(isDarkMode);
-
   return (
     <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
       {children}
     </DarkModeContext.Provider>
   );
-};
-
-DarkModeProvider.propTypes = {
-  children: PropTypes.element,
 };
 
 // Custom hook to use the context

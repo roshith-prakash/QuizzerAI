@@ -4,6 +4,27 @@
 @tailwind components;
 @tailwind utilities;
 
+.scroller::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+
+/* Track */
+.scroller::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background for the scrollbar track */
+}
+
+/* Handle */
+.scroller::-webkit-scrollbar-thumb {
+  background: #888; /* Color for the scrollbar handle */
+  border-radius: 5px; /* Optional: Add rounding for a smoother look */
+}
+
+/* Handle on hover */
+.scroller::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker color on hover */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -59,6 +80,7 @@
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;

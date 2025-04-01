@@ -12,7 +12,7 @@ const Navbar = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
-    <div className="font-poppins dark:bg-darkbg relative w-full flex p-5 shadow-md z-5 justify-between items-center">
+    <div className="font-poppins bg-white dark:bg-darkbg relative w-full flex p-5 shadow-md z-5 justify-between items-center">
       <Link to="/" className="flex gap-x-3 items-center">
         <img
           src={
@@ -25,65 +25,67 @@ const Navbar = () => {
           Quizzer AI
         </p>
       </Link>
+      {/* LG screen links */}
       <div className="hidden pr-10 md:flex items-center gap-x-10 font-medium">
         <Link
           to="/flashcard"
-          className="flex gap-x-3 items-center hover:text-cta transition-all"
+          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
         >
           FlashCards
         </Link>
         <Link
           to="/mcq"
-          className="flex gap-x-3 items-center hover:text-cta transition-all"
+          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
         >
           MCQs
         </Link>
         <Link
           to="/fact-or-not"
-          className="flex gap-x-3 items-center hover:text-cta transition-all"
+          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
         >
           Fact OR Not
         </Link>
 
         <Link
           to="/multiplayer"
-          className="flex gap-x-3 items-center hover:text-cta transition-all"
+          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
         >
           MultiPlayer
         </Link>
 
         <button
           onClick={toggleDarkMode}
-          className="hidden lg:block outline-none "
+          className="hidden md:block outline-none "
         >
           {isDarkMode ? (
-            <IoSunnySharp className="text-2xl hover:text-cta transition-all" />
+            <IoSunnySharp className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
           ) : (
-            <IoMoon className="text-2xl hover:text-cta transition-all" />
+            <IoMoon className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
           )}
         </button>
       </div>
 
+      {/* Open Drawer button */}
       <div className="md:hidden flex gap-x-5 items-center">
         <button onClick={toggleDarkMode} className="outline-none">
           {isDarkMode ? (
-            <IoSunnySharp className="text-2xl hover:text-cta transition-all" />
+            <IoSunnySharp className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
           ) : (
-            <IoMoon className="text-2xl hover:text-cta transition-all" />
+            <IoMoon className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
           )}
         </button>
 
         <RxHamburgerMenu
           onClick={() => setOpen(true)}
-          className="md:hidden text-xl cursor-pointer text-cta dark:text-darkmodetext transition-all"
+          className="md:hidden text-xl cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
         />
       </div>
 
-      {/* Pop out div - displayed when hamburger is clicked  */}
+      {/* Pop out drawer - displayed when hamburger is clicked  */}
       <div
         className={`${
           isDarkMode ? "bg-animatedWaveDark" : "bg-home"
-        }  bg-cover bg-no-repeat h-screen w-full text-xl md:text-lg fixed top-0 right-0 z-50 bg-white dark:bg-darkbg pb-6 text-center shadow-md ${
+        }  bg-cover bg-no-repeat h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-white dark:bg-darkbg pb-6 text-center shadow-md ${
           open ? "translate-x-0" : "translate-x-[100%]"
         } transition-all duration-500`}
       >
@@ -108,7 +110,7 @@ const Navbar = () => {
           {/* Close drawer */}
           <RxCross2
             onClick={() => setOpen(false)}
-            className="cursor-pointer text-2xl text-white"
+            className="cursor-pointer text-2xl  dark:hover:text-darkmodeCTA text-white transition-all"
           />
         </div>
         <div className="px-8 mt-14 text-2xl flex flex-col items-center gap-y-5">
@@ -116,11 +118,14 @@ const Navbar = () => {
             src={
               "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
             }
+            alt="Quizzer AI"
             className="w-40 pointer-events-none"
           />
           <p className="font-medium text-white w-[70%]">
             Hey! Quizzer is ready to quiz you!
           </p>
+
+          {/* Buttons */}
           <div className="mt-5 flex flex-col items-center gap-y-8">
             <CTAButton
               text={"FlashCards"}
@@ -128,7 +133,7 @@ const Navbar = () => {
                 navigate("/flashcard");
                 setOpen(false);
               }}
-              className="text-lg w-52 bg-hovercta"
+              className="text-[1rem]  w-52 bg-hovercta"
             />
             <CTAButton
               text={"Multiple Choice"}
@@ -136,7 +141,7 @@ const Navbar = () => {
                 navigate("/mcq");
                 setOpen(false);
               }}
-              className="text-lg w-52 bg-hovercta"
+              className="text-[1rem]  w-52 bg-hovercta"
             />
 
             <CTAButton
@@ -145,7 +150,7 @@ const Navbar = () => {
                 navigate("/fact-or-not");
                 setOpen(false);
               }}
-              className="text-lg w-52 bg-hovercta"
+              className="text-[1rem]  w-52 bg-hovercta"
             />
 
             <CTAButton
@@ -154,7 +159,7 @@ const Navbar = () => {
                 navigate("/multiplayer");
                 setOpen(false);
               }}
-              className="text-lg w-52 bg-hovercta"
+              className="text-[1rem]  w-52 bg-hovercta"
             />
           </div>
         </div>

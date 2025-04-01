@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { axiosInstance } from "./utils/axios";
 import { SyncLoader } from "react-spinners";
-import { Navbar } from "./components";
+import { Navbar, Footer } from "./components";
 import { Typewriter } from "react-simple-typewriter";
 import { Toaster } from "react-hot-toast";
 import { useDarkMode } from "./context/DarkModeContext";
@@ -29,7 +29,7 @@ function App() {
   const { isDarkMode } = useDarkMode();
 
   return (
-    <div className="dark:bg-darkbg dark:text-darkmodetext">
+    <div className="bg-hovercta dark:bg-darkbg dark:text-darkmodetext">
       <Toaster
         toastOptions={{
           style: {
@@ -97,6 +97,7 @@ function App() {
             {/* 404 error page */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       )}
     </div>
