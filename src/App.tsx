@@ -22,7 +22,7 @@ function App() {
     queryFn: () => {
       return axiosInstance.get("/");
     },
-    refetchInterval: 10000,
+    refetchInterval: 60000,
     retry: 10,
   });
 
