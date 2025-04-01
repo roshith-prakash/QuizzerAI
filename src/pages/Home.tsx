@@ -41,7 +41,7 @@ const Home = () => {
         {/* FlashCard Button */}
         <CTAButton
           text={"FlashCards"}
-          className="w-52 hover:scale-105"
+          className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {
             navigate("/flashcard");
           }}
@@ -50,7 +50,7 @@ const Home = () => {
         {/* MCQ Button */}
         <CTAButton
           text={"Multiple Choice"}
-          className="w-52 hover:scale-105"
+          className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {
             navigate("/mcq");
           }}
@@ -59,7 +59,7 @@ const Home = () => {
         {/* Fact or not Button */}
         <CTAButton
           text={"Fact OR Not"}
-          className="w-52 hover:scale-105"
+          className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {
             navigate("/fact-or-not");
           }}
@@ -68,7 +68,7 @@ const Home = () => {
         {/* Multiplayer Button */}
         <CTAButton
           text={"MultiPlayer"}
-          className="w-52 hover:scale-105"
+          className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {
             navigate("/multiplayer");
           }}

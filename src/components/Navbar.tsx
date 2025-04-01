@@ -12,7 +12,7 @@ const Navbar = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
-    <div className="font-poppins bg-white dark:bg-darkbg relative w-full flex p-5 shadow-md z-5 justify-between items-center">
+    <div className="font-poppins bg-white border-b-4 border-darkbg dark:border-darkmodetext/75 dark:bg-darkbg relative w-full flex p-5 shadow-md z-5 justify-between items-center">
       <Link to="/" className="flex gap-x-3 items-center">
         <img
           src={

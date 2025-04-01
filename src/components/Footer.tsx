@@ -1,16 +1,10 @@
-import { ContextValue, useDarkMode } from "@/context/DarkModeContext";
-
 const Footer = () => {
-  const { isDarkMode } = useDarkMode() as ContextValue;
-
   return (
     <footer
-      className={`${
-        isDarkMode ? "bg-secondarydarkbg  border-t-2" : "bg-hovercta"
-      } border-t-8 border-darkbg dark:border-darkmodetext font-inter min-h-50vh px-10 relative mt-20 pt-36 pb-20 text-white`}
+      className={`bg-[#e1e1e1] dark:bg-secondarydarkbg  border-t-8 border-darkbg dark:border-darkmodetext/75 font-inter min-h-50vh px-10 relative mt-20 pt-36 pb-20 dark:text-darkmodetext`}
     >
       {/* Floating Div */}
-      <div className="dark:border-darkmodetext absolute -top-16 left-1/2 flex h-32 w-[90vw] -translate-x-1/2 items-center justify-around rounded-lg bg-[#1f1e1e] text-white lg:w-[80vw] dark:border-4">
+      <div className="border-darkbg dark:border-darkmodetext/75 absolute -top-16 left-1/2 flex h-32 w-[90vw] -translate-x-1/2 items-center justify-around rounded-lg bg-[#1f1e1e] text-white lg:w-[80vw] border-4">
         <p className="text-xl px-5 text-center font-medium">
           Meet Quizzer - your friendly neighbourhood AI QuizMaster Owl!
         </p>
