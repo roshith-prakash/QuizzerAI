@@ -29,7 +29,11 @@ function App() {
   const { isDarkMode } = useDarkMode();
 
   return (
-    <div className="bg-hovercta dark:bg-darkbg dark:text-darkmodetext">
+    <div
+      className={`${
+        !isLoading && "bg-hovercta"
+      } dark:bg-darkbg dark:text-darkmodetext`}
+    >
       <Toaster
         toastOptions={{
           style: {
