@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { CTAButton } from "../components";
+import { SecondaryButton } from "../components";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const Home = () => {
@@ -39,7 +39,7 @@ const Home = () => {
       {/* Button Links */}
       <div className="flex flex-wrap justify-center items-center gap-8 pt-8">
         {/* FlashCard Button */}
-        <CTAButton
+        <SecondaryButton
           text={"FlashCards"}
           className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {
@@ -48,7 +48,7 @@ const Home = () => {
         />
 
         {/* MCQ Button */}
-        <CTAButton
+        <SecondaryButton
           text={"Multiple Choice"}
           className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {
@@ -57,7 +57,7 @@ const Home = () => {
         />
 
         {/* Fact or not Button */}
-        <CTAButton
+        <SecondaryButton
           text={"Fact OR Not"}
           className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {
@@ -66,7 +66,7 @@ const Home = () => {
         />
 
         {/* Multiplayer Button */}
-        <CTAButton
+        <SecondaryButton
           text={"MultiPlayer"}
           className="w-52 border-2 border-darkbg hover:scale-105"
           onClick={() => {

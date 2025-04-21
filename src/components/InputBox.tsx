@@ -1,5 +1,5 @@
 import * as PropTypes from "prop-types";
-import CTAButton from "./CTAButton";
+import SecondaryButton from "./SecondaryButton";
 
 const InputBox = ({
   buttonText,
@@ -96,12 +96,12 @@ const InputBox = ({
 
         {/* Button to fetch flashcards */}
         <div className="mt-5 flex justify-center">
-          <CTAButton
+          <SecondaryButton
             // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
             onClick={handleClick}
             disabled={searchTerm?.length == 0 || isLoading || isFetching}
             text={buttonText}
-          ></CTAButton>
+          ></SecondaryButton>
         </div>
 
         {/* Fetching */}

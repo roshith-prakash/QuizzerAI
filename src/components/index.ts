@@ -1,6 +1,6 @@
 import FlashCard from "./FlashCard";
 import Navbar from "./Navbar";
-import CTAButton from "./CTAButton";
+import SecondaryButton from "./SecondaryButton";
 import MCQ from "./MCQ";
 import InputBox from "./InputBox";
 import Timer from "./Timer";
@@ -10,7 +10,7 @@ import Footer from "./Footer";
 export {
   FlashCard,
   Navbar,
-  CTAButton,
+  SecondaryButton,
   MCQ,
   InputBox,
   Timer,

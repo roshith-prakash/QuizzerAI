@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
-import { CTAButton, MCQ, Timer } from "../components";
+import { SecondaryButton, MCQ, Timer } from "../components";
 import { SyncLoader } from "react-spinners";
 import { MdOutlineContentCopy } from "react-icons/md";
 import {
@@ -359,7 +359,7 @@ const SocketPage = () => {
               </p>
             )}
 
-            <CTAButton
+            <SecondaryButton
               onClick={() => {
                 if (username?.length == 0 || !username) {
                   setError((prev) => ({ ...prev, stage1: 1 }));
@@ -373,7 +373,7 @@ const SocketPage = () => {
                 }
               }}
               text={"Next"}
-            ></CTAButton>
+            ></SecondaryButton>
           </div>
         </div>
       )}
@@ -386,18 +386,18 @@ const SocketPage = () => {
               Join an existing room{" "}
               <span className="text-nowrap">or create a new one!</span>
             </label>
-            <CTAButton
+            <SecondaryButton
               className="w-full md:min-w-80 py-2"
               onClick={createRoom}
               text="Create New Room"
-            ></CTAButton>
-            <CTAButton
+            ></SecondaryButton>
+            <SecondaryButton
               className="w-full md:min-w-80 py-2"
               onClick={() => {
                 setStage(4);
               }}
               text="Join Existing Room"
-            ></CTAButton>
+            ></SecondaryButton>
             <button
               onClick={() => {
                 setStage(1);

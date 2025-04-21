@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
 import { useState } from "react";
-import CTAButton from "./CTAButton";
+import SecondaryButton from "./SecondaryButton";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 import { IoMoon, IoSunnySharp } from "react-icons/io5";
@@ -127,7 +127,7 @@ const Navbar = () => {
 
           {/* Buttons */}
           <div className="mt-5 flex flex-col items-center gap-y-8">
-            <CTAButton
+            <SecondaryButton
               text={"FlashCards"}
               onClick={() => {
                 navigate("/flashcard");
@@ -135,7 +135,7 @@ const Navbar = () => {
               }}
               className="text-[1rem]  w-52 bg-hovercta"
             />
-            <CTAButton
+            <SecondaryButton
               text={"Multiple Choice"}
               onClick={() => {
                 navigate("/mcq");
@@ -144,7 +144,7 @@ const Navbar = () => {
               className="text-[1rem]  w-52 bg-hovercta"
             />
 
-            <CTAButton
+            <SecondaryButton
               text={"Fact OR Not"}
               onClick={() => {
                 navigate("/fact-or-not");
@@ -153,7 +153,7 @@ const Navbar = () => {
               className="text-[1rem]  w-52 bg-hovercta"
             />
 
-            <CTAButton
+            <SecondaryButton
               text={"MultiPlayer"}
               onClick={() => {
                 navigate("/multiplayer");

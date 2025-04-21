@@ -1,4 +1,4 @@
-import CTAButton from "../components/CTAButton";
+import SecondaryButton from "../components/SecondaryButton";
 import { useNavigate } from "react-router-dom";
 
 const NotFound = () => {
@@ -13,7 +13,7 @@ const NotFound = () => {
         alt="Not Found"
       />
       <p className="text-xl">Uh oh! We are lost. Lets go back?</p>
-      <CTAButton
+      <SecondaryButton
         text={"Home"}
         onClick={() => {
           navigate("/");
