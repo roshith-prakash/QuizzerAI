@@ -5,15 +5,24 @@ import {
   MCQQuiz,
   FactOrNot,
   SocketPage,
+
+  // V2 Routes
+  Signup,
+  Login,
+  Onboarding,
+  Signout,
+  User,
+  Profile,
+  EditProfile,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { axiosInstance } from "./utils/axios";
 import { SyncLoader } from "react-spinners";
 import { Navbar, Footer } from "./components";
-import { Typewriter } from "react-simple-typewriter";
 import { Toaster } from "react-hot-toast";
-import { useDarkMode } from "./context/DarkModeContext";
+import { ContextValue, useDarkMode } from "./context/DarkModeContext";
+import Protector from "./components/Protector";
 
 function App() {
   // Check if server is active
@@ -26,13 +35,11 @@ function App() {
     retry: 10,
   });
 
-  const { isDarkMode } = useDarkMode();
+  const { isDarkMode } = useDarkMode() as ContextValue;
 
   return (
     <div
-      className={`${
-        !isLoading && "bg-hovercta"
-      } dark:bg-darkbg dark:text-darkmodetext`}
+      className={`bg-whitebg dark:bg-darkbg font-body dark:text-darkmodetext`}
     >
       <Toaster
         toastOptions={{
@@ -45,7 +52,7 @@ function App() {
 
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
-        <div className="h-screen w-full flex flex-col gap-y-10 justify-center items-center">
+        <div className="min-h-screen w-full flex flex-col gap-y-10 justify-center items-center">
           <img
             src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1724056376/sleep_hyhact.webp"
             className="w-52 pointer-events-none"
@@ -59,21 +66,10 @@ function App() {
             data-testid="loader"
           />
           {/* Typewriter effect to show 4 different texts. Gradient text */}
-          <p className="bg-gradient-to-br ml-3 text-transparent bg-clip-text from-cta to-hovercta font-medium text-xl">
-            <Typewriter
-              words={[
-                "Waking up the Quizzer !",
-                "Turning on the Lights !",
-                "Brewing some coffee !",
-                "Suit up !",
-              ]}
-              loop={false}
-              cursor
-              cursorStyle="_"
-              typeSpeed={70}
-              deleteSpeed={50}
-              delaySpeed={1000}
-            />
+          <p className="text-center px-5 max-w-2xl lml-3 font-medium mb-10 text-xl">
+            Quizzer might take a minute or two to load because the server's
+            powered by broke dreams. Go grab a snack - you've got more resources
+            than this server. We'll be here... eventually.
           </p>
         </div>
       )}
@@ -100,6 +96,44 @@ function App() {
 
             {/* 404 error page */}
             <Route path="*" element={<NotFound />} />
+
+            {/* V2 Routes */}
+
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Login />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/signout" element={<Signout />} />
+
+            {/* Protected routes - Logged In User required. */}
+
+            <Route
+              path="/edit-profile"
+              element={
+                <Protector>
+                  <EditProfile />
+                </Protector>
+              }
+            />
+
+            {/* View your profile */}
+            <Route
+              path="/profile"
+              element={
+                <Protector>
+                  <Profile />
+                </Protector>
+              }
+            />
+
+            {/* View a User's Profile (Non Current user) */}
+            <Route
+              path="/user/:username"
+              element={
+                <Protector>
+                  <User />
+                </Protector>
+              }
+            />
           </Routes>
           <Footer />
         </BrowserRouter>

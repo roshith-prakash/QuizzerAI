@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
-import * as PropTypes from "prop-types";
 
-const Timer = ({ duration, onTimeUp }) => {
+const Timer = ({
+  duration,
+  onTimeUp,
+}: {
+  duration: number;
+  onTimeUp: () => void;
+}) => {
   const [timeLeft, setTimeLeft] = useState(duration);
 
   useEffect(() => {
@@ -18,7 +23,7 @@ const Timer = ({ duration, onTimeUp }) => {
     return () => clearInterval(timerId);
   }, [timeLeft, onTimeUp]);
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
@@ -32,11 +37,6 @@ const Timer = ({ duration, onTimeUp }) => {
       <h1>Time Left: {formatTime(timeLeft)}</h1>
     </div>
   );
-};
-
-Timer.propTypes = {
-  duration: PropTypes.number,
-  onTimeUp: PropTypes.func,
 };
 
 export default Timer;

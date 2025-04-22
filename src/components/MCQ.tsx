@@ -1,8 +1,6 @@
-/* eslint-disable react-refresh/only-export-components */
 import { useEffect, useState } from "react";
 import { SiTicktick } from "react-icons/si";
 import { ImCross } from "react-icons/im";
-import PropTypes from "prop-types";
 
 const MCQ = ({
   question,
@@ -12,19 +10,30 @@ const MCQ = ({
   reason,
   showAnswer = true,
   allowReSelection = false,
+}: {
+  question: string;
+  answer: string;
+  options: string[];
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+  reason?: string;
+  showAnswer?: boolean;
+  allowReSelection?: boolean;
 }) => {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
     if (!allowReSelection && selected == String(answer)) {
-      setCount((prev) => prev + 1);
+      setCount((prev: number) => prev + 1);
     }
   }, [selected, answer, allowReSelection, setCount]);
 
   return (
-    <div className="font-poppins w-full border-2 p-4 max-w-[95%] shadow-xl rounded-lg bg-white dark:bg-secondarydarkbg">
+    <div className="font-poppins max-w-[95%] md:max-w-3xl w-full  p-4 shadow-xl rounded-lg bg-white dark:bg-white/5">
       {/* Display the question */}
-      <span className="font-medium">Q . {question}</span>
+      <p className="font-medium text-lg">
+        <span className="font-bold">Q . </span>
+        {question}
+      </p>
 
       {/* Display the options */}
       <div className="flex flex-col gap-y-3 mt-5">
@@ -40,24 +49,24 @@ const MCQ = ({
               // Highlight the option selected by CTA background
               // Highlight the correct answer by green background
               // Highlight the incorrect answer by red background
-              className={`w-full px-4 border-2 ${
-                !selected && "dark:border-darkmodetext"
+              className={`cursor-pointer tracking-wide w-full px-4 border-2 ${
+                !selected && "dark:border-darkmodetext/40"
               } p-2 gap-3 flex items-center rounded text-left transition-all
                 ${selected == option && "border-cta dark:text-white"} 
                 ${
                   showAnswer &&
                   selected &&
                   (answer == option
-                    ? "bg-green-200/90 dark:bg-green-800/50  dark:text-white"
-                    : "bg-red-200/90 dark:bg-red-700/30  dark:text-white")
+                    ? "bg-green-200/90 dark:bg-green-500/30  dark:text-white"
+                    : "bg-red-200/90 dark:bg-red-500/20  dark:text-white")
                 }
                 ${
                   showAnswer &&
                   selected &&
                   selected != option &&
                   (answer == option
-                    ? "border-green-200/90 dark:border-green-800/50"
-                    : "border-red-200/90 dark:border-red-800/50")
+                    ? "border-green-200/90 dark:border-green-500/50"
+                    : "border-red-200/90 dark:border-red-500/20")
                 }`}
             >
               <p>
@@ -82,16 +91,6 @@ const MCQ = ({
       {reason && selected && <p className="mt-4 px-1">{reason}</p>}
     </div>
   );
-};
-
-MCQ.propTypes = {
-  question: PropTypes.string,
-  answer: PropTypes.string,
-  options: PropTypes.array,
-  setCount: PropTypes.func,
-  reason: PropTypes.string,
-  showAnswer: PropTypes.bool,
-  allowReSelection: PropTypes.bool,
 };
 
 export default MCQ;
