@@ -82,7 +82,7 @@ const FlashCardQuiz = () => {
         searchTerm={searchTerm}
         setDifficulty={setDifficulty}
         setSearchTerm={setSearchTerm}
-        title={"FlashCard Quiz"}
+        title={"FlashCards"}
         text={"Your Flashcards are ready!"}
       />
 

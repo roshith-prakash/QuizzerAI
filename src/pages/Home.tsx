@@ -38,7 +38,7 @@ const Home = () => {
       </p>
 
       {/* Button Links */}
-      <div className="flex flex-wrap justify-center items-center gap-8 pt-8">
+      <div className="flex font-title text-2xl font-bold tracking-widest flex-wrap justify-center items-center gap-8 pt-8">
         {/* FlashCard Button */}
         <PrimaryButton
           text={"FlashCards"}

@@ -173,7 +173,7 @@ const Signup = () => {
         {/* Left Div */}
         <div className="min-h-[95vh] lg:h-full lg:min-h-[88vh] pb-10 bg-cover flex-1 flex justify-center items-center">
           {/* Sign up Form Div */}
-          <div className="bg-white dark:border-1 dark:border-white/25 dark:bg-secondarydarkbg max-w-xl dark:bg-darkgrey dark:text-darkmodetext border-darkbg/25 border-1 px-8 lg:max-w-lg mt-5 p-5 md:px-10 shadow-lg rounded-2xl pb-10">
+          <div className="bg-white dark:bg-white/5 max-w-xl dark:bg-darkgrey dark:text-darkmodetext px-8 lg:max-w-lg mt-5 p-5 md:px-10 shadow-lg rounded-2xl pb-10">
             {/* Title */}
             <h1 className="dark:text-darkmodetext pt-5 font-bold text-2xl text-center">
               Create your account
@@ -189,10 +189,10 @@ const Signup = () => {
               <button
                 disabled={disabled}
                 onClick={handleGoogleSignup}
-                className="mt-8 dark:hover:border-white cursor-pointer hover:border-darkbg border-darkbg/25 dark:border-white/25 border-1 flex  gap-x-2 py-2 justify-center items-center px-14 shadow rounded-lg font-medium active:shadow transition-all"
+                className="mt-8 font-bold dark:hover:border-white cursor-pointer hover:border-darkbg border-darkbg/25 dark:border-white/25 border-1 flex  gap-x-2 py-2 justify-center items-center px-14 shadow rounded-lg  active:shadow transition-all"
               >
                 {disabled ? <p>Please Wait...</p> : <p>Sign up with Google</p>}
-                <FaGoogle className="text-xl translate-y-0.5" />
+                <FaGoogle className="text-xl" />
               </button>
             </div>
 

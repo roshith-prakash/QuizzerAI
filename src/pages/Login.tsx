@@ -184,7 +184,7 @@ const Login = () => {
         {/* Right Div */}
         <div className="min-h-[95vh] mt-5 lg:mt-0 lg:h-full lg:min-h-[88vh] pb-10 flex-1 flex justify-center items-center">
           {/* Login Form Div */}
-          <div className="bg-white dark:border-1 dark:border-white/25 dark:bg-secondarydarkbg max-w-xl dark:bg-darkgrey dark:text-darkmodetext border-darkbg/25 border-1 px-8 lg:max-w-lg mt-5 p-5 md:px-10 shadow-lg rounded-2xl pb-10">
+          <div className="bg-white dark:bg-white/5 max-w-xl dark:bg-darkgrey dark:text-darkmodetext px-8 lg:max-w-lg mt-5 p-5 md:px-10 shadow-lg rounded-2xl pb-10">
             {/* Title */}
             <h1 className="dark:text-darkmodetext pt-5 font-bold text-2xl text-center">
               Sign in to Quizzer AI

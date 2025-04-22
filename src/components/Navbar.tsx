@@ -12,8 +12,8 @@ const Navbar = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode() as ContextValue;
 
   return (
-    <div className="font-title bg-white  border-darkbg dark:border-darkmodetext/75 dark:bg-darkbg relative w-full flex p-5 z-5 justify-between items-center">
-      <Link to="/" className="flex gap-x-3 items-center">
+    <div className="font-title border-darkbg dark:border-darkmodetext/75 dark:bg-darkbg relative w-full flex p-5 z-5 justify-between items-center">
+      <Link to="/" className="md:ml-5 flex gap-x-3 items-center">
         <img
           src={
             "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
@@ -21,12 +21,12 @@ const Navbar = () => {
           alt="Quizzer AI"
           className="h-10 pointer-events-none"
         />
-        <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-3xl">
+        <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-4xl">
           Quizzer AI
         </p>
       </Link>
       {/* LG screen links */}
-      <div className="hidden text-2xl font-semibold tracking-wide pr-10 md:flex items-center gap-x-10">
+      <div className="hidden text-3xl font-semibold tracking-wide pr-5 md:flex items-center gap-x-10">
         <Link
           to="/flashcard"
           className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
@@ -86,7 +86,7 @@ const Navbar = () => {
 
       {/* Pop out drawer - displayed when hamburger is clicked  */}
       <div
-        className={` bg-cover bg-no-repeat h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-white dark:bg-darkbg pb-6 text-center shadow-md ${
+        className={` h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-whitebg dark:bg-darkbg pb-6 text-center shadow-md ${
           open ? "translate-x-0" : "translate-x-[100%]"
         } transition-all duration-500`}
       >
@@ -106,14 +106,14 @@ const Navbar = () => {
               alt="Quizzer AI"
               className="h-10 pointer-events-none"
             />
-            <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-3xl">
+            <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-4xl">
               Quizzer AI
             </p>
           </div>
           {/* Close drawer */}
           <RxCross2
             onClick={() => setOpen(false)}
-            className="cursor-pointer text-2xl  dark:hover:text-darkmodeCTA transition-all"
+            className="cursor-pointer text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all"
           />
         </div>
         <div className="px-8 mt-14 text-2xl flex flex-col items-center gap-y-5">

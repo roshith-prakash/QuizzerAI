@@ -156,8 +156,7 @@ const FactOrNot = () => {
                 className="w-10  [transform:rotateY(180deg)]"
               />
             )}
-            Your Score : <span className="text-hovercta">{correctCount}</span> /{" "}
-            {questions?.length}
+            Your Score : <span>{correctCount}</span> / {questions?.length}
             {correctCount == questions?.length && (
               <img
                 src={
