@@ -1,18 +1,18 @@
 import { Link } from "react-router-dom";
 import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
 import { useState } from "react";
-import SecondaryButton from "./SecondaryButton";
+import { PrimaryButton } from "@/components";
 import { useNavigate } from "react-router-dom";
-import { useDarkMode } from "../context/DarkModeContext";
+import { ContextValue, useDarkMode } from "../context/DarkModeContext";
 import { IoMoon, IoSunnySharp } from "react-icons/io5";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { isDarkMode, toggleDarkMode } = useDarkMode() as ContextValue;
 
   return (
-    <div className="font-poppins bg-white border-b-4 border-darkbg dark:border-darkmodetext/75 dark:bg-darkbg relative w-full flex p-5 shadow-md z-5 justify-between items-center">
+    <div className="font-title bg-white  border-darkbg dark:border-darkmodetext/75 dark:bg-darkbg relative w-full flex p-5 z-5 justify-between items-center">
       <Link to="/" className="flex gap-x-3 items-center">
         <img
           src={
@@ -21,12 +21,12 @@ const Navbar = () => {
           alt="Quizzer AI"
           className="h-10 pointer-events-none"
         />
-        <p className="dark:text-darkmodetext font-semibold bg-gradient-to-t text-transparent bg-clip-text from-cta to-hovercta text-lg">
+        <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-3xl">
           Quizzer AI
         </p>
       </Link>
       {/* LG screen links */}
-      <div className="hidden pr-10 md:flex items-center gap-x-10 font-medium">
+      <div className="hidden text-2xl font-semibold tracking-wide pr-10 md:flex items-center gap-x-10">
         <Link
           to="/flashcard"
           className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
@@ -55,7 +55,7 @@ const Navbar = () => {
 
         <button
           onClick={toggleDarkMode}
-          className="hidden md:block outline-none "
+          className="hidden md:block cursor-pointer outline-none "
         >
           {isDarkMode ? (
             <IoSunnySharp className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
@@ -67,7 +67,10 @@ const Navbar = () => {
 
       {/* Open Drawer button */}
       <div className="md:hidden flex gap-x-5 items-center">
-        <button onClick={toggleDarkMode} className="outline-none">
+        <button
+          onClick={toggleDarkMode}
+          className="outline-none cursor-pointer"
+        >
           {isDarkMode ? (
             <IoSunnySharp className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
           ) : (
@@ -83,9 +86,7 @@ const Navbar = () => {
 
       {/* Pop out drawer - displayed when hamburger is clicked  */}
       <div
-        className={`${
-          isDarkMode ? "bg-animatedWaveDark" : "bg-home"
-        }  bg-cover bg-no-repeat h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-white dark:bg-darkbg pb-6 text-center shadow-md ${
+        className={` bg-cover bg-no-repeat h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-white dark:bg-darkbg pb-6 text-center shadow-md ${
           open ? "translate-x-0" : "translate-x-[100%]"
         } transition-all duration-500`}
       >
@@ -105,12 +106,14 @@ const Navbar = () => {
               alt="Quizzer AI"
               className="h-10 pointer-events-none"
             />
-            <p className="text-lg text-white font-semibold  pr-2">Quizzer AI</p>
+            <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-3xl">
+              Quizzer AI
+            </p>
           </div>
           {/* Close drawer */}
           <RxCross2
             onClick={() => setOpen(false)}
-            className="cursor-pointer text-2xl  dark:hover:text-darkmodeCTA text-white transition-all"
+            className="cursor-pointer text-2xl  dark:hover:text-darkmodeCTA transition-all"
           />
         </div>
         <div className="px-8 mt-14 text-2xl flex flex-col items-center gap-y-5">
@@ -121,45 +124,45 @@ const Navbar = () => {
             alt="Quizzer AI"
             className="w-40 pointer-events-none"
           />
-          <p className="font-medium text-white w-[70%]">
+          <p className="font-semibold tracking-wide text-3xl w-[70%]">
             Hey! Quizzer is ready to quiz you!
           </p>
 
           {/* Buttons */}
           <div className="mt-5 flex flex-col items-center gap-y-8">
-            <SecondaryButton
+            <PrimaryButton
               text={"FlashCards"}
               onClick={() => {
                 navigate("/flashcard");
                 setOpen(false);
               }}
-              className="text-[1rem]  w-52 bg-hovercta"
+              className="text-2xl font-bold tracking-wider  w-52 "
             />
-            <SecondaryButton
+            <PrimaryButton
               text={"Multiple Choice"}
               onClick={() => {
                 navigate("/mcq");
                 setOpen(false);
               }}
-              className="text-[1rem]  w-52 bg-hovercta"
+              className="text-2xl font-bold tracking-wider  w-52 "
             />
 
-            <SecondaryButton
+            <PrimaryButton
               text={"Fact OR Not"}
               onClick={() => {
                 navigate("/fact-or-not");
                 setOpen(false);
               }}
-              className="text-[1rem]  w-52 bg-hovercta"
+              className="text-2xl font-bold tracking-wider  w-52 "
             />
 
-            <SecondaryButton
+            <PrimaryButton
               text={"MultiPlayer"}
               onClick={() => {
                 navigate("/multiplayer");
                 setOpen(false);
               }}
-              className="text-[1rem]  w-52 bg-hovercta"
+              className="text-2xl font-bold tracking-wider  w-52 "
             />
           </div>
         </div>

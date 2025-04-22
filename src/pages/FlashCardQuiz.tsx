@@ -1,14 +1,13 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
 import { FlashCard } from "@/components";
 import { SyncLoader } from "react-spinners";
 import { GoUpButton, InputBox } from "../components";
-import { useDarkMode } from "../context/DarkModeContext";
+import { ContextValue, useDarkMode } from "../context/DarkModeContext";
 
 const FlashCardQuiz = () => {
-  const { isDarkMode } = useDarkMode();
+  const { isDarkMode } = useDarkMode() as ContextValue;
 
   // The topic for which flashcards need to be created
   const [searchTerm, setSearchTerm] = useState("");
@@ -52,7 +51,7 @@ const FlashCardQuiz = () => {
   // Fetch data on click of the button
   const handleClick = () => {
     setInputError(0);
-    let search = searchTerm?.replaceAll(" ", "");
+    const search = searchTerm?.replaceAll(" ", "");
 
     if (search?.length == 0) {
       setInputError(1);
@@ -90,13 +89,13 @@ const FlashCardQuiz = () => {
       {/* Mapping flashcards */}
       {!isLoading && questions?.length > 0 && (
         <>
-          <p className="text-center mt-10 text-white px-2">
+          <p className="text-center mt-10  px-2">
             Note : Questions & answers are created using AI and may be
             incorrect.
           </p>
           <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
             {questions?.length > 0 &&
-              questions?.map((item) => {
+              questions?.map((item: { question: string; answer: string }) => {
                 return (
                   <FlashCard
                     key={item?.question}
@@ -114,7 +113,7 @@ const FlashCardQuiz = () => {
         // Loading indicator for questions
         <div className="mt-12 flex justify-center items-center">
           <SyncLoader
-            color={"#ffffff"}
+            color={"#9b0ced"}
             loading={isLoading}
             size={60}
             aria-label="Loading Spinner"
@@ -125,7 +124,7 @@ const FlashCardQuiz = () => {
 
       {/* Error statement */}
       {error && (
-        <p className="text-center font-medium text-xl text-white drop-shadow-lg">
+        <p className="text-center font-medium text-xl drop-shadow-lg">
           Uh oh! Couldn't create flashcards about "{searchTerm}". Maybe try a
           different topic?
         </p>

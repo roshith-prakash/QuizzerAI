@@ -1,19 +1,31 @@
 import FlashCard from "./FlashCard";
 import Navbar from "./Navbar";
-import SecondaryButton from "./SecondaryButton";
+import ErrorStatement from "./ErrorStatement";
 import MCQ from "./MCQ";
 import InputBox from "./InputBox";
 import Timer from "./Timer";
 import GoUpButton from "./GoUpButton";
 import Footer from "./Footer";
 
+// REUSEIT
+import PrimaryButton from "./reuseit/PrimaryButton";
+import SecondaryButton from "./reuseit/SecondaryButton";
+import Input from "./reuseit/Input";
+import PasswordInput from "./reuseit/PasswordInput";
+
 export {
   FlashCard,
   Navbar,
-  SecondaryButton,
+  ErrorStatement,
   MCQ,
   InputBox,
   Timer,
   GoUpButton,
   Footer,
+
+  // -----------
+  PrimaryButton,
+  SecondaryButton,
+  Input,
+  PasswordInput,
 };

@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { FaArrowsRotate } from "react-icons/fa6";
-import * as PropTypes from "prop-types";
 
-const FlashCard = ({ question, answer }) => {
+const FlashCard = ({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) => {
   // State to check whether the card was flipped to view the answer.
   const [flipped, setFlipped] = useState(false);
 
@@ -42,11 +47,6 @@ const FlashCard = ({ question, answer }) => {
       </div>
     </div>
   );
-};
-
-FlashCard.propTypes = {
-  question: PropTypes.string,
-  answer: PropTypes.string,
 };
 
 export default FlashCard;

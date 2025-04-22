@@ -1,14 +1,13 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axios";
 import { MCQ } from "@/components";
 import { SyncLoader } from "react-spinners";
 import { GoUpButton, InputBox } from "../components";
-import { useDarkMode } from "../context/DarkModeContext";
+import { ContextValue, useDarkMode } from "../context/DarkModeContext";
 
 const FactOrNot = () => {
-  const { isDarkMode } = useDarkMode();
+  const { isDarkMode } = useDarkMode() as ContextValue;
 
   // The topic for which flashcards need to be created
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,7 +55,7 @@ const FactOrNot = () => {
   // Fetch data on click of the button
   const handleClick = () => {
     setInputError(0);
-    let search = searchTerm?.replaceAll(" ", "");
+    const search = searchTerm?.replaceAll(" ", "");
 
     if (search?.length == 0) {
       setInputError(1);
@@ -94,31 +93,38 @@ const FactOrNot = () => {
       {/* Div for questions */}
       {!isLoading && questions?.length > 0 && (
         <>
-          <p className="text-center mt-10 text-white px-2">
+          <p className="text-center mt-10  px-2">
             Note : Questions & answers are created using AI and may be
             incorrect.
           </p>
 
           <div className="flex flex-wrap gap-5 justify-center py-10">
-            {questions?.map((item) => {
-              return (
-                <MCQ
-                  key={item?.question}
-                  question={item?.question}
-                  answer={item?.answer}
-                  options={item?.options}
-                  reason={item?.reason}
-                  setCount={setCorrectCount}
-                />
-              );
-            })}
+            {questions?.map(
+              (item: {
+                question: string;
+                answer: string;
+                options: string[];
+                reason: string;
+              }) => {
+                return (
+                  <MCQ
+                    key={item?.question}
+                    question={item?.question}
+                    answer={item?.answer}
+                    options={item?.options}
+                    reason={item?.reason}
+                    setCount={setCorrectCount}
+                  />
+                );
+              }
+            )}
           </div>
         </>
       )}
 
       {/* Error statement */}
       {error && (
-        <p className="text-center font-medium text-xl text-white drop-shadow-lg">
+        <p className="text-center font-medium text-xl  drop-shadow-lg">
           Uh oh! Couldn't create questions about "{searchTerm}". Maybe try a
           different topic?
         </p>
@@ -129,7 +135,7 @@ const FactOrNot = () => {
         // Loading indicator for questions
         <div className="mt-12 flex justify-center items-center">
           <SyncLoader
-            color={"#ffffff"}
+            color={"#9b0ced"}
             loading={isLoading}
             size={60}
             aria-label="Loading Spinner"

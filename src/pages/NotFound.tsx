@@ -1,4 +1,4 @@
-import SecondaryButton from "../components/SecondaryButton";
+import { SecondaryButton } from "@/components";
 import { useNavigate } from "react-router-dom";
 
 const NotFound = () => {

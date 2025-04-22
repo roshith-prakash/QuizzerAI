@@ -5,6 +5,15 @@ import {
   MCQQuiz,
   FactOrNot,
   SocketPage,
+
+  // V2 Routes
+  Signup,
+  Login,
+  Onboarding,
+  Signout,
+  User,
+  Profile,
+  EditProfile,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -13,7 +22,8 @@ import { SyncLoader } from "react-spinners";
 import { Navbar, Footer } from "./components";
 import { Typewriter } from "react-simple-typewriter";
 import { Toaster } from "react-hot-toast";
-import { useDarkMode } from "./context/DarkModeContext";
+import { ContextValue, useDarkMode } from "./context/DarkModeContext";
+import Protector from "./components/Protector";
 
 function App() {
   // Check if server is active
@@ -26,14 +36,10 @@ function App() {
     retry: 10,
   });
 
-  const { isDarkMode } = useDarkMode();
+  const { isDarkMode } = useDarkMode() as ContextValue;
 
   return (
-    <div
-      className={`${
-        !isLoading && "bg-hovercta"
-      } dark:bg-darkbg dark:text-darkmodetext`}
-    >
+    <div className={`dark:bg-darkbg font-body dark:text-darkmodetext`}>
       <Toaster
         toastOptions={{
           style: {
@@ -100,6 +106,44 @@ function App() {
 
             {/* 404 error page */}
             <Route path="*" element={<NotFound />} />
+
+            {/* V2 Routes */}
+
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Login />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/signout" element={<Signout />} />
+
+            {/* Protected routes - Logged In User required. */}
+
+            <Route
+              path="/edit-profile"
+              element={
+                <Protector>
+                  <EditProfile />
+                </Protector>
+              }
+            />
+
+            {/* View your profile */}
+            <Route
+              path="/profile"
+              element={
+                <Protector>
+                  <Profile />
+                </Protector>
+              }
+            />
+
+            {/* View a User's Profile (Non Current user) */}
+            <Route
+              path="/user/:username"
+              element={
+                <Protector>
+                  <User />
+                </Protector>
+              }
+            />
           </Routes>
           <Footer />
         </BrowserRouter>

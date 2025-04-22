@@ -1,26 +1,24 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { SecondaryButton, MCQ, Timer } from "../components";
 import { SyncLoader } from "react-spinners";
 import { MdOutlineContentCopy } from "react-icons/md";
-import {
-  Table,
+import Table, {
   TableCell,
   TableHead,
   TableBody,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/reuseit/Table";
 import { FaTrophy } from "react-icons/fa6";
-import { useDarkMode } from "../context/DarkModeContext";
+import { ContextValue, useDarkMode } from "../context/DarkModeContext";
 
-const socket = io("https://flashcardquiz-backend.onrender.com");
-// const socket = io("http://localhost:4000");
+// const socket = io("https://flashcardquiz-backend.onrender.com");
+const socket = io("http://localhost:4000");
 
 const SocketPage = () => {
-  const { isDarkMode } = useDarkMode();
+  const { isDarkMode } = useDarkMode() as ContextValue;
 
   // Room ID input state
   const [roomId, setRoomId] = useState("");
@@ -143,7 +141,7 @@ const SocketPage = () => {
 
       if (scoreTable[0].id == socket.id) {
         toast.custom(
-          (t) => (
+          (t: { visible: boolean }) => (
             <div
               className={`${
                 t.visible ? "animate-enter" : "animate-leave"
@@ -164,7 +162,7 @@ const SocketPage = () => {
         );
       } else {
         toast.custom(
-          (t) => (
+          (t: { visible: boolean }) => (
             <div
               className={`${
                 t.visible ? "animate-enter" : "animate-leave"
@@ -204,7 +202,7 @@ const SocketPage = () => {
     socket.on("newMember", ({ id, name }) => {
       if (id != socket.id) {
         toast.custom(
-          (t) => (
+          (t: { visible: boolean }) => (
             <div
               className={`${
                 t.visible ? "animate-enter" : "animate-leave"
@@ -311,14 +309,14 @@ const SocketPage = () => {
       }  bg-no-repeat flex flex-col pb-20 bg-cover font-poppins min-h-screen`}
     >
       {/* Title */}
-      <h1 className="text-white text-center py-10 text-3xl md:text-4xl font-medium">
+      <h1 className=" text-center font-title py-10 text-3xl md:text-6xl font-black tracking-wider">
         Quizzer AI <span className="text-nowrap">Multi-Player</span>
       </h1>
 
       {/* Subtitle */}
       {(stage == 1 || stage == 2) && (
         <div className="flex justify-center pb-10">
-          <h2 className="text-white text-center md:text-xl lg:max-w-[70%] px-2">
+          <h2 className=" text-center  md:text-xl lg:max-w-[70%] px-2">
             Challenge your friends and level up the fun with{" "}
             <b className="text-nowrap">Quizzer AI's Multiplayer Mode!</b> <br />
             Compete in real-time and prove who's the ultimate quiz master. Are
@@ -360,6 +358,7 @@ const SocketPage = () => {
             )}
 
             <SecondaryButton
+              className="mx-auto"
               onClick={() => {
                 if (username?.length == 0 || !username) {
                   setError((prev) => ({ ...prev, stage1: 1 }));
@@ -415,7 +414,7 @@ const SocketPage = () => {
         <>
           {/* Inputs */}
           <div className="flex justify-center">
-            <div className="flex max-w-[90%] rounded-lg p-10 bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext flex-col gap-y-4 my-5 hover:scale-105 transition-all">
+            <div className="flex max-w-[90%] shadow-md rounded-lg p-10 bg-white dark:bg-secondarydarkbg dark:border-2 dark:border-darkmodetext flex-col gap-y-4 my-5 hover:scale-105 transition-all">
               {/* Room ID */}
               <span className="flex justify-center gap-x-2 items-center text-lg font-medium">
                 <label htmlFor="room">Room ID : </label>
@@ -666,18 +665,18 @@ const SocketPage = () => {
                     Players
                   </p>
                   <Table className="overflow-hidden mt-10 w-full rounded-lg">
-                    <TableHeader>
+                    <TableHead>
                       <TableRow>
-                        <TableHead className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
+                        <TableHeader className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
                           Sr No.
-                        </TableHead>
-                        <TableHead className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
+                        </TableHeader>
+                        <TableHeader className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
                           Name
-                        </TableHead>
+                        </TableHeader>
                       </TableRow>
-                    </TableHeader>
+                    </TableHead>
                     <TableBody>
-                      {players.map((row, i) => {
+                      {players.map((row: { id: number; name: string }, i) => {
                         return (
                           <TableRow
                             // className="border-b-2 text-center"
@@ -709,19 +708,26 @@ const SocketPage = () => {
           {/* MCQs */}
           {!submitted && questions && questions?.length > 0 && (
             <div className="flex flex-wrap gap-5 justify-center py-10">
-              {questions?.map((item) => {
-                return (
-                  <MCQ
-                    // showAnswer={false}
-                    // allowReSelection={true}
-                    key={item?.question}
-                    question={item?.question}
-                    answer={item?.answer}
-                    options={item?.options}
-                    setCount={setCorrectCount}
-                  />
-                );
-              })}
+              {questions?.map(
+                (item: {
+                  question: string;
+                  answer: string;
+                  options: string[];
+                  reason?: string;
+                }) => {
+                  return (
+                    <MCQ
+                      // showAnswer={false}
+                      // allowReSelection={true}
+                      key={item?.question}
+                      question={item?.question}
+                      answer={item?.answer}
+                      options={item?.options}
+                      setCount={setCorrectCount}
+                    />
+                  );
+                }
+              )}
             </div>
           )}
 
@@ -793,13 +799,17 @@ const SocketPage = () => {
                       </TableHead>
                     </TableRow>
                   </TableHeader>
-                  {leaderboard.map((row, position) => {
-                    return (
-                      <TableRow
-                        className={`text-center ${
-                          position == 0 &&
-                          "bg-yellow-100 hover:bg-yellow-100 dark:hover:bg-yellow-700 bg-opacity-50"
-                        }
+                  {leaderboard.map(
+                    (
+                      row: { id: number; name: string; score: number },
+                      position
+                    ) => {
+                      return (
+                        <TableRow
+                          className={`text-center ${
+                            position == 0 &&
+                            "bg-yellow-100 hover:bg-yellow-100 dark:hover:bg-yellow-700 bg-opacity-50"
+                          }
                         
                         ${
                           position == 1 &&
@@ -812,52 +822,53 @@ const SocketPage = () => {
                          }
 
                         `}
-                        key={row?.id}
-                      >
-                        <TableCell className={`p-2`}>
-                          {/* First Place */}
-                          {position == 0 && (
-                            <img
-                              src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/first_sa8pmv.png"
-                              alt="First Place"
-                              className="h-8 mx-auto"
-                            />
-                          )}
+                          key={row?.id}
+                        >
+                          <TableCell className={`p-2`}>
+                            {/* First Place */}
+                            {position == 0 && (
+                              <img
+                                src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/first_sa8pmv.png"
+                                alt="First Place"
+                                className="h-8 mx-auto"
+                              />
+                            )}
 
-                          {/* Second Place */}
-                          {position == 1 && (
-                            <img
-                              src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/second_oebfev.png"
-                              alt="Second Place"
-                              className="h-8 mx-auto"
-                            />
-                          )}
+                            {/* Second Place */}
+                            {position == 1 && (
+                              <img
+                                src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/second_oebfev.png"
+                                alt="Second Place"
+                                className="h-8 mx-auto"
+                              />
+                            )}
 
-                          {/* Third Place */}
-                          {position == 2 && (
-                            <img
-                              src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/third_opteoq.png"
-                              alt="Third Place"
-                              className="h-8 mx-auto"
-                            />
-                          )}
+                            {/* Third Place */}
+                            {position == 2 && (
+                              <img
+                                src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1732589582/third_opteoq.png"
+                                alt="Third Place"
+                                className="h-8 mx-auto"
+                              />
+                            )}
 
-                          {/* Position - lower than third */}
-                          {position > 2 && (
-                            <p className="text-center font-medium">
-                              {position + 1}
-                            </p>
-                          )}
-                        </TableCell>
-                        <TableCell className="p-2 font-medium">
-                          {row?.name}
-                        </TableCell>
-                        <TableCell className="p-2 font-medium">
-                          {row?.score}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                            {/* Position - lower than third */}
+                            {position > 2 && (
+                              <p className="text-center font-medium">
+                                {position + 1}
+                              </p>
+                            )}
+                          </TableCell>
+                          <TableCell className="p-2 font-medium">
+                            {row?.name}
+                          </TableCell>
+                          <TableCell className="p-2 font-medium">
+                            {row?.score}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    }
+                  )}
                 </Table>
               </div>
             </section>

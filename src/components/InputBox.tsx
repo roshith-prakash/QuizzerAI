@@ -1,5 +1,4 @@
-import * as PropTypes from "prop-types";
-import SecondaryButton from "./SecondaryButton";
+import { SecondaryButton } from "@/components";
 
 const InputBox = ({
   buttonText,
@@ -14,6 +13,19 @@ const InputBox = ({
   inputError,
   questions,
   text,
+}: {
+  buttonText?: string;
+  searchTerm?: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+  difficulty: string;
+  setDifficulty: React.Dispatch<React.SetStateAction<string>>;
+  title: string;
+  handleClick: () => void;
+  isLoading?: boolean;
+  isFetching?: boolean;
+  inputError?: number;
+  questions?: { question: string }[]; // Replace `any` with a specific type if you know the question shape
+  text?: string;
 }) => {
   return (
     <div className="py-10 flex justify-center ">
@@ -105,7 +117,7 @@ const InputBox = ({
         </div>
 
         {/* Fetching */}
-        {questions?.length > 0 && !isLoading && (
+        {questions && questions?.length > 0 && !isLoading && (
           <p className="text-cta dark:text-darkmodetext font-medium animate-bounce mt-5 flex gap-x-2 items-center">
             {!isFetching ? text : "Fetching new questions..."}
           </p>
@@ -113,21 +125,6 @@ const InputBox = ({
       </div>
     </div>
   );
-};
-
-InputBox.propTypes = {
-  buttonText: PropTypes.string,
-  searchTerm: PropTypes.string,
-  setSearchTerm: PropTypes.func,
-  difficulty: PropTypes.string,
-  setDifficulty: PropTypes.func,
-  title: PropTypes.string,
-  handleClick: PropTypes.func,
-  isLoading: PropTypes.bool,
-  isFetching: PropTypes.bool,
-  inputError: PropTypes.number,
-  questions: PropTypes.array,
-  text: PropTypes.string,
 };
 
 export default InputBox;
