@@ -12,10 +12,12 @@ const NotFound = () => {
     <div className="h-screen font-poppins flex flex-col justify-center items-center gap-8">
       <img
         src={isDarkMode ? doodleDark : doodle}
-        className="-mt-14 w-72 md:w-80"
+        className="-mt-14 w-80 md:w-96"
         alt="Not Found"
       />
-      <p className="text-xl">Uh oh! We are lost. Lets go back?</p>
+      <p className="text-3xl font-medium text-center px-5">
+        Uh oh! We are lost. Lets go back?
+      </p>
       <SecondaryButton
         text={"Home"}
         onClick={() => {

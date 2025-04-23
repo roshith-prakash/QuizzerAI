@@ -17,7 +17,6 @@ import { RiAccountPinCircleLine } from "react-icons/ri";
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { FaUserPlus } from "react-icons/fa6";
 import { PiSignOutFill } from "react-icons/pi";
-import { SiF1 } from "react-icons/si";
 import Avatar from "./reuseit/Avatar";
 import AlertModal from "./reuseit/AlertModal";
 
@@ -130,18 +129,6 @@ const Navbar = () => {
 
           {dbUser ? (
             <>
-              <Link
-                to="/leagues"
-                className="hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-              >
-                Leagues
-              </Link>
-              <Link
-                to="/leaderboard"
-                className="hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-              >
-                Leaderboard
-              </Link>
               <button
                 onClick={() => setIsSignOutModalOpen(true)}
                 className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
@@ -215,7 +202,7 @@ const Navbar = () => {
                     <>
                       <Link
                         to="/profile"
-                        className={`flex flex-col gap-y-2 font-medium text-cta dark:text-darkmodeCTA  hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey hover:text-hovercta dark:hover:text-cta text-lg py-2 px-5 rounded  w-full transition-all`}
+                        className={`flex flex-col gap-y-2 font-medium  hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey hover:text-hovercta dark:hover:text-cta text-lg py-2 px-5 rounded  w-full transition-all`}
                       >
                         <p className="text-center">{dbUser?.name}</p>
                         <p className="text-center">@{dbUser?.username}</p>
@@ -238,23 +225,6 @@ const Navbar = () => {
                       >
                         <CgProfile className="text-xl" />
                         Edit Profile
-                      </NavLink>
-                      <hr />
-                    </>
-                  )}
-
-                  {dbUser && (
-                    <>
-                      <NavLink
-                        to="/create-league"
-                        className={({ isActive }) =>
-                          `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
-                            isActive && "bg-slate-100 dark:bg-white/20"
-                          }`
-                        }
-                      >
-                        <SiF1 className="text-xl" />
-                        Create League
                       </NavLink>
                       <hr />
                     </>
@@ -363,7 +333,7 @@ const Navbar = () => {
                   <>
                     <Link
                       to="/profile"
-                      className={`flex flex-col gap-y-2 font-medium text-cta dark:text-darkmodeCTA  hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey hover:text-hovercta dark:hover:text-cta text-lg py-2 px-5 rounded  w-full transition-all`}
+                      className={`flex flex-col gap-y-2 font-medium   hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey hover:text-hovercta dark:hover:text-cta text-lg py-2 px-5 rounded  w-full transition-all`}
                     >
                       <p className="text-center">{dbUser?.name}</p>
                       <p className="text-center">@{dbUser?.username}</p>
@@ -386,23 +356,6 @@ const Navbar = () => {
                     >
                       <CgProfile className="text-xl" />
                       Edit Profile
-                    </NavLink>
-                    <hr />
-                  </>
-                )}
-
-                {dbUser && (
-                  <>
-                    <NavLink
-                      to="/create-league"
-                      className={({ isActive }) =>
-                        `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
-                          isActive && "bg-slate-100 dark:bg-white/20"
-                        }`
-                      }
-                    >
-                      <SiF1 className="text-xl" />
-                      Create League
                     </NavLink>
                     <hr />
                   </>
@@ -525,22 +478,6 @@ const Navbar = () => {
 
             {dbUser ? (
               <>
-                <button
-                  onClick={() => handleSearch("/leagues")}
-                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
-                  tabIndex={0}
-                  aria-label="Leagues"
-                >
-                  Leagues
-                </button>
-                <button
-                  onClick={() => handleSearch("/leaderboard")}
-                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
-                  tabIndex={0}
-                  aria-label="Leaderboard"
-                >
-                  Leaderboard
-                </button>
                 <button
                   onClick={() => handleSearch("/signout")}
                   className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
