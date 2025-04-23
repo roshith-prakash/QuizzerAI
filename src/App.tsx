@@ -5,6 +5,7 @@ import {
   MCQQuiz,
   FactOrNot,
   SocketPage,
+  FAQ,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -81,8 +82,11 @@ function App() {
             {/* Fact or Not Page */}
             <Route path="/fact-or-not" element={<FactOrNot />} />
 
-            {/* Test Page */}
+            {/* Multiplayer Page */}
             <Route path="/multiplayer" element={<SocketPage />} />
+
+            {/* FAQ Page */}
+            <Route path="/faq" element={<FAQ />} />
 
             {/* 404 error page */}
             <Route path="*" element={<NotFound />} />
