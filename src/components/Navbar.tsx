@@ -1,173 +1,591 @@
-import { Link } from "react-router-dom";
-import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
 import { useState } from "react";
+import { RxCross2, RxHamburgerMenu } from "react-icons/rx";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { IoMoon } from "react-icons/io5";
+import { IoSunnySharp } from "react-icons/io5";
+import { ContextValue, useDarkMode } from "@/context/DarkModeContext";
+import { useDBUser } from "@/context/UserContext";
+import { auth } from "@/firebase/firebase";
+import { signOut } from "firebase/auth";
 import { PrimaryButton } from "@/components";
-import { useNavigate } from "react-router-dom";
-import { ContextValue, useDarkMode } from "../context/DarkModeContext";
-import { IoMoon, IoSunnySharp } from "react-icons/io5";
+import { SecondaryButton } from "@/components";
+import SignupModal from "./SignupModal";
+import LoginModal from "./LoginModal";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { useAuth } from "@/context/AuthContext";
+import { RiAccountPinCircleLine } from "react-icons/ri";
+import { CgProfile, CgLogOut } from "react-icons/cg";
+import { FaUserPlus } from "react-icons/fa6";
+import { PiSignOutFill } from "react-icons/pi";
+import { SiF1 } from "react-icons/si";
+import Avatar from "./reuseit/Avatar";
+import AlertModal from "./reuseit/AlertModal";
 
 const Navbar = () => {
-  const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useDarkMode() as ContextValue;
+  const { dbUser } = useDBUser();
+  const { currentUser } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSearch = (link: string) => {
+    navigate(link);
+    setOpen(false);
+  };
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        setIsSignOutModalOpen(false);
+        navigate("/");
+      })
+      .catch((error) => {
+        setIsSignOutModalOpen(false);
+        console.log(error);
+      });
+  };
 
   return (
-    <div className="font-title border-darkbg dark:border-darkmodetext/75 dark:bg-darkbg relative w-full flex p-5 z-5 justify-between items-center">
-      <Link to="/" className="md:ml-5 flex gap-x-3 items-center">
-        <img
-          src={
-            "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
-          }
-          alt="Quizzer AI"
-          className="h-10 pointer-events-none"
-        />
-        <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-4xl">
-          Quizzer AI
-        </p>
-      </Link>
-      {/* LG screen links */}
-      <div className="hidden text-3xl font-semibold tracking-wide pr-5 md:flex items-center gap-x-10">
-        <Link
-          to="/flashcard"
-          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-        >
-          FlashCards
-        </Link>
-        <Link
-          to="/mcq"
-          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-        >
-          MCQs
-        </Link>
-        <Link
-          to="/fact-or-not"
-          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-        >
-          Fact OR Not
-        </Link>
-
-        <Link
-          to="/multiplayer"
-          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-        >
-          MultiPlayer
-        </Link>
-
-        <button
-          onClick={toggleDarkMode}
-          className="hidden md:block cursor-pointer outline-none "
-        >
-          {isDarkMode ? (
-            <IoSunnySharp className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
-          ) : (
-            <IoMoon className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
-          )}
-        </button>
-      </div>
-
-      {/* Open Drawer button */}
-      <div className="md:hidden flex gap-x-5 items-center">
-        <button
-          onClick={toggleDarkMode}
-          className="outline-none cursor-pointer"
-        >
-          {isDarkMode ? (
-            <IoSunnySharp className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
-          ) : (
-            <IoMoon className="text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all" />
-          )}
-        </button>
-
-        <RxHamburgerMenu
-          onClick={() => setOpen(true)}
-          className="md:hidden text-xl cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-        />
-      </div>
-
-      {/* Pop out drawer - displayed when hamburger is clicked  */}
-      <div
-        className={` h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-whitebg dark:bg-darkbg pb-6 text-center shadow-md ${
-          open ? "translate-x-0" : "translate-x-[100%]"
-        } transition-all duration-500`}
+    <>
+      {/* Log Out Modal */}
+      <AlertModal
+        isOpen={isSignOutModalOpen}
+        onClose={() => setIsSignOutModalOpen(false)}
       >
-        <div className="flex justify-between items-center pt-5 px-5 lg:px-10 mb-14">
+        <div className="flex flex-col gap-y-2">
           {/* Title */}
-          <div
-            onClick={() => {
-              navigate("/");
-              setOpen(false);
-            }}
-            className="flex items-center gap-x-2 cursor-pointer"
-          >
-            <img
-              src={
-                "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
-              }
-              alt="Quizzer AI"
-              className="h-10 pointer-events-none"
+          <h1 className="dark:text-darkmodetext font-bold text-2xl">
+            Are you sure you want to sign out?
+          </h1>
+
+          {/* Subtitle */}
+          <h2 className="dark:text-darkmodetext mt-1 text-sm text-darkbg/70">
+            You will need to log in again to access your account.
+          </h2>
+
+          <div className="mt-5 flex gap-x-5 justify-end">
+            <PrimaryButton
+              className="text-sm"
+              onClick={handleLogout}
+              text="Log out"
             />
-            <p className=" font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-4xl">
-              Quizzer AI
-            </p>
+            <SecondaryButton
+              className="text-sm"
+              onClick={() => setIsSignOutModalOpen(false)}
+              text="Cancel"
+            />
           </div>
-          {/* Close drawer */}
-          <RxCross2
-            onClick={() => setOpen(false)}
-            className="cursor-pointer text-2xl hover:text-cta dark:hover:text-darkmodeCTA transition-all"
-          />
         </div>
-        <div className="px-8 mt-14 text-2xl flex flex-col items-center gap-y-5">
+      </AlertModal>
+
+      {/* Sign Up Modal */}
+      <SignupModal
+        moveToLogin={() => {
+          setIsSignUpModalOpen(false);
+          setIsLoginModalOpen(true);
+        }}
+        isModalOpen={isSignUpModalOpen}
+        setIsModalOpen={() => setIsSignUpModalOpen(false)}
+      />
+
+      {/* Login Modal */}
+      <LoginModal
+        moveToSignup={() => {
+          setIsLoginModalOpen(false);
+          setIsSignUpModalOpen(true);
+        }}
+        isModalOpen={isLoginModalOpen}
+        setIsModalOpen={() => setIsLoginModalOpen(false)}
+      />
+
+      <nav
+        className={`dark:bg-darkbg relative z-2 flex items-center justify-between bg-whitebg px-10 py-3 font-title dark:text-white`}
+      >
+        {/* Quizzer AI */}
+        <Link to="/" aria-label="Home" className="flex gap-x-2 items-center">
           <img
             src={
               "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
             }
             alt="Quizzer AI"
-            className="w-40 pointer-events-none"
+            className="h-10 pointer-events-none"
           />
-          <p className="font-semibold tracking-wide text-3xl w-[70%]">
-            Hey! Quizzer is ready to quiz you!
+          <p className="hidden md:block font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-4xl">
+            Quizzer AI
           </p>
+        </Link>
 
-          {/* Buttons */}
-          <div className="mt-5 flex flex-col items-center gap-y-8">
-            <PrimaryButton
-              text={"FlashCards"}
-              onClick={() => {
-                navigate("/flashcard");
-                setOpen(false);
-              }}
-              className="text-2xl font-bold tracking-wider  w-52 "
-            />
-            <PrimaryButton
-              text={"Multiple Choice"}
-              onClick={() => {
-                navigate("/mcq");
-                setOpen(false);
-              }}
-              className="text-2xl font-bold tracking-wider  w-52 "
-            />
+        {/* LG screen links */}
+        <div className="hidden items-center text-2xl font-semibold -translate-x-10 gap-x-8  lg:flex">
+          {/* Home Page */}
+          <Link
+            to="/"
+            className="hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+          >
+            Home
+          </Link>
 
-            <PrimaryButton
-              text={"Fact OR Not"}
-              onClick={() => {
-                navigate("/fact-or-not");
-                setOpen(false);
-              }}
-              className="text-2xl font-bold tracking-wider  w-52 "
-            />
+          {dbUser ? (
+            <>
+              <Link
+                to="/leagues"
+                className="hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+              >
+                Leagues
+              </Link>
+              <Link
+                to="/leaderboard"
+                className="hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+              >
+                Leaderboard
+              </Link>
+              <button
+                onClick={() => setIsSignOutModalOpen(true)}
+                className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              {location.pathname != "/signup" && (
+                <button
+                  onClick={() => setIsSignUpModalOpen(true)}
+                  className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                >
+                  Sign up
+                </button>
+              )}
 
-            <PrimaryButton
-              text={"MultiPlayer"}
-              onClick={() => {
-                navigate("/multiplayer");
-                setOpen(false);
-              }}
-              className="text-2xl font-bold tracking-wider  w-52 "
-            />
+              {location.pathname != "/signin" && (
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
+                  className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                >
+                  Sign in
+                </button>
+              )}
+            </>
+          )}
+
+          {/* FAQ Page */}
+          <Link
+            to="/faq"
+            className="hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+          >
+            FAQ
+          </Link>
+        </div>
+
+        {/* Theme + Popover - Large Screen */}
+        <div className="flex items-center gap-x-5">
+          {/* Theme change button */}
+          <button
+            aria-label="Change Theme"
+            className="hidden cursor-pointer lg:flex"
+            onClick={toggleDarkMode}
+          >
+            {isDarkMode ? (
+              <IoSunnySharp className="hover:text-darkmodeCTA text-2xl transition-all" />
+            ) : (
+              <IoMoon className="hover:text-cta text-2xl transition-all" />
+            )}
+          </button>
+          <div className="hidden lg:block">
+            <Popover>
+              <PopoverTrigger className="flex items-center cursor-pointer">
+                {dbUser ? (
+                  <Avatar
+                    border
+                    borderClassName="bg-gradient-to-br  from-[#ec8cff] to-cta"
+                    imageSrc={dbUser?.photoURL}
+                    fallBackText={dbUser?.name}
+                  />
+                ) : (
+                  <Avatar />
+                )}
+              </PopoverTrigger>
+              <PopoverContent className="dark:bg-darkgrey dark:border-2 w-auto mt-2 mr-4 py-0 px-1">
+                <div className="py-1 min-w-48 flex flex-col gap-y-1">
+                  {/* View Profile */}
+                  {dbUser && (
+                    <>
+                      <Link
+                        to="/profile"
+                        className={`flex flex-col gap-y-2 font-medium text-cta dark:text-darkmodeCTA  hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey hover:text-hovercta dark:hover:text-cta text-lg py-2 px-5 rounded  w-full transition-all`}
+                      >
+                        <p className="text-center">{dbUser?.name}</p>
+                        <p className="text-center">@{dbUser?.username}</p>
+                      </Link>
+
+                      <hr />
+                    </>
+                  )}
+
+                  {/* Edit Profile */}
+                  {dbUser && (
+                    <>
+                      <NavLink
+                        to="/edit-profile"
+                        className={({ isActive }) =>
+                          `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
+                            isActive && "bg-slate-100 dark:bg-white/20"
+                          }`
+                        }
+                      >
+                        <CgProfile className="text-xl" />
+                        Edit Profile
+                      </NavLink>
+                      <hr />
+                    </>
+                  )}
+
+                  {dbUser && (
+                    <>
+                      <NavLink
+                        to="/create-league"
+                        className={({ isActive }) =>
+                          `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
+                            isActive && "bg-slate-100 dark:bg-white/20"
+                          }`
+                        }
+                      >
+                        <SiF1 className="text-xl" />
+                        Create League
+                      </NavLink>
+                      <hr />
+                    </>
+                  )}
+
+                  {/* Onboarding */}
+                  {currentUser && !dbUser && (
+                    <>
+                      <NavLink
+                        to="/onboarding"
+                        className={({ isActive }) =>
+                          `flex gap-x-5 items-center font-medium bg-purple-100 dark:bg-darkgrey text-lg py-2 px-5 rounded w-full transition-all ${
+                            isActive && "bg-slate-100 dark:bg-white/20"
+                          }`
+                        }
+                      >
+                        <RiAccountPinCircleLine className="text-xl animate-pulse" />
+                        <p className="animate-pulse">Profile</p>
+                      </NavLink>
+                      <hr />
+                    </>
+                  )}
+
+                  {/* Log Out */}
+                  {currentUser && (
+                    <NavLink
+                      to="/signout"
+                      className="cursor-pointer flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all"
+                    >
+                      <PiSignOutFill className="text-xl" />
+                      Sign out
+                    </NavLink>
+                  )}
+
+                  {/* Sign up */}
+                  {!currentUser && (
+                    <>
+                      <NavLink
+                        to="/signup"
+                        className={({ isActive }) =>
+                          `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey  w-full transition-all ${
+                            isActive && "bg-slate-100 dark:bg-white/20"
+                          }`
+                        }
+                      >
+                        <FaUserPlus className="text-xl" />
+                        Sign up
+                      </NavLink>
+                      <hr />
+                    </>
+                  )}
+
+                  {/* Log in */}
+                  {!currentUser && (
+                    <NavLink
+                      to="/signin"
+                      className={({ isActive }) =>
+                        `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
+                          isActive && "bg-slate-100 dark:bg-white/20"
+                        }`
+                      }
+                    >
+                      <CgLogOut className="text-xl rotate-180" />
+                      Sign in
+                    </NavLink>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
-      </div>
-    </div>
+
+        {/* Open Drawer */}
+        <div className="flex items-center gap-x-10 font-medium lg:hidden">
+          {/* Toggle Light & Dark Mode */}
+          <button
+            className="cursor-pointer"
+            aria-label="Change Theme"
+            onClick={toggleDarkMode}
+          >
+            {isDarkMode ? (
+              <IoSunnySharp className="hover:text-cta text-xl transition-all" />
+            ) : (
+              <IoMoon className="hover:text-cta text-xl transition-all" />
+            )}
+          </button>
+
+          {/* Pop over component */}
+          <Popover>
+            <PopoverTrigger className="flex items-center cursor-pointer">
+              {dbUser ? (
+                <Avatar
+                  border
+                  borderClassName="bg-gradient-to-br  from-[#ec8cff] to-cta"
+                  imageSrc={dbUser?.photoURL}
+                  fallBackText={dbUser?.name}
+                />
+              ) : (
+                <Avatar />
+              )}
+            </PopoverTrigger>
+            <PopoverContent className="dark:bg-darkgrey dark:border-2 w-auto mt-2 mr-4 py-0 px-1">
+              <div className="py-1 min-w-48 flex flex-col gap-y-1">
+                {/* View Profile */}
+                {dbUser && (
+                  <>
+                    <Link
+                      to="/profile"
+                      className={`flex flex-col gap-y-2 font-medium text-cta dark:text-darkmodeCTA  hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey hover:text-hovercta dark:hover:text-cta text-lg py-2 px-5 rounded  w-full transition-all`}
+                    >
+                      <p className="text-center">{dbUser?.name}</p>
+                      <p className="text-center">@{dbUser?.username}</p>
+                    </Link>
+
+                    <hr />
+                  </>
+                )}
+
+                {/* Edit Profile */}
+                {dbUser && (
+                  <>
+                    <NavLink
+                      to="/edit-profile"
+                      className={({ isActive }) =>
+                        `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
+                          isActive && "bg-slate-100 dark:bg-white/20"
+                        }`
+                      }
+                    >
+                      <CgProfile className="text-xl" />
+                      Edit Profile
+                    </NavLink>
+                    <hr />
+                  </>
+                )}
+
+                {dbUser && (
+                  <>
+                    <NavLink
+                      to="/create-league"
+                      className={({ isActive }) =>
+                        `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
+                          isActive && "bg-slate-100 dark:bg-white/20"
+                        }`
+                      }
+                    >
+                      <SiF1 className="text-xl" />
+                      Create League
+                    </NavLink>
+                    <hr />
+                  </>
+                )}
+
+                {/* Onboarding */}
+                {currentUser && !dbUser && (
+                  <>
+                    <NavLink
+                      to="/onboarding"
+                      className={({ isActive }) =>
+                        `flex gap-x-5 items-center font-medium bg-purple-100 dark:bg-darkgrey text-lg py-2 px-5 rounded w-full transition-all ${
+                          isActive && "bg-slate-100 dark:bg-white/20"
+                        }`
+                      }
+                    >
+                      <RiAccountPinCircleLine className="text-xl animate-pulse" />
+                      <p className="animate-pulse">Profile</p>
+                    </NavLink>
+                    <hr />
+                  </>
+                )}
+
+                {/* Log Out */}
+                {currentUser && (
+                  <NavLink
+                    to="/signout"
+                    className="cursor-pointer flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all"
+                  >
+                    <PiSignOutFill className="text-xl" />
+                    Sign out
+                  </NavLink>
+                )}
+
+                {/* Sign up */}
+                {!currentUser && (
+                  <>
+                    <NavLink
+                      to="/signup"
+                      className={({ isActive }) =>
+                        `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey  w-full transition-all ${
+                          isActive && "bg-slate-100 dark:bg-white/20"
+                        }`
+                      }
+                    >
+                      <FaUserPlus className="text-xl" />
+                      Sign up
+                    </NavLink>
+                    <hr />
+                  </>
+                )}
+
+                {/* Log in */}
+                {!currentUser && (
+                  <NavLink
+                    to="/signin"
+                    className={({ isActive }) =>
+                      `flex gap-x-5 items-center font-medium text-lg py-2 px-5 rounded hover:bg-slate-50 dark:hover:bg-white/10 dark:hover:bg-darkgrey w-full transition-all ${
+                        isActive && "bg-slate-100 dark:bg-white/20"
+                      }`
+                    }
+                  >
+                    <CgLogOut className="text-xl rotate-180" />
+                    Sign in
+                  </NavLink>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* Hamburger Button to open the drawer */}
+          <button onClick={() => setOpen(true)} className="cursor-pointer">
+            <RxHamburgerMenu className="text-xl" aria-label="Open menu" />
+          </button>
+        </div>
+
+        {/* Drawer Menu */}
+        <div
+          className={`dark:bg-darkbg scroller fixed top-0 right-0 z-50 h-screen w-full overflow-y-auto bg-whitebg pb-6 text-center text-xl shadow-md md:text-lg ${
+            open ? "translate-x-0" : "translate-x-[100%]"
+          } transition-all duration-500`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Drawer Menu"
+        >
+          <div className="mb-14 h-14 flex items-center justify-between px-10 pt-4.5 lg:px-10">
+            <button
+              className="cursor-pointer flex gap-x-2 items-center"
+              onClick={() => handleSearch("/")}
+              aria-label="Home"
+            >
+              <img
+                src={
+                  "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+                }
+                alt="Quizzer AI"
+                className="h-10 pointer-events-none"
+              />
+              <p className="font-black dark:text-darkmodetext  bg-gradient-to-t text-transparent tracking-wider bg-clip-text from-cta to-hovercta text-4xl">
+                Quizzer AI
+              </p>
+            </button>
+            <RxCross2
+              onClick={() => setOpen(false)}
+              className="hover:text-cta dark:hover:text-darkmodeCTA cursor-pointer text-2xl transition-all"
+              aria-label="Close menu"
+            />
+          </div>
+
+          <div className="mt-20 flex flex-col text-3xl tracking-wide font-semibold items-center justify-between gap-y-12 px-8">
+            {/*  Add your links here */}
+            <button
+              onClick={() => handleSearch("/")}
+              className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+              tabIndex={0}
+              aria-label="Go to Home"
+            >
+              Home
+            </button>
+
+            {dbUser ? (
+              <>
+                <button
+                  onClick={() => handleSearch("/leagues")}
+                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+                  tabIndex={0}
+                  aria-label="Leagues"
+                >
+                  Leagues
+                </button>
+                <button
+                  onClick={() => handleSearch("/leaderboard")}
+                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+                  tabIndex={0}
+                  aria-label="Leaderboard"
+                >
+                  Leaderboard
+                </button>
+                <button
+                  onClick={() => handleSearch("/signout")}
+                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+                  tabIndex={0}
+                  aria-label="Sign out"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleSearch("/signup")}
+                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+                  tabIndex={0}
+                  aria-label="Sign up"
+                >
+                  Sign up
+                </button>{" "}
+                <button
+                  onClick={() => handleSearch("/signin")}
+                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+                  tabIndex={0}
+                  aria-label="Sign in"
+                >
+                  Sign in
+                </button>
+              </>
+            )}
+
+            <button
+              onClick={() => handleSearch("/faq")}
+              className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+              tabIndex={0}
+              aria-label="FAQ Page"
+            >
+              FAQ
+            </button>
+          </div>
+
+          {/* Footer Text   */}
+          <div className="absolute bottom-24 left-1/2 w-full -translate-x-1/2 pl-1 text-sm lg:bottom-10"></div>
+        </div>
+      </nav>
+    </>
   );
 };
 

@@ -12,6 +12,7 @@ import Signout from "./Signout";
 import EditProfile from "./EditProfile";
 import Profile from "./Profile";
 import User from "./User";
+import FAQ from "./FAQ";
 
 export {
   Home,
@@ -29,4 +30,5 @@ export {
   EditProfile,
   Profile,
   User,
+  FAQ,
 };

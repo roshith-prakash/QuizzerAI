@@ -14,6 +14,7 @@ import {
   User,
   Profile,
   EditProfile,
+  FAQ,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -23,6 +24,7 @@ import { Navbar, Footer } from "./components";
 import { Toaster } from "react-hot-toast";
 import { ContextValue, useDarkMode } from "./context/DarkModeContext";
 import Protector from "./components/Protector";
+import NoteEditor from "./pages/NoteEditor";
 
 function App() {
   // Check if server is active
@@ -32,6 +34,7 @@ function App() {
       return axiosInstance.get("/");
     },
     refetchInterval: 60000,
+    refetchIntervalInBackground: true,
     retry: 10,
   });
 
@@ -77,65 +80,72 @@ function App() {
       {/* When server responds, allow the user to use the app */}
       {data?.data && (
         <BrowserRouter>
-          <Navbar />
-          <Routes>
-            {/* Home Page */}
-            <Route path="/" element={<Home />} />
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
+                {/* Home Page */}
+                <Route path="/" element={<Home />} />
 
-            {/* FlashCard Quiz Page */}
-            <Route path="/flashcard" element={<FlashCardQuiz />} />
+                {/* FlashCard Quiz Page */}
+                <Route path="/flashcard" element={<FlashCardQuiz />} />
 
-            {/* MCQ Quiz Page */}
-            <Route path="/mcq" element={<MCQQuiz />} />
+                {/* MCQ Quiz Page */}
+                <Route path="/mcq" element={<MCQQuiz />} />
 
-            {/* Fact or Not Page */}
-            <Route path="/fact-or-not" element={<FactOrNot />} />
+                {/* Fact or Not Page */}
+                <Route path="/fact-or-not" element={<FactOrNot />} />
 
-            {/* Test Page */}
-            <Route path="/multiplayer" element={<SocketPage />} />
+                {/* Test Page */}
+                <Route path="/multiplayer" element={<SocketPage />} />
 
-            {/* 404 error page */}
-            <Route path="*" element={<NotFound />} />
+                {/* 404 error page */}
+                <Route path="*" element={<NotFound />} />
 
-            {/* V2 Routes */}
+                {/* V2 Routes */}
 
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/signin" element={<Login />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/signout" element={<Signout />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/signin" element={<Login />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/signout" element={<Signout />} />
+                <Route path="/faq" element={<FAQ />} />
 
-            {/* Protected routes - Logged In User required. */}
+                {/* Protected routes - Logged In User required. */}
 
-            <Route
-              path="/edit-profile"
-              element={
-                <Protector>
-                  <EditProfile />
-                </Protector>
-              }
-            />
+                <Route
+                  path="/edit-profile"
+                  element={
+                    <Protector>
+                      <EditProfile />
+                    </Protector>
+                  }
+                />
 
-            {/* View your profile */}
-            <Route
-              path="/profile"
-              element={
-                <Protector>
-                  <Profile />
-                </Protector>
-              }
-            />
+                {/* View your profile */}
+                <Route
+                  path="/profile"
+                  element={
+                    <Protector>
+                      <Profile />
+                    </Protector>
+                  }
+                />
 
-            {/* View a User's Profile (Non Current user) */}
-            <Route
-              path="/user/:username"
-              element={
-                <Protector>
-                  <User />
-                </Protector>
-              }
-            />
-          </Routes>
-          <Footer />
+                {/* View a User's Profile (Non Current user) */}
+                <Route
+                  path="/user/:username"
+                  element={
+                    <Protector>
+                      <User />
+                    </Protector>
+                  }
+                />
+
+                <Route path="/test" element={<NoteEditor />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
         </BrowserRouter>
       )}
     </div>

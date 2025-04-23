@@ -169,7 +169,7 @@ const Signup = () => {
 
   return (
     <>
-      <div className="lg:min-h-[89vh] flex w-full">
+      <div className="lg:min-h-[89vh] px-8 flex gap-x-8 w-full">
         {/* Left Div */}
         <div className="min-h-[95vh] lg:h-full lg:min-h-[88vh] pb-10 bg-cover flex-1 flex justify-center items-center">
           {/* Sign up Form Div */}

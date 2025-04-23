@@ -169,7 +169,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="lg:min-h-[89vh] flex w-full">
+      <div className="lg:min-h-[89vh]  px-8 flex gap-x-8 w-full">
         {/* Image Div - displayed only on laptop */}
         <div className="hidden lg:flex lg:flex-1 items-center justify-center">
           <img
