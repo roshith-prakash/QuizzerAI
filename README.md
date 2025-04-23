@@ -1,4 +1,4 @@
-<h1>Quizzer AI</h1>
+<h1>Quizzer AI v1</h1>
 
 Quizzer AI is a versatile and user-friendly quiz application built using Express, React, Node.js and Gemini AI. It enables users to create customized flashcards, multiple-choice questions (MCQs), and factual question sets. Whether you're a student, educator, or just someone looking to challenge your knowledge, Quizzer AI provides a dynamic platform to learn and assess understanding across a variety of subjects.
 
