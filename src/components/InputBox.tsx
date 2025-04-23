@@ -1,4 +1,4 @@
-import { PrimaryButton } from "@/components";
+import { ErrorStatement, PrimaryButton } from "@/components";
 
 const InputBox = ({
   buttonText,
@@ -29,7 +29,7 @@ const InputBox = ({
 }) => {
   return (
     <div className="py-10 flex justify-center ">
-      <div className="flex max-w-[95%] w-full sm:max-w-lg py-10 px-10 flex-col items-center gap-y-8 bg-white dark:bg-white/5 rounded-xl shadow-xl">
+      <div className="flex max-w-[95%] w-full sm:max-w-lg py-10 px-10 flex-col items-center bg-white dark:bg-white/5 rounded-xl shadow-xl">
         {/* Page Title */}
         <div className="flex items-center gap-x-2">
           <p className="text-cta font-title  dark:text-darkmodeCTA text-4xl tracking-wider font-semibold">
@@ -38,7 +38,9 @@ const InputBox = ({
         </div>
 
         {/* Topic input text */}
-        <p className="text-center font-medium text-xl">Enter your topic :</p>
+        <p className="text-center py-8 font-medium text-xl">
+          Enter your topic :
+        </p>
 
         {/* Input box for topic */}
         <input
@@ -50,18 +52,20 @@ const InputBox = ({
           className="w-full border-b-2 dark:border-darkmodetext p-1 text-center bg-transparent outline-none"
         />
 
-        {inputError == 1 && (
-          <p className="text-center text-red-500">Please enter a topic.</p>
-        )}
+        <ErrorStatement
+          text="Please enter a topic."
+          isOpen={inputError == 1}
+        ></ErrorStatement>
 
-        {inputError == 2 && (
-          <p className="text-center text-red-500">
-            Topic must not exceed 50 characters.
-          </p>
-        )}
+        <ErrorStatement
+          text="Topic must not exceed 50 characters."
+          isOpen={inputError == 2}
+        ></ErrorStatement>
 
         {/* Difficulty text */}
-        <p className="text-center text-xl font-medium">Choose Difficulty :</p>
+        <p className="text-center py-8 text-xl font-medium">
+          Choose Difficulty :
+        </p>
 
         {/* Radio Button Group for difficulty */}
         <div className="flex justify-evenly text-lg gap-x-10">
@@ -107,7 +111,7 @@ const InputBox = ({
         </div>
 
         {/* Button to fetch flashcards */}
-        <div className="mt-5 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <PrimaryButton
             // className="shadow p-2 w-fit bg-white rounded px-5 hover:shadow-md transition-all"
             onClick={handleClick}

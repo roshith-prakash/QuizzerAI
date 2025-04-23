@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
-import { SecondaryButton, MCQ, Timer } from "../components";
+import { SecondaryButton, MCQ, Timer, ErrorStatement } from "../components";
 import { SyncLoader } from "react-spinners";
 import { MdOutlineContentCopy } from "react-icons/md";
 import Table, {
@@ -272,6 +272,10 @@ const SocketPage = () => {
 
   // Join an existing room
   const joinRoom = () => {
+    if (!roomId) {
+      setError((prev) => ({ ...prev, stage4: 1 }));
+      return;
+    }
     socket.emit("joinRoom", { roomId, name: username });
   };
 
@@ -328,7 +332,7 @@ const SocketPage = () => {
       {/* Enter your username */}
       {stage == 1 && (
         <div className="flex flex-col px-5 flex-1 gap-y-10 items-center">
-          <div className="bg-white max-w-2xl dark:bg-white/5 flex flex-col gap-y-10 w-full md:w-fit px-10 shadow-xl rounded-xl hover:scale-105 transition-all py-10">
+          <div className="bg-white max-w-2xl dark:bg-white/5 flex flex-col w-full md:w-fit px-10 shadow-xl rounded-xl hover:scale-105 transition-all py-10">
             {/* Username */}
             <label htmlFor="username" className="text-xl font-medium">
               Enter your Name{" "}
@@ -338,7 +342,7 @@ const SocketPage = () => {
                 type="text"
                 disabled={disabled}
                 id="username"
-                className="bg-transparent outline-none border-b-2 dark:border-darkmodetext/50 px-2 py-1.5 md:min-w-80 w-full"
+                className="mt-10 bg-transparent outline-none border-b-2 dark:border-darkmodetext/50 px-2 py-1.5 md:min-w-80 w-full"
                 placeholder="Please enter your name"
                 value={username}
                 onChange={(e) => {
@@ -347,18 +351,18 @@ const SocketPage = () => {
               />
             </span>
 
-            {error.stage1 == 1 && (
-              <p className="text-red-500">Please enter your name.</p>
-            )}
+            <ErrorStatement
+              text="Please enter your name."
+              isOpen={error.stage1 == 1}
+            ></ErrorStatement>
 
-            {error.stage1 == 2 && (
-              <p className="text-red-500">
-                Name cannot be longer than 20 characters.
-              </p>
-            )}
+            <ErrorStatement
+              text="Name cannot be longer than 20 characters."
+              isOpen={error.stage1 == 2}
+            ></ErrorStatement>
 
             <SecondaryButton
-              className="mx-auto w-full max-w-md"
+              className="mx-auto mt-5 w-full max-w-md"
               onClick={() => {
                 if (username?.length == 0 || !username) {
                   setError((prev) => ({ ...prev, stage1: 1 }));
@@ -444,6 +448,11 @@ const SocketPage = () => {
                 onChange={(e) => setTopic(e.target.value)}
               />
 
+              <ErrorStatement
+                text="Please enter the topic for the quiz."
+                isOpen={error.stage3 == 1}
+              ></ErrorStatement>
+
               {/* Radio Button Group for difficulty */}
               <label className="pt-5 text-center font-medium">
                 Choose Difficulty :{" "}
@@ -489,13 +498,6 @@ const SocketPage = () => {
                   Hard
                 </div>
               </div>
-
-              {/* Error */}
-              {error?.stage3 == 1 && (
-                <p className="text-red-500">
-                  Please enter the topic for the quiz.
-                </p>
-              )}
 
               {/* Buttons */}
               <div className="flex flex-wrap-reverse gap-x-8 gap-y-4 py-5">
@@ -554,6 +556,11 @@ const SocketPage = () => {
                 onChange={(e) => {
                   setRoomId(e.target.value);
                 }}
+              />
+
+              <ErrorStatement
+                isOpen={error.stage4 == 1}
+                text="Please enter a room ID."
               />
 
               {disabled && (
@@ -782,11 +789,11 @@ const SocketPage = () => {
           {/* Leaderboard table */}
           {!loading && leaderboard.length > 0 && (
             <section className="flex flex-col items-center mt-10">
-              <div className="max-w-xl w-full bg-white dark:bg-secondarydarkbg shadow-lg rounded-lg py-5">
-                <h2 className="text-center drop-shadow-lg text-hovercta text-4xl font-medium py-5">
+              <div className="max-w-xl w-full bg-white dark:bg-white/5 shadow-lg rounded-lg py-5">
+                <h2 className="text-center drop-shadow-lg text-4xl font-medium py-5">
                   LeaderBoard
                 </h2>
-                <Table className="overflow-hidden mt-10 w-full rounded-lg">
+                <Table className="overflow-hidden mt-10 w-full">
                   <TableHead>
                     <TableRow>
                       <TableHeader className="text-center text-lg font-semibold text-black dark:text-darkmodetext py-2 pl-3 text-nowrap">
