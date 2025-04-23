@@ -26,7 +26,7 @@ const Navbar = () => {
         </p>
       </Link>
       {/* LG screen links */}
-      <div className="hidden text-3xl font-semibold tracking-wide pr-5 md:flex items-center gap-x-10">
+      <div className="hidden text-3xl font-semibold tracking-wide pr-5 lg:flex items-center gap-x-10">
         <Link
           to="/flashcard"
           className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
@@ -53,6 +53,13 @@ const Navbar = () => {
           MultiPlayer
         </Link>
 
+        <Link
+          to="/faq"
+          className="flex gap-x-3 items-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+        >
+          FAQ
+        </Link>
+
         <button
           onClick={toggleDarkMode}
           className="hidden md:block cursor-pointer outline-none "
@@ -66,7 +73,7 @@ const Navbar = () => {
       </div>
 
       {/* Open Drawer button */}
-      <div className="md:hidden flex gap-x-5 items-center">
+      <div className="lg:hidden flex gap-x-5 items-center">
         <button
           onClick={toggleDarkMode}
           className="outline-none cursor-pointer"
@@ -80,13 +87,13 @@ const Navbar = () => {
 
         <RxHamburgerMenu
           onClick={() => setOpen(true)}
-          className="md:hidden text-xl cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+          className="lg:hidden text-xl cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
         />
       </div>
 
       {/* Pop out drawer - displayed when hamburger is clicked  */}
       <div
-        className={` h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-whitebg dark:bg-darkbg pb-6 text-center shadow-md ${
+        className={`h-screen w-full text-xl md:text-lg overflow-y-scroll scroller fixed top-0 right-0 z-50 bg-whitebg dark:bg-darkbg pb-6 text-center shadow-md ${
           open ? "translate-x-0" : "translate-x-[100%]"
         } transition-all duration-500`}
       >
@@ -160,6 +167,15 @@ const Navbar = () => {
               text={"MultiPlayer"}
               onClick={() => {
                 navigate("/multiplayer");
+                setOpen(false);
+              }}
+              className="text-2xl font-bold tracking-wider  w-52 "
+            />
+
+            <PrimaryButton
+              text={"FAQ"}
+              onClick={() => {
+                navigate("/faq");
                 setOpen(false);
               }}
               className="text-2xl font-bold tracking-wider  w-52 "
