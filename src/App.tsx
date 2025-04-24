@@ -16,7 +16,7 @@ import { Toaster } from "react-hot-toast";
 import { ContextValue, useDarkMode } from "./context/DarkModeContext";
 
 function App() {
-  // Check if server is active
+  // Check if server is active / keep server active
   const { data, isLoading } = useQuery({
     queryKey: ["check"],
     queryFn: () => {
@@ -44,6 +44,7 @@ function App() {
       {/* If server isn't ready for use, show a loading indicator */}
       {isLoading && (
         <div className="min-h-screen w-full flex flex-col gap-y-10 justify-center items-center">
+          {/* Sleeping owl */}
           <img
             src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1724056376/sleep_hyhact.webp"
             className="w-52 pointer-events-none"
@@ -56,7 +57,7 @@ function App() {
             aria-label="Loading Spinner"
             data-testid="loader"
           />
-          {/* Typewriter effect to show 4 different texts. Gradient text */}
+          {/* Loading Text */}
           <p className="text-center px-5 max-w-2xl lml-3 font-medium mb-10 text-xl">
             Quizzer might take a minute or two to load because the server's
             powered by broke dreams. Go grab a snack - you've got more resources
@@ -68,30 +69,34 @@ function App() {
       {/* When server responds, allow the user to use the app */}
       {data?.data && (
         <BrowserRouter>
-          <Navbar />
-          <Routes>
-            {/* Home Page */}
-            <Route path="/" element={<Home />} />
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
+                {/* Home Page */}
+                <Route path="/" element={<Home />} />
 
-            {/* FlashCard Quiz Page */}
-            <Route path="/flashcard" element={<FlashCardQuiz />} />
+                {/* FlashCard Quiz Page */}
+                <Route path="/flashcard" element={<FlashCardQuiz />} />
 
-            {/* MCQ Quiz Page */}
-            <Route path="/mcq" element={<MCQQuiz />} />
+                {/* MCQ Quiz Page */}
+                <Route path="/mcq" element={<MCQQuiz />} />
 
-            {/* Fact or Not Page */}
-            <Route path="/fact-or-not" element={<FactOrNot />} />
+                {/* Fact or Not Page */}
+                <Route path="/fact-or-not" element={<FactOrNot />} />
 
-            {/* Multiplayer Page */}
-            <Route path="/multiplayer" element={<SocketPage />} />
+                {/* Multiplayer Page */}
+                <Route path="/multiplayer" element={<SocketPage />} />
 
-            {/* FAQ Page */}
-            <Route path="/faq" element={<FAQ />} />
+                {/* FAQ Page */}
+                <Route path="/faq" element={<FAQ />} />
 
-            {/* 404 error page */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Footer />
+                {/* 404 error page */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
         </BrowserRouter>
       )}
     </div>
