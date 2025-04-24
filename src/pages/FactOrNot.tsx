@@ -111,7 +111,9 @@ const FactOrNot = () => {
                     key={item?.question}
                     question={item?.question}
                     answer={item?.answer}
-                    options={item?.options}
+                    options={item?.options?.sort(
+                      (a: string, b: string) => a?.length - b?.length
+                    )}
                     reason={item?.reason}
                     setCount={setCorrectCount}
                   />
