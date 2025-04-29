@@ -71,6 +71,8 @@ input::placeholder {
   width: 0px;
 }
 
+/* ----------------------------------------- QUILL EDITOR CSS ------------------------------------------- */
+
 .custom-quill-editor .ql-container {
   border: none !important; /* Remove the border from the container */
   box-shadow: none !important; /* Remove any shadow from the container */
@@ -176,6 +178,8 @@ input::placeholder {
   font-size: 1.5rem !important; /* 24px */
   line-height: 2.25rem !important; /* 36px */
 }
+
+/* ----------------------------------------- ------------------------------------------- */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

@@ -28,7 +28,7 @@ const MCQ = ({
   }, [selected, answer, allowReSelection, setCount]);
 
   return (
-    <div className="font-poppins max-w-[95%] md:max-w-3xl w-full  p-4 shadow-xl rounded-lg bg-white dark:bg-white/5">
+    <div className="font-body max-w-[95%] md:max-w-3xl w-full  p-4 shadow-xl rounded-lg bg-white dark:bg-white/5">
       {/* Display the question */}
       <p className="font-medium text-lg">
         <span className="font-bold">Q . </span>

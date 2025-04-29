@@ -5,8 +5,16 @@ import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDBUser } from "@/context/UserContext";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { PopoverClose } from "@radix-ui/react-popover";
+import { FaEye, FaTrash } from "react-icons/fa6";
 
 const Notes = () => {
   // State for user input - passed to debouncer
@@ -117,22 +125,56 @@ const Notes = () => {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   return page?.data.notes?.map((note: any) => {
                     if (note?.title) {
-                      console.log(note);
                       return (
-                        <Link
+                        <div
                           key={note?.noteId}
-                          className=" bg-white shadow-xl max-w-3xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all hover:scale-105"
-                          to={`/notes/${note?.noteId}`}
+                          className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all hover:scale-105"
+                          onClick={() => navigate(`/notes/${note?.noteId}`)}
                         >
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute W top-4 right-4 "
+                          >
+                            <Popover>
+                              <PopoverTrigger className="flex items-center cursor-pointer">
+                                <BsThreeDotsVertical className="text-2xl" />
+                              </PopoverTrigger>
+
+                              <PopoverContent className="dark:bg-darkgrey dark:border-2 w-auto mt-2 mr-4 py-0 px-1">
+                                <div className="py-1 min-w-32 flex flex-col gap-y-1">
+                                  <PopoverClose>
+                                    <button
+                                      onClick={() => {}}
+                                      className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-red-500 dark:hover:text-red-400 hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
+                                    >
+                                      <FaTrash />
+                                      <span className="-translate-x-1">
+                                        Delete
+                                      </span>
+                                    </button>
+                                  </PopoverClose>
+                                  <PopoverClose>
+                                    <button
+                                      onClick={() => {}}
+                                      className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA w-full flex items-center gap-x-2 justify-center hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
+                                    >
+                                      <FaEye />
+                                      Privacy
+                                    </button>
+                                  </PopoverClose>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
                           <div className="flex-1">
-                            <p className="text-xl mb-4 font-semibold">
+                            <p className="text-xl mb-4 mr-6 line-clamp-2 font-semibold">
                               {note?.title}
                             </p>
-                            <p className="text-md line-clamp-6 dark:text-white/80 text-darkbg/70">
+                            <p className="text-md text-justify line-clamp-6 dark:text-white/80 text-darkbg/70">
                               {note?.content}
                             </p>
                           </div>
-                        </Link>
+                        </div>
                       );
                     }
                   });

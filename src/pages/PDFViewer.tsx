@@ -2,9 +2,10 @@ import "@/utils/pdfWorker";
 import { TiArrowSortedUp } from "react-icons/ti";
 import { Document, Page } from "react-pdf";
 import { useState } from "react";
+import { PrimaryButton } from "@/components";
+
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
-import { PrimaryButton } from "@/components";
 
 function MyPDFViewer() {
   const [numPages, setNumPages] = useState<number | null>(null);
@@ -46,7 +47,9 @@ function MyPDFViewer() {
           file="https://res.cloudinary.com/dvwdsxirc/image/upload/v1745254564/psych_iyhhu1.pdf"
           onLoadSuccess={onDocumentLoadSuccess}
         >
-          <Page pageNumber={pageNumber} width={600} />
+          <div className="pointer-events-none">
+            <Page pageNumber={pageNumber} width={600} />
+          </div>
         </Document>
         <div className="flex justify-between items-center py-4 px-4 text-xl">
           <button

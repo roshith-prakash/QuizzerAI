@@ -10,7 +10,7 @@ const Home = () => {
     <div
       className={`${
         isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
-      }  font-poppins  bg-cover bg-no-repeat py-20 px-5`}
+      }  font-body  bg-cover bg-no-repeat py-20 px-5`}
     >
       {/* Owl */}
       <div className="flex justify-center">

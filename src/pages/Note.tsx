@@ -14,10 +14,14 @@ const Note = () => {
 
   const { dbUser } = useDBUser();
 
+  // Fetch note from DB
   const { data, isLoading, error } = useQuery({
     queryKey: ["note", noteId],
     queryFn: () => {
-      return axiosInstance.post("/note/get-note-by-id", { noteId });
+      return axiosInstance.post("/note/get-note-by-id", {
+        noteId,
+        userId: dbUser?.id,
+      });
     },
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -26,6 +30,7 @@ const Note = () => {
     enabled: !!noteId,
   });
 
+  // Set fetched note values into state
   useEffect(() => {
     if (data?.data) {
       setTitle(data?.data?.note?.title);
@@ -33,15 +38,28 @@ const Note = () => {
     }
   }, [data?.data]);
 
-  console.log(isLoading, error);
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-  // If the profile is the current user's profile, show the profile component.
+  // NEED to WORK ON THIS
+  if (error) {
+    return <p>Could not find that note!</p>;
+  }
+
+  // NEED TO WORK ON THIS
+  if (!data?.data?.note) {
+    return <p>Could not find that note!</p>;
+  }
+
   if (data?.data?.note?.user?.id == dbUser?.id) {
+    // If the profile is the current user's profile, show the profile component.
     return <NoteEditor />;
   }
 
   return (
     <div className="relative max-w-[95%] mb-20 md:max-w-5xl mx-auto mt-10 px-4 py-6 bg-white dark:bg-white/5 rounded-xl shadow-sm">
+      {/* Display note title */}
       <input
         type="text"
         disabled={true}
@@ -51,6 +69,7 @@ const Note = () => {
         className="w-full text-3xl font-semibold bg-transparent outline-none mb-6 placeholder-gray-400 dark:placeholder-white"
       />
       <hr className="border-t-2" />
+      {/* Display note content */}
       <ReactQuill
         theme="bubble"
         value={content}

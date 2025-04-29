@@ -72,7 +72,7 @@ const MCQQuiz = () => {
     <div
       className={`${
         isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
-      } bg-no-repeat bg-cover font-poppins min-h-screen`}
+      } bg-no-repeat bg-cover font-body min-h-screen`}
     >
       {/* Input for parameters */}
       <InputBox
