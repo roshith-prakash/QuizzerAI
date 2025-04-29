@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrimaryButton, SecondaryButton } from "@/components";
 import { useDBUser } from "../context/UserContext";
 import { BsFillTrash3Fill, BsPen } from "react-icons/bs";
@@ -10,6 +9,8 @@ import { auth } from "../firebase/firebase";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import AlertModal from "@/components/reuseit/AlertModal";
+
+import banner from "@/assets/profileBackground1.png";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -108,7 +109,9 @@ const Profile = () => {
       {/* Main */}
       <div className="lg:min-h-screen bg-bgwhite dark:bg-darkbg dark:text-darkmodetext w-full pb-20">
         {/* Background color div */}
-        <div className="bg-secondarydarkbg dark:bg-darkgrey border-b-4 border-black h-48 dark:border-white/10"></div>
+        <div className="bg-secondarydarkbg overflow-hidden dark:bg-darkgrey border-b-4 border-black h-48 dark:border-white/10">
+          <img src={banner} className="object-cover" />
+        </div>
 
         {/* Profile Info Div */}
         <div className="bg-white dark:bg-secondarydarkbg dark:border-white/25 shadow-xl -translate-y-14 border-2 min-h-52 pt-20 pb-10 rounded-lg mx-5 md:mx-10 lg:mx-20">

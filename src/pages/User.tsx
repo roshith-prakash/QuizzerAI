@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate, useParams } from "react-router-dom";
 import { SecondaryButton } from "../components";
 import { useDBUser } from "../context/UserContext";
@@ -8,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
 import Profile from "./Profile";
 import { useEffect } from "react";
+import banner from "@/assets/profileBackground2.png";
 
 const User = () => {
   const { username } = useParams();
@@ -84,7 +84,9 @@ const User = () => {
       {user && (
         <div className="lg:min-h-screen bg-bgwhite dark:bg-darkbg dark:text-darkmodetext w-full pb-20">
           {/* Background color div */}
-          <div className="bg-secondarydarkbg  border-b-4 border-black h-48"></div>
+          <div className="bg-secondarydarkbg overflow-hidden dark:bg-darkgrey border-b-4 border-black h-48 dark:border-white/10">
+            <img src={banner} className="object-cover" />
+          </div>
 
           {/* Profile Info Div */}
           <div className="bg-white dark:bg-secondarydarkbg dark:border-white/25 shadow-xl -translate-y-14 border-2 min-h-52 pt-20 pb-10 rounded-lg mx-5 md:mx-10 lg:mx-20">

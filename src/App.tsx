@@ -5,6 +5,7 @@ import {
   MCQQuiz,
   FactOrNot,
   SocketPage,
+  FAQ,
 
   // V2 Routes
   Signup,
@@ -14,7 +15,8 @@ import {
   User,
   Profile,
   EditProfile,
-  FAQ,
+  Notes,
+  Note,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -24,10 +26,10 @@ import { Navbar, Footer } from "./components";
 import { Toaster } from "react-hot-toast";
 import { ContextValue, useDarkMode } from "./context/DarkModeContext";
 import Protector from "./components/Protector";
-import NoteEditor from "./pages/NoteEditor";
+import PDFViewer from "./pages/PDFViewer";
 
 function App() {
-  // Check if server is active
+  // Check if server is active / keep server active
   const { data, isLoading } = useQuery({
     queryKey: ["check"],
     queryFn: () => {
@@ -42,7 +44,7 @@ function App() {
 
   return (
     <div
-      className={`bg-whitebg dark:bg-darkbg font-body dark:text-darkmodetext`}
+      className={`bg-whitebg dark:bg-darkbg font-body dark:text-darkmodetext dark:placeholder:text-darkmodetext`}
     >
       <Toaster
         toastOptions={{
@@ -103,7 +105,6 @@ function App() {
                 <Route path="*" element={<NotFound />} />
 
                 {/* V2 Routes */}
-
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/signin" element={<Login />} />
                 <Route path="/onboarding" element={<Onboarding />} />
@@ -141,7 +142,20 @@ function App() {
                   }
                 />
 
-                <Route path="/test" element={<NoteEditor />} />
+                {/* View all your notes */}
+                <Route
+                  path="/notes"
+                  element={
+                    <Protector>
+                      <Notes />
+                    </Protector>
+                  }
+                />
+
+                {/* Displays a note (Allows to edit if you're the note owner) */}
+                <Route path="/notes/:noteId" element={<Note />} />
+
+                <Route path="/test" element={<PDFViewer />} />
               </Routes>
             </main>
             <Footer />
