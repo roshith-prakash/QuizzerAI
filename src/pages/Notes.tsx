@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useDebounce from "../utils/useDebounce";
-import { Input, SecondaryButton } from "../components";
+import { Input, PrimaryButton, SecondaryButton } from "../components";
 import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -15,8 +15,16 @@ import {
 } from "@/components/ui/popover";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { FaEye, FaTrash } from "react-icons/fa6";
+import toast from "react-hot-toast";
+import AlertModal from "@/components/reuseit/AlertModal";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Notes = () => {
+  const [noteId, setNoteId] = useState<string>("");
+  const [noteTitle, setNoteTitle] = useState<string>("");
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState<boolean>(false);
   // State for user input - passed to debouncer
   const [search, setSearch] = useState("");
   // Debouncing the input of the user
@@ -24,6 +32,8 @@ const Notes = () => {
 
   const { dbUser } = useDBUser();
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
 
   // Intersection observer to fetch new leagues
   const { ref, inView } = useInView();
@@ -48,10 +58,11 @@ const Notes = () => {
         userId: dbUser?.id,
       });
     },
-    initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       return lastPage?.data?.nextPage;
     },
+    initialPageParam: 0,
+    gcTime: 0,
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -70,12 +81,139 @@ const Notes = () => {
     axiosInstance
       ?.post("/note/create-note", { userId: dbUser?.id })
       .then((res) => {
+        queryClient.invalidateQueries({
+          queryKey: ["notes", dbUser?.id, debouncedSearch],
+        });
         navigate(`/notes/${res?.data?.note?.noteId}`);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Could not create note!");
+      });
+  };
+
+  // Delete the note
+  const deleteNote = () => {
+    setIsDisabled(true);
+    axiosInstance
+      ?.post("/note/delete-note", { noteId, userId: dbUser?.id })
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["notes", dbUser?.id, debouncedSearch],
+        });
+        setIsDisabled(false);
+        toast("Deleted note.");
+        setIsDeleteModalOpen(false);
+      })
+      .catch((err) => {
+        toast.error("Could not delete note.");
+        setIsDisabled(false);
+        console.log(err);
+      });
+  };
+
+  const renameNote = () => {
+    axiosInstance
+      ?.post("/note/rename-note", {
+        noteId,
+        userId: dbUser?.id,
+        title: noteTitle,
+      })
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["notes", dbUser?.id, debouncedSearch],
+        });
+        setIsDisabled(false);
+        toast("Renamed note.");
+        setIsRenameModalOpen(false);
+      })
+      .catch((err) => {
+        toast.error("Could not rename note.");
+        setIsDisabled(false);
+        console.log(err);
       });
   };
 
   return (
     <>
+      {/* Delete Note Modal */}
+      <AlertModal
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+        }}
+        isOpen={isDeleteModalOpen}
+      >
+        <div className="flex flex-col gap-y-2">
+          {/* Title */}
+          <h1 className="dark:text-darkmodetext font-bold text-2xl">
+            Are you sure you want to delete this note?
+          </h1>
+
+          {/* Subtitle */}
+          <h2 className="dark:text-darkmodetext mt-1 text-base text-darkbg/80">
+            This action cannot be reversed.
+          </h2>
+
+          {/* Buttons */}
+          <div className="mt-5 flex gap-x-5 justify-end">
+            <PrimaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600 dark:bg-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:hover:border-red-600"
+              onClick={deleteNote}
+              text="Delete"
+            />
+            <SecondaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm text-black border-black hover:bg-black hover:border-black"
+              onClick={() => setIsDeleteModalOpen(false)}
+              text="Cancel"
+            />
+          </div>
+        </div>
+      </AlertModal>
+
+      {/* Rename Note Modal */}
+      <AlertModal
+        onClose={() => {
+          setIsRenameModalOpen(false);
+        }}
+        isOpen={isRenameModalOpen}
+      >
+        <div className="flex flex-col gap-y-2">
+          {/* Title */}
+          <h1 className="dark:text-darkmodetext font-bold text-2xl">
+            Rename this note
+          </h1>
+
+          {/* Subtitle */}
+          <Input
+            value={noteTitle}
+            onChange={(e) => setNoteTitle(e.target.value)}
+            placeholder="Add Note Title..."
+          />
+
+          {/* Buttons */}
+          <div className="mt-5 flex gap-x-5 justify-end">
+            <PrimaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm"
+              onClick={renameNote}
+              text="Rename"
+            />
+            <SecondaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm text-black border-black hover:bg-black hover:border-black"
+              onClick={() => setIsRenameModalOpen(false)}
+              text="Cancel"
+            />
+          </div>
+        </div>
+      </AlertModal>
+
       <div className="min-h-[70vh] dark:bg-darkbg dark:text-darkmodetext md:min-h-[65vh] lg:min-h-[60vh] px-8 lg:px-10 py-10">
         <div>
           <div className="flex justify-between gap-x-4 items-center">
@@ -128,12 +266,14 @@ const Notes = () => {
                       return (
                         <div
                           key={note?.noteId}
-                          className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all hover:scale-105"
+                          className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer"
                           onClick={() => navigate(`/notes/${note?.noteId}`)}
                         >
                           <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute W top-4 right-4 "
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                            className="absolute top-4 right-4 "
                           >
                             <Popover>
                               <PopoverTrigger className="flex items-center cursor-pointer">
@@ -144,7 +284,10 @@ const Notes = () => {
                                 <div className="py-1 min-w-32 flex flex-col gap-y-1">
                                   <PopoverClose>
                                     <button
-                                      onClick={() => {}}
+                                      onClick={() => {
+                                        setNoteId(note?.noteId);
+                                        setIsDeleteModalOpen(true);
+                                      }}
                                       className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-red-500 dark:hover:text-red-400 hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
                                     >
                                       <FaTrash />
@@ -155,11 +298,15 @@ const Notes = () => {
                                   </PopoverClose>
                                   <PopoverClose>
                                     <button
-                                      onClick={() => {}}
+                                      onClick={() => {
+                                        setNoteId(note?.noteId);
+                                        setNoteTitle(note?.title);
+                                        setIsRenameModalOpen(true);
+                                      }}
                                       className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA w-full flex items-center gap-x-2 justify-center hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
                                     >
                                       <FaEye />
-                                      Privacy
+                                      Rename
                                     </button>
                                   </PopoverClose>
                                 </div>

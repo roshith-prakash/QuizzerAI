@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 import ReactQuill from "react-quill";
@@ -31,34 +31,35 @@ import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 const NoteEditor = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isPublic, setIsPublic] = useState<boolean>(false);
   const debouncedTitle = useDebounce(title, 750);
   const debouncedContent = useDebounce(content, 750);
-  const [isPublic, setIsPublic] = useState<boolean>(false);
+  const debouncedPublicState = useDebounce(isPublic, 750);
+
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState<boolean>(false);
 
-  const [lastSaved, setLastSaved] = useState({
-    title: "",
-    content: "",
-    isPublic: false,
-  });
-
   const { dbUser } = useDBUser();
   const { noteId } = useParams();
+
+  const queryClient = useQueryClient();
 
   const navigate = useNavigate();
 
   // Fetch note from DB
   const { data, isLoading, error } = useQuery({
-    queryKey: ["note", noteId],
+    queryKey: ["note-editor", noteId],
     queryFn: () => {
-      return axiosInstance.post("/note/get-note-by-id", { noteId });
+      return axiosInstance.post("/note/get-note-by-id", {
+        noteId,
+        userId: dbUser?.id,
+      });
     },
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchOnMount: false,
-    staleTime: 60 * 1000 * 10,
+    refetchOnMount: true,
+    staleTime: 0,
     enabled: !!noteId,
   });
 
@@ -69,30 +70,26 @@ const NoteEditor = () => {
       setTitle(title);
       setContent(content);
       setIsPublic(isPublic);
-
-      setLastSaved({ title, content, isPublic });
     }
   }, [data?.data]);
 
   // Auto save the note
   useEffect(() => {
-    if (
-      data?.data &&
-      debouncedTitle &&
-      !isLoading &&
-      !error &&
-      (debouncedTitle != lastSaved?.title ||
-        debouncedContent != lastSaved?.content ||
-        isPublic != lastSaved?.isPublic)
-    ) {
+    if (data?.data && debouncedTitle && !isLoading && !error) {
       // Save the note
       const savePromise = axiosInstance.post("/note/update-note", {
         userId: dbUser?.id,
         noteId: noteId,
         title: debouncedTitle,
         content: debouncedContent,
-        isPublic: isPublic,
+        isPublic: debouncedPublicState,
       });
+
+      // savePromise.then(() => {
+      //   queryClient.invalidateQueries({
+      //     queryKey: ["notes", dbUser?.id],
+      //   });
+      // });
 
       // Display toast
       toast.promise(
@@ -121,16 +118,25 @@ const NoteEditor = () => {
         console.error("Failed to save note:", error);
       });
     }
+
+    return () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notes", dbUser?.id],
+      });
+
+      // queryClient.invalidateQueries({
+      //   queryKey: ["note-editor", noteId],
+      // });
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    data?.data,
     dbUser?.id,
     debouncedContent,
     debouncedTitle,
+    debouncedPublicState,
     noteId,
     isLoading,
     error,
-    isPublic,
   ]);
 
   // Check if user presses ctrl + c
@@ -159,6 +165,14 @@ const NoteEditor = () => {
     axiosInstance
       ?.post("/note/delete-note", { noteId, userId: dbUser?.id })
       .then(() => {
+        queryClient.removeQueries({
+          queryKey: ["notes", dbUser?.id, ""],
+        });
+
+        queryClient.removeQueries({
+          queryKey: ["note-editor", noteId],
+        });
+
         setIsDisabled(false);
         toast("Deleted note.");
         navigate("/notes");

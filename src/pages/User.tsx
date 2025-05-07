@@ -91,7 +91,7 @@ const User = () => {
           {/* Profile Info Div */}
           <div className="bg-white dark:bg-secondarydarkbg dark:border-white/25 shadow-xl -translate-y-14 border-2 min-h-52 pt-20 pb-10 rounded-lg mx-5 md:mx-10 lg:mx-20">
             {/* Floating Image */}
-            <div className="absolute w-full -top-16 flex justify-center">
+            <div className="absolute w-full -top-18 flex justify-center">
               {user?.data?.user?.photoURL ? (
                 <img
                   src={
@@ -99,7 +99,7 @@ const User = () => {
                       ? user?.data?.user?.photoURL
                       : "https://res.cloudinary.com/do8rpl9l4/image/upload/v1736740649/account_glotqh.png"
                   }
-                  className={`bg-white rounded-full h-32 w-32 border-8 border-secondarydarkbg dark:border-darkgrey `}
+                  className={`bg-white rounded-full h-36 w-36 border-8 border-white dark:border-secondarydarkbg dark:border-darkgrey `}
                 />
               ) : (
                 <img
@@ -113,7 +113,7 @@ const User = () => {
                       window.open(user?.data?.user?.photoURL);
                     }
                   }}
-                  className={`bg-secondarydarkbg rounded-full h-32 w-32 border-8 border-secondarydarkbg ${
+                  className={`bg-secondarydarkbg rounded-full h-36 w-36 border-8 border-white dark:border-secondarydarkbg ${
                     user?.data?.user?.photoURL && "cursor-pointer"
                   } `}
                 />

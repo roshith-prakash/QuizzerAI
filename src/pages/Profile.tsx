@@ -116,18 +116,18 @@ const Profile = () => {
         {/* Profile Info Div */}
         <div className="bg-white dark:bg-secondarydarkbg dark:border-white/25 shadow-xl -translate-y-14 border-2 min-h-52 pt-20 pb-10 rounded-lg mx-5 md:mx-10 lg:mx-20">
           {/* Floating Image */}
-          <div className="absolute w-full -top-16 flex justify-center">
+          <div className="absolute w-full -top-18 flex justify-center">
             {dbUser?.photoURL ? (
               <img
                 src={dbUser?.photoURL}
-                className="bg-white  rounded-full h-32 w-32 border-8 border-secondarydarkbg dark:border-darkgrey pointer-events-none"
+                className="bg-white  rounded-full h-36 w-36 border-8 border-white dark:border-secondarydarkbg dark:border-darkgrey pointer-events-none"
               />
             ) : (
               <img
                 src={
                   "https://res.cloudinary.com/do8rpl9l4/image/upload/v1740987081/accountcircle_axsjlm.png"
                 }
-                className="bg-secondarydarkbg rounded-full h-32 w-32 border-8 border-secondarydarkbg dark:border-darkgrey pointer-events-none"
+                className="bg-secondarydarkbg rounded-full h-36 w-36 border-8 border-white dark:border-secondarydarkbg dark:border-darkgrey pointer-events-none"
               />
             )}
           </div>
