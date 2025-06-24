@@ -135,6 +135,12 @@ const Navbar = () => {
               >
                 Notes
               </Link>
+              <Link
+                to="/files"
+                className="hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+              >
+                Files
+              </Link>
               <button
                 onClick={() => setIsSignOutModalOpen(true)}
                 className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
@@ -491,6 +497,14 @@ const Navbar = () => {
                   aria-label="Notes"
                 >
                   Notes
+                </button>
+                <button
+                  onClick={() => handleSearch("/files")}
+                  className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"
+                  tabIndex={0}
+                  aria-label="Files"
+                >
+                  Files
                 </button>
                 <button
                   onClick={() => handleSearch("/signout")}

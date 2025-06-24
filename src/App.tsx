@@ -17,6 +17,8 @@ import {
   EditProfile,
   Notes,
   Note,
+  Files,
+  File,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -154,6 +156,19 @@ function App() {
 
                 {/* Displays a note (Allows to edit if you're the note owner) */}
                 <Route path="/notes/:noteId" element={<Note />} />
+
+                {/* View all your notes */}
+                <Route
+                  path="/files"
+                  element={
+                    <Protector>
+                      <Files />
+                    </Protector>
+                  }
+                />
+
+                {/* Displays a file */}
+                <Route path="/files/:fileId" element={<File />} />
 
                 <Route path="/test" element={<PDFViewer />} />
               </Routes>

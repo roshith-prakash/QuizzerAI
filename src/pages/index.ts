@@ -15,6 +15,8 @@ import Profile from "./Profile";
 import User from "./User";
 import Notes from "./Notes";
 import Note from "./Note";
+import Files from "./Files";
+import File from "./File";
 
 export {
   Home,
@@ -35,4 +37,6 @@ export {
   User,
   Notes,
   Note,
+  Files,
+  File,
 };
