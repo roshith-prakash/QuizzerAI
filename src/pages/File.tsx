@@ -2,7 +2,12 @@ import "@/utils/pdfWorker";
 import { TiArrowSortedUp } from "react-icons/ti";
 import { Document, Page } from "react-pdf";
 import { useEffect, useState } from "react";
-import { Input, PrimaryButton, SecondaryButton } from "@/components";
+import {
+  ErrorStatement,
+  Input,
+  PrimaryButton,
+  SecondaryButton,
+} from "@/components";
 
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
@@ -36,6 +41,8 @@ function File() {
 
   const { fileId } = useParams();
   const { dbUser } = useDBUser();
+
+  const [fileNameError, setFileNameError] = useState<number>(0);
 
   const navigate = useNavigate();
 
@@ -123,6 +130,18 @@ function File() {
 
   // Rename a file
   const renameFile = () => {
+    setFileNameError(0);
+
+    if (fileName == null || fileName == undefined || fileName.length <= 0) {
+      setFileNameError(1);
+      return;
+    } else if (fileName?.length > 50) {
+      setFileNameError(2);
+      return;
+    }
+
+    setFileNameError(0);
+
     axiosInstance
       ?.post("/file/update-file-name", {
         fileId: data?.data?.file?.assetId,
@@ -208,9 +227,55 @@ function File() {
           {/* Subtitle */}
           <Input
             value={fileName}
-            onChange={(e) => setFileName(e.target.value)}
-            placeholder="Add Note Title..."
+            onChange={(e) => {
+              setFileName(e.target.value);
+
+              if (
+                e.target.value != null &&
+                e.target.value != undefined &&
+                e.target.value.length > 0 &&
+                e.target.value?.length < 50
+              ) {
+                setFileNameError(0);
+              }
+            }}
+            onBlur={(e) => {
+              if (
+                e.target.value == null ||
+                e.target.value == undefined ||
+                e.target.value.length <= 0
+              ) {
+                setFileNameError(1);
+                return;
+              } else if (e.target.value?.length > 50) {
+                setFileNameError(2);
+                return;
+              }
+            }}
+            placeholder="Add Filename..."
           />
+
+          {/* Error + Length */}
+          <div className="flex w-full justify-between">
+            <div>
+              <ErrorStatement
+                isOpen={fileNameError == 1}
+                text={"Please enter filename."}
+              />
+
+              <ErrorStatement
+                isOpen={fileNameError == 2}
+                text={"Filename cannot exceed 50 characters."}
+              />
+            </div>
+            <p
+              className={`text-right mt-0.5 mr-0.5 ${
+                fileName?.length > 50 && "text-red-500"
+              }`}
+            >
+              {fileName?.length}/50
+            </p>
+          </div>
 
           {/* Buttons */}
           <div className="mt-5 flex gap-x-5 justify-end">

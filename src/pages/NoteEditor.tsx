@@ -75,6 +75,11 @@ const NoteEditor = () => {
 
   // Auto save the note
   useEffect(() => {
+    if (!title || title?.length > 50) {
+      return;
+    }
+
+    // Saving the note
     if (data?.data && debouncedTitle && !isLoading && !error) {
       // Save the note
       const savePromise = axiosInstance.post("/note/update-note", {
@@ -84,12 +89,6 @@ const NoteEditor = () => {
         content: debouncedContent,
         isPublic: debouncedPublicState,
       });
-
-      // savePromise.then(() => {
-      //   queryClient.invalidateQueries({
-      //     queryKey: ["notes", dbUser?.id],
-      //   });
-      // });
 
       // Display toast
       toast.promise(
@@ -123,10 +122,6 @@ const NoteEditor = () => {
       queryClient.invalidateQueries({
         queryKey: ["notes", dbUser?.id],
       });
-
-      // queryClient.invalidateQueries({
-      //   queryKey: ["note-editor", noteId],
-      // });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -337,8 +332,18 @@ const NoteEditor = () => {
         {/* Title Input */}
         <HoverError
           position="top"
-          text="A Title is required for the note."
-          displayed={!isLoading && !error && !title}
+          text={(() => {
+            if (!title) {
+              return "Title is required for the note";
+            }
+
+            if (title.length > 50) {
+              return "Title cannot exceed 50 characters";
+            }
+
+            return "a";
+          })()}
+          displayed={!isLoading && !error && (!title || title.length > 50)}
           className="!left-0 text-md !translate-x-0 text-red-500"
         >
           <input

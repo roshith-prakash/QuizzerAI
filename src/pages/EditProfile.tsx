@@ -278,15 +278,26 @@ const EditProfile = () => {
                 placeholder={"Enter your name"}
               />
 
-              <ErrorStatement
-                isOpen={error.name == 1}
-                text={"Please enter your name."}
-              />
+              <div className="flex w-full justify-between">
+                <div>
+                  <ErrorStatement
+                    isOpen={error.name == 1}
+                    text={"Please enter your name."}
+                  />
 
-              <ErrorStatement
-                isOpen={error.name == 2}
-                text={"Name cannot exceed 30 characters."}
-              />
+                  <ErrorStatement
+                    isOpen={error.name == 2}
+                    text={"Name cannot exceed 30 characters."}
+                  />
+                </div>
+                <p
+                  className={`text-right mt-0.5 mr-0.5 ${
+                    name?.length > 30 && "text-red-500"
+                  }`}
+                >
+                  {name?.length}/30
+                </p>
+              </div>
             </div>
 
             {/* Username Input field */}
@@ -330,25 +341,37 @@ const EditProfile = () => {
                 placeholder={"Enter a username"}
               />
 
-              <ErrorStatement
-                isOpen={error.username == 1}
-                text={"Please enter a username."}
-              />
+              <div className="flex w-full justify-between">
+                <div>
+                  {" "}
+                  <ErrorStatement
+                    isOpen={error.username == 1}
+                    text={"Please enter a username."}
+                  />
+                  <ErrorStatement
+                    isOpen={error.username == 2}
+                    text={"Username already exists."}
+                  />
+                  <ErrorStatement
+                    isOpen={error.username == 3}
+                    text={"Username cannot exceed 20 characters."}
+                  />
+                  <ErrorStatement
+                    isOpen={error.username == 4}
+                    text={
+                      "Username can contain alphabets, numbers and underscore."
+                    }
+                  />
+                </div>
 
-              <ErrorStatement
-                isOpen={error.username == 2}
-                text={"Username already exists."}
-              />
-
-              <ErrorStatement
-                isOpen={error.username == 3}
-                text={"Username cannot exceed 20 characters."}
-              />
-
-              <ErrorStatement
-                isOpen={error.username == 4}
-                text={"Username can contain alphabets, numbers and underscore."}
-              />
+                <p
+                  className={`text-right mt-0.5 mr-0.5 ${
+                    username?.length > 20 && "text-red-500"
+                  }`}
+                >
+                  {username?.length}/20
+                </p>
+              </div>
             </div>
           </div>
 

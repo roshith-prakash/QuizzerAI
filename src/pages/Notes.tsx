@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import useDebounce from "../utils/useDebounce";
-import { Input, PrimaryButton, SecondaryButton } from "../components";
+import {
+  ErrorStatement,
+  Input,
+  PrimaryButton,
+  SecondaryButton,
+} from "../components";
 import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -25,10 +30,13 @@ const Notes = () => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState<boolean>(false);
+
   // State for user input - passed to debouncer
   const [search, setSearch] = useState("");
   // Debouncing the input of the user
   const debouncedSearch = useDebounce(search);
+  // Note title errors
+  const [noteTitleError, setNoteTitleError] = useState<number>(0);
 
   const { dbUser } = useDBUser();
   const navigate = useNavigate();
@@ -112,7 +120,20 @@ const Notes = () => {
       });
   };
 
+  // Rename the note
   const renameNote = () => {
+    setNoteTitleError(0);
+
+    if (noteTitle == null || noteTitle == undefined || noteTitle.length <= 0) {
+      setNoteTitleError(1);
+      return;
+    } else if (noteTitle?.length > 50) {
+      setNoteTitleError(2);
+      return;
+    }
+
+    setNoteTitleError(0);
+
     axiosInstance
       ?.post("/note/rename-note", {
         noteId,
@@ -187,15 +208,62 @@ const Notes = () => {
             Rename this note
           </h1>
 
+          {/* Subtitle */}
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Give your note a new name to help you find it later.
           </p>
 
           <Input
             value={noteTitle}
-            onChange={(e) => setNoteTitle(e.target.value)}
+            onChange={(e) => {
+              setNoteTitle(e.target.value);
+
+              if (
+                e.target.value != null &&
+                e.target.value != undefined &&
+                e.target.value.length > 0 &&
+                e.target.value?.length < 50
+              ) {
+                setNoteTitleError(0);
+              }
+            }}
+            onBlur={(e) => {
+              if (
+                e.target.value == null ||
+                e.target.value == undefined ||
+                e.target.value.length <= 0
+              ) {
+                setNoteTitleError(1);
+                return;
+              } else if (e.target.value?.length > 50) {
+                setNoteTitleError(2);
+                return;
+              }
+            }}
             placeholder="Add Note Title..."
           />
+
+          {/* Error + Length */}
+          <div className="flex w-full justify-between">
+            <div>
+              <ErrorStatement
+                isOpen={noteTitleError == 1}
+                text={"Please enter note title."}
+              />
+
+              <ErrorStatement
+                isOpen={noteTitleError == 2}
+                text={"Note Title cannot exceed 50 characters."}
+              />
+            </div>
+            <p
+              className={`text-right mt-0.5 mr-0.5 ${
+                noteTitle?.length > 50 && "text-red-500"
+              }`}
+            >
+              {noteTitle?.length}/50
+            </p>
+          </div>
 
           {/* Buttons */}
           <div className="mt-5 flex gap-x-5 justify-end">

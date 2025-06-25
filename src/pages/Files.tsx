@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import useDebounce from "../utils/useDebounce";
-import { Input, PrimaryButton, SecondaryButton } from "../components";
+import {
+  ErrorStatement,
+  Input,
+  PrimaryButton,
+  SecondaryButton,
+} from "../components";
 import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -20,19 +25,23 @@ import AlertModal from "@/components/reuseit/AlertModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import dayjs from "dayjs";
+import { AxiosError, AxiosResponse } from "axios";
 
 const Files = () => {
   const [noteId, setNoteId] = useState<string>("");
-  const [noteTitle, setNoteTitle] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState<boolean>(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // State for user input - passed to debouncer
   const [search, setSearch] = useState("");
   // Debouncing the input of the user
   const debouncedSearch = useDebounce(search);
+
+  const [fileNameError, setFileNameError] = useState<number>(0);
 
   const [files, setFiles] = useState<File[]>([]);
 
@@ -75,32 +84,39 @@ const Files = () => {
     const formData = new FormData();
 
     files.forEach((file) => {
-      formData.append("files", file); // 'files' is the key your server should accept
+      formData.append("files", file);
     });
 
     formData.append("userId", dbUser?.id);
 
-    try {
-      const response = await axiosInstance.post(
-        "/file/upload-files",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    setIsUploading(true);
 
-      queryClient.invalidateQueries({
-        queryKey: ["files", dbUser?.id, debouncedSearch],
-      });
-
-      console.log("Upload successful", response.data);
-      toast.success("Upload successful");
-    } catch (error) {
-      console.error("Upload failed", error);
-      toast.error("Upload failed");
-    }
+    await toast.promise(
+      axiosInstance.post("/file/upload-files", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+      {
+        loading: "Uploading...",
+        success: (res: AxiosResponse) => {
+          queryClient.invalidateQueries({
+            queryKey: ["files", dbUser?.id, debouncedSearch],
+          });
+          setIsUploading(false);
+          console.log("Upload successful", res.data);
+          return "Upload successful";
+        },
+        error: (err: AxiosError) => {
+          setIsUploading(false);
+          console.error("Upload failed", err);
+          return "Upload failed";
+        },
+      },
+      {
+        position: "bottom-right",
+      }
+    );
   };
 
   //  Page Title
@@ -163,11 +179,23 @@ const Files = () => {
 
   // Rename a file
   const renameFile = () => {
+    setFileNameError(0);
+
+    if (fileName == null || fileName == undefined || fileName.length <= 0) {
+      setFileNameError(1);
+      return;
+    } else if (fileName?.length > 50) {
+      setFileNameError(2);
+      return;
+    }
+
+    setFileNameError(0);
+
     axiosInstance
       ?.post("/file/update-file-name", {
         fileId: noteId,
         userId: dbUser?.id,
-        fileName: noteTitle,
+        fileName: fileName,
       })
       .then(() => {
         queryClient.invalidateQueries({
@@ -248,6 +276,7 @@ const Files = () => {
 
           {/* Button to select an image */}
           <button
+            disabled={isUploading}
             onClick={() => {
               if (fileRef?.current) fileRef.current.click();
             }}
@@ -299,11 +328,61 @@ const Files = () => {
           </h1>
 
           {/* Subtitle */}
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Give your file a new name to help you find it later.
+          </p>
+
           <Input
-            value={noteTitle}
-            onChange={(e) => setNoteTitle(e.target.value)}
-            placeholder="Add Note Title..."
+            value={fileName}
+            onChange={(e) => {
+              setFileName(e.target.value);
+
+              if (
+                e.target.value != null &&
+                e.target.value != undefined &&
+                e.target.value.length > 0 &&
+                e.target.value?.length < 50
+              ) {
+                setFileNameError(0);
+              }
+            }}
+            onBlur={(e) => {
+              if (
+                e.target.value == null ||
+                e.target.value == undefined ||
+                e.target.value.length <= 0
+              ) {
+                setFileNameError(1);
+                return;
+              } else if (e.target.value?.length > 50) {
+                setFileNameError(2);
+                return;
+              }
+            }}
+            placeholder="Add Filename..."
           />
+
+          {/* Error + Length */}
+          <div className="flex w-full justify-between">
+            <div>
+              <ErrorStatement
+                isOpen={fileNameError == 1}
+                text={"Please enter filename."}
+              />
+
+              <ErrorStatement
+                isOpen={fileNameError == 2}
+                text={"Filename cannot exceed 50 characters."}
+              />
+            </div>
+            <p
+              className={`text-right mt-0.5 mr-0.5 ${
+                fileName?.length > 50 && "text-red-500"
+              }`}
+            >
+              {fileName?.length}/50
+            </p>
+          </div>
 
           {/* Buttons */}
           <div className="mt-5 flex gap-x-5 justify-end">
@@ -333,9 +412,10 @@ const Files = () => {
               Files
             </h1>
 
-            {/* Create a new note */}
+            {/* Upload a new file */}
             <SecondaryButton
               className="border-transparent dark:hover:!text-cta dark:disabled:hover:!text-gray-400 shadow-md"
+              disabled={isUploading}
               text={
                 <div className="flex gap-x-2 items-center">
                   <IoMdAddCircleOutline className="text-2xl" />
@@ -416,7 +496,7 @@ const Files = () => {
                                     <button
                                       onClick={() => {
                                         setNoteId(file?.assetId);
-                                        setNoteTitle(file?.fileName);
+                                        setFileName(file?.fileName);
                                         setIsRenameModalOpen(true);
                                       }}
                                       className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA w-full flex items-center gap-x-2 justify-center hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
