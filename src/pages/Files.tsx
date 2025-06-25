@@ -378,7 +378,7 @@ const Files = () => {
                     if (file?.fileName) {
                       return (
                         <div
-                          key={file?.noteId}
+                          key={file?.assetId}
                           className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer"
                           onClick={() => navigate(`/files/${file?.assetId}`)}
                         >
@@ -430,10 +430,10 @@ const Files = () => {
                             </Popover>
                           </div>
                           <div className="flex-1">
-                            <p className="text-xl mb-4 mr-6 line-clamp-2 font-semibold">
+                            <p className="text-xl mb-4 mr-6 line-clamp-1 font-semibold">
                               {file?.fileName}
                             </p>
-                            <p className="text-md text-justify line-clamp-6 dark:text-white/80 text-darkbg/70">
+                            <p className="text-md text-justify line-clamp-1 dark:text-white/80 text-darkbg/70">
                               Uploaded on{" "}
                               {dayjs(new Date(file?.createdAt)).format(
                                 "MMM DD, YYYY"

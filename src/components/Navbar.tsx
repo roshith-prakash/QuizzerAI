@@ -19,6 +19,41 @@ import { FaUserPlus } from "react-icons/fa6";
 import { PiSignOutFill } from "react-icons/pi";
 import Avatar from "./reuseit/Avatar";
 import AlertModal from "./reuseit/AlertModal";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "./ui/navigation-menu";
+import { cn } from "@/lib/utils";
+
+const ListItem = ({
+  className,
+  title,
+  to,
+  ...props
+}: {
+  className: string;
+  title: string;
+  to: string;
+}) => {
+  return (
+    <NavigationMenuLink asChild>
+      <Link
+        to={to}
+        className={cn(
+          "block w-full select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors  focus:bg-accent focus:text-accent-foreground font-medium text-nowrap",
+          className
+        )}
+        {...props}
+      >
+        {title}
+      </Link>
+    </NavigationMenuLink>
+  );
+};
 
 const Navbar = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode() as ContextValue;
@@ -141,6 +176,33 @@ const Navbar = () => {
               >
                 Files
               </Link>
+              {/* Pop-out menu to display quiz links */}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-2xl font-semibold ">
+                      Quizzes
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="p-2">
+                      <ListItem
+                        to="/flashcard"
+                        title="FlashCard"
+                        className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                      ></ListItem>
+                      <ListItem
+                        to="/mcq"
+                        title="MCQ"
+                        className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                      ></ListItem>
+                      <ListItem
+                        to="/fact-or-not"
+                        title="Fact or Not"
+                        className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                      ></ListItem>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
               <button
                 onClick={() => setIsSignOutModalOpen(true)}
                 className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA transition-all"
@@ -506,6 +568,33 @@ const Navbar = () => {
                 >
                   Files
                 </button>
+                {/* Pop-out menu to display quiz links */}
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className="text-3xl font-semibold ">
+                        Quizzes
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="p-2">
+                        <ListItem
+                          to="/flashcard"
+                          title="FlashCard"
+                          className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                        ></ListItem>
+                        <ListItem
+                          to="/mcq"
+                          title="MCQ"
+                          className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                        ></ListItem>
+                        <ListItem
+                          to="/fact-or-not"
+                          title="Fact or Not"
+                          className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                        ></ListItem>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
                 <button
                   onClick={() => handleSearch("/signout")}
                   className="hover:text-cta dark:hover-darkmodeCTA w-fit cursor-pointer transition-all"

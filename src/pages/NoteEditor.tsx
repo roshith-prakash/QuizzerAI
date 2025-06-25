@@ -18,13 +18,13 @@ import { useDBUser } from "@/context/UserContext";
 import HoverError from "@/components/reuseit/HoverError";
 import AlertModal from "@/components/reuseit/AlertModal";
 import Modal from "@/components/reuseit/Modal";
-import Switch from "@/components/reuseit/Switch";
 
 import { PrimaryButton, SecondaryButton } from "@/components";
 import QuillToolbar, { formats, modules } from "@/components/QuillToolbar";
 
 import { Popover, PopoverClose } from "@radix-ui/react-popover";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Globe, Lock } from "lucide-react";
 
 // --------------------------------------------------------------------
 
@@ -249,16 +249,86 @@ const NoteEditor = () => {
           <h2 className="dark:text-darkmodetext mt-1 text-base text-darkbg/80">
             Public notes will be visible on your profile.
           </h2>
-          <div className="flex items-center py-4 justify-center">
-            <Switch
-              checked={isPublic}
-              onChange={() => {
-                setIsPublic((prev) => !prev);
-              }}
-            />
-            <label className="font-semibold text-xl">
-              {isPublic ? "Public" : "Private"}
-            </label>
+          <div className="grid mt-4 grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Public Option */}
+            <div
+              onClick={() => setIsPublic(true)}
+              className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
+                isPublic
+                  ? "border-cta dark:border-darkmodeCTA bg-cta/10 dark:bg-cta/30"
+                  : "border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    isPublic
+                      ? "bg-cta/10 dark:bg-cta/30"
+                      : "bg-slate-100 dark:bg-slate-700"
+                  }`}
+                >
+                  <Globe
+                    className={`w-4 h-4 ${
+                      isPublic
+                        ? "text-cta dark:text-darkmodeCTA"
+                        : "text-slate-500"
+                    }`}
+                  />
+                </div>
+                <h3
+                  className={`font-semibold ${
+                    isPublic
+                      ? "text-cta dark:text-white"
+                      : "text-slate-900 dark:text-white"
+                  }`}
+                >
+                  Public Note
+                </h3>
+              </div>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                This note is public and visible to everyone.
+              </p>
+            </div>
+
+            {/* Private Option */}
+            <div
+              onClick={() => setIsPublic(false)}
+              className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
+                !isPublic
+                  ? "border-cta dark:border-darkmodeCTA bg-cta/10 dark:bg-cta/30"
+                  : "border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    !isPublic
+                      ? "bg-cta/10 dark:bg-cta/30"
+                      : "bg-slate-100 dark:bg-slate-700"
+                  }`}
+                >
+                  <Lock
+                    className={`w-4 h-4 ${
+                      !isPublic
+                        ? "text-cta dark:text-darkmodeCTA"
+                        : "text-slate-500"
+                    }`}
+                  />
+                </div>
+                <h3
+                  className={`font-semibold ${
+                    !isPublic
+                      ? "text-cta dark:text-white"
+                      : "text-slate-900 dark:text-white"
+                  }`}
+                >
+                  Private Note
+                </h3>
+              </div>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                This note is private and only visible to you.
+              </p>
+            </div>
           </div>
         </div>
       </Modal>

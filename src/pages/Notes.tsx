@@ -187,7 +187,10 @@ const Notes = () => {
             Rename this note
           </h1>
 
-          {/* Subtitle */}
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Give your note a new name to help you find it later.
+          </p>
+
           <Input
             value={noteTitle}
             onChange={(e) => setNoteTitle(e.target.value)}
@@ -266,7 +269,7 @@ const Notes = () => {
                       return (
                         <div
                           key={note?.noteId}
-                          className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer"
+                          className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer hover:scale-105 duration-150"
                           onClick={() => navigate(`/notes/${note?.noteId}`)}
                         >
                           <div

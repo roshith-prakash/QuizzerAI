@@ -201,6 +201,10 @@ function File() {
             Rename this file
           </h1>
 
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Give your file a new name to help you find it later.
+          </p>
+
           {/* Subtitle */}
           <Input
             value={fileName}

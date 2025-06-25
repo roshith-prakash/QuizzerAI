@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { PrimaryButton } from "../components";
 import { ContextValue, useDarkMode } from "../context/DarkModeContext";
+import { useEffect } from "react";
 
 const Home = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode() as ContextValue;
+
+  useEffect(() => {
+    document.title = `Home | Quizzer AI`;
+  }, []);
 
   return (
     <div
