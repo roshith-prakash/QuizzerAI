@@ -1,5 +1,10 @@
 import { useDBUser } from "@/context/UserContext";
-import { PrimaryButton, ErrorStatement, Input } from "@/components";
+import {
+  PrimaryButton,
+  ErrorStatement,
+  Input,
+  SecondaryButton,
+} from "@/components";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { axiosInstance } from "@/utils/axios";
@@ -7,6 +12,11 @@ import toast from "react-hot-toast";
 import { isValidUsername } from "@/utils/regexFunctions";
 import { ContextValue, useDarkMode } from "@/context/DarkModeContext";
 import { useNavigate } from "react-router-dom";
+
+import Cropper from "react-easy-crop";
+import getCroppedImg from "../utils/cropImage"; // (You'll add this util below)
+import Modal from "@/components/reuseit/Modal"; // optional: modal component for cropping
+import { compressImage } from "@/utils/compressImage";
 
 const EditProfile = () => {
   const { isDarkMode } = useDarkMode() as ContextValue;
@@ -28,6 +38,13 @@ const EditProfile = () => {
     username: 0,
   });
   const navigate = useNavigate();
+
+  // Image Crop States
+  const [showCropper, setShowCropper] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Scroll to the top of page
   useEffect(() => {
@@ -51,15 +68,19 @@ const EditProfile = () => {
   // Set the received image in the state.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFileChange = (e: any) => {
-    if (fileRef?.current) {
-      setImage(e.target.files[0]);
-      // @ts-expect-error must assign null
-      fileRef.current.value = null;
-    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    setShowCropper(true);
+
+    // Clear input
+    // @ts-expect-error null
+    if (fileRef?.current) fileRef.current.value = null;
   };
 
   // Submit the data to the server to edit the user object.
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Reset Errors
     setError({
       name: 0,
@@ -96,7 +117,7 @@ const EditProfile = () => {
       // Check if username is already in use.
       axiosInstance
         .post("/user/check-username", { username: username?.toLowerCase() })
-        .then((res) => {
+        .then(async (res) => {
           // If username already exists - show an error
           if (res.data?.exists) {
             setDisabled(false);
@@ -110,7 +131,8 @@ const EditProfile = () => {
 
             // If image is added - add a file
             if (image && typeof image != "string") {
-              formData.append("file", image);
+              const compressedFile = await compressImage(image);
+              formData.append("file", compressedFile);
             }
 
             // Add details in the user object
@@ -157,7 +179,8 @@ const EditProfile = () => {
 
       // If image is added - add a file
       if (image && typeof image != "string") {
-        formData.append("file", image);
+        const compressedFile = await compressImage(image);
+        formData.append("file", compressedFile);
       }
 
       // Add details in the user object
@@ -193,6 +216,47 @@ const EditProfile = () => {
 
   return (
     <>
+      {showCropper && selectedFile && (
+        <Modal
+          className="px-0 py-0 pb-5"
+          isOpen={showCropper}
+          onClose={() => setShowCropper(false)}
+        >
+          <div className="relative w-full h-[400px] bg-black">
+            <Cropper
+              image={URL.createObjectURL(selectedFile)}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={(_, croppedAreaPixels) => {
+                // @ts-expect-error type issue with state
+                setCroppedAreaPixels(croppedAreaPixels);
+              }}
+            />
+          </div>
+          <div className="flex justify-end px-5 gap-4 mt-4">
+            <PrimaryButton
+              onClick={async () => {
+                const croppedImage = await getCroppedImg(
+                  URL.createObjectURL(selectedFile),
+                  croppedAreaPixels
+                );
+                // @ts-expect-error type issue with state
+                setImage(croppedImage);
+                setShowCropper(false);
+              }}
+              text="Crop & Use"
+            ></PrimaryButton>
+            <SecondaryButton
+              text="Cancel"
+              onClick={() => setShowCropper(false)}
+            ></SecondaryButton>
+          </div>
+        </Modal>
+      )}
+
       <div className="min-h-[70vh] md:min-h-[65vh] lg:min-h-[60vh] bg-bgwhite flex items-center justify-center pt-12 pb-32">
         <div className="bg-white dark:bg-secondarydarkbg dark:border-white/10 dark:border-2 w-full dark:bg-darkgrey dark:text-darkmodetext border-1 max-w-[95%] md:max-w-3xl md:mt-5 lg:mt-5 p-5 md:px-20 shadow-xl rounded-xl pb-10">
           {/* Title */}
