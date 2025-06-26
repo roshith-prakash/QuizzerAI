@@ -23,6 +23,7 @@ import { FaEye, FaTrash } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import AlertModal from "@/components/reuseit/AlertModal";
 import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 const Notes = () => {
   const [noteId, setNoteId] = useState<string>("");
@@ -94,9 +95,15 @@ const Notes = () => {
         });
         navigate(`/notes/${res?.data?.note?.noteId}`);
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         console.log(err);
-        toast.error("Could not create note!");
+        if (err?.response?.status == 403) {
+          toast.error(
+            "Note limit exceeded. Please delete existing notes to add new ones."
+          );
+        } else {
+          toast.error("Could not create note!");
+        }
       });
   };
 

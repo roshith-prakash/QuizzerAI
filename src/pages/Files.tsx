@@ -8,7 +8,7 @@ import {
 } from "../components";
 import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { useInView } from "react-intersection-observer";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { useDBUser } from "@/context/UserContext";
@@ -50,10 +50,63 @@ const Files = () => {
 
   const queryClient = useQueryClient();
 
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
   // Intersection observer to fetch new leagues
   const { ref, inView } = useInView();
 
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  //  Page Title
+  useEffect(() => {
+    document.title = "Your Files | Quizzer AI";
+  }, []);
+
+  // Get number of files
+  const { data: numberOfFiles } = useQuery({
+    queryKey: ["numberOfFiles", dbUser?.id],
+    queryFn: () => {
+      return axiosInstance.post("/file/get-number-of-files", {
+        userId: dbUser?.id,
+      });
+    },
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+  });
+
+  // Fetching searched files
+  const {
+    data: dbFiles,
+    isLoading: loadingFiles,
+    // error: notesError,
+    fetchNextPage: fetchNextFiles,
+  } = useInfiniteQuery({
+    queryKey: ["files", dbUser?.id, debouncedSearch],
+    queryFn: ({ pageParam }) => {
+      return axiosInstance.post("/file/get-files-for-user", {
+        searchTerm: debouncedSearch,
+        page: pageParam,
+        userId: dbUser?.id,
+      });
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage?.data?.nextPage;
+    },
+    initialPageParam: 0,
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+  });
+
+  // Fetching more files
+  useEffect(() => {
+    if (inView) {
+      fetchNextFiles();
+    }
+  }, [inView, fetchNextFiles, dbFiles?.pages?.length]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
@@ -80,7 +133,13 @@ const Files = () => {
     }
   };
 
+  // Upload files
   const handleUpload = async () => {
+    if (files?.length + numberOfFiles?.data?.fileCount > 5) {
+      toast.error("File limit exceeded.");
+      return;
+    }
+
     const formData = new FormData();
 
     files.forEach((file) => {
@@ -91,18 +150,25 @@ const Files = () => {
 
     setIsUploading(true);
 
+    const uploadPromise = axiosInstance.post("/file/upload-files", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
     await toast.promise(
-      axiosInstance.post("/file/upload-files", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }),
+      uploadPromise,
       {
         loading: "Uploading...",
         success: (res: AxiosResponse) => {
           queryClient.invalidateQueries({
             queryKey: ["files", dbUser?.id, debouncedSearch],
           });
+          queryClient.invalidateQueries({
+            queryKey: ["numberOfFiles", dbUser?.id],
+          });
+
+          setFiles([]);
           setIsUploading(false);
           console.log("Upload successful", res.data);
           return "Upload successful";
@@ -119,44 +185,6 @@ const Files = () => {
     );
   };
 
-  //  Page Title
-  useEffect(() => {
-    document.title = "Your Files | Quizzer AI";
-  }, []);
-
-  // Fetching searched notes
-  const {
-    data: dbFiles,
-    isLoading: loadingFiles,
-    // error: notesError,
-    fetchNextPage: fetchNextNotes,
-  } = useInfiniteQuery({
-    queryKey: ["files", dbUser?.id, debouncedSearch],
-    queryFn: ({ pageParam }) => {
-      return axiosInstance.post("/file/get-files-for-user", {
-        searchTerm: debouncedSearch,
-        page: pageParam,
-        userId: dbUser?.id,
-      });
-    },
-    getNextPageParam: (lastPage) => {
-      return lastPage?.data?.nextPage;
-    },
-    initialPageParam: 0,
-    gcTime: 0,
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-  });
-
-  // Fetching more notes
-  useEffect(() => {
-    if (inView) {
-      fetchNextNotes();
-    }
-  }, [inView, fetchNextNotes, dbFiles?.pages?.length]);
-
   // Delete the note
   const deleteFile = () => {
     setIsDisabled(true);
@@ -166,6 +194,11 @@ const Files = () => {
         queryClient.invalidateQueries({
           queryKey: ["files", dbUser?.id, debouncedSearch],
         });
+
+        queryClient.invalidateQueries({
+          queryKey: ["numberOfFiles", dbUser?.id],
+        });
+
         setIsDisabled(false);
         toast("Deleted file.");
         setIsDeleteModalOpen(false);
@@ -257,13 +290,19 @@ const Files = () => {
         onClose={() => {
           setIsUploadModalOpen(false);
         }}
+        className="p-0"
         isOpen={isUploadModalOpen}
       >
-        <div className="flex flex-col gap-y-2">
-          {/* Title */}
-          <h1 className="dark:text-darkmodetext font-bold text-2xl">
-            Upload Files
-          </h1>
+        <div className="flex flex-col gap-6 p-6 bg-white dark:bg-white/5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+          {/* Header */}
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-50 dark:bg-white/10 rounded-lg">
+              <IoCloudUploadOutline className="w-5 h-5 text-cta" />
+            </div>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Upload Files
+            </h1>
+          </div>
 
           <input
             ref={fileRef}
@@ -274,40 +313,87 @@ const Files = () => {
             accept="application/pdf"
           />
 
-          {/* Button to select an image */}
-          <button
-            disabled={isUploading}
-            onClick={() => {
-              if (fileRef?.current) fileRef.current.click();
-            }}
-            className="cursor-pointer hover:bg-hovercta dark:hover:bg-cta hover:border-hovercta hover:text-white dark:hover:border-cta border-darkbg/25 dark:border-white/25 border-1 flex  gap-x-2 py-2 justify-center items-center px-14 shadow rounded-lg font-medium active:shadow transition-all disabled:text-greyText"
-          >
-            Upload <IoCloudUploadOutline className="translate-y-0.5" />
-          </button>
+          {/* Upload Area */}
+          <div className="relative">
+            <button
+              disabled={isUploading}
+              onClick={() => {
+                if (fileRef?.current) fileRef.current.click();
+              }}
+              className="w-full group relative overflow-hidden rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-cta dark:hover:border-darkmodeCTA transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+                <div className="p-3 bg-gray-50 dark:bg-white/10 rounded-full group-hover:bg-blue-50 dark:group-hover:bg-white/15 transition-colors duration-200 mb-4">
+                  <IoCloudUploadOutline className="w-8 h-8 text-gray-400 group-hover:text-cta dark:group-hover:text-darkmodeCTA transition-colors duration-200" />
+                </div>
+                <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {isUploading ? "Uploading..." : "Click to upload files"}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  PDF files only • Multiple files supported
+                </p>
+              </div>
+            </button>
+          </div>
 
-          {files &&
-            files?.length > 0 &&
-            files?.map((file) => {
-              return <p>{file?.name}</p>;
-            })}
+          {/* File List */}
+          {files && files.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Selected Files ({files.length})
+              </h3>
+              <div className="space-y-2 max-h-32 overflow-y-auto scroller pr-2">
+                {files.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-white/10 rounded-lg border border-gray-200 dark:border-gray-700"
+                  >
+                    <div className="p-1.5 bg-red-100 dark:bg-red-900/20 rounded">
+                      <svg
+                        className="w-4 h-4 text-red-600 dark:text-red-400"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-          {/* Buttons */}
-          <div className="mt-5 flex gap-x-5 justify-end">
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <PrimaryButton
               disabled={isDisabled}
-              disabledText="Please Wait..."
-              className="text-sm"
+              disabledText="Uploading..."
+              className="flex-1 justify-center"
               onClick={() => {
                 handleUpload();
                 setIsUploadModalOpen(false);
               }}
-              text="Upload"
+              text="Upload Files"
             />
             <SecondaryButton
               disabled={isDisabled}
               disabledText="Please Wait..."
-              className="text-sm text-black border-black hover:bg-black hover:border-black"
-              onClick={() => setIsUploadModalOpen(false)}
+              onClick={() => {
+                setIsUploadModalOpen(false);
+                setFiles([]);
+              }}
               text="Cancel"
             />
           </div>
@@ -448,7 +534,7 @@ const Files = () => {
             </p>
           )}
 
-          {/* Map notes if notes are found */}
+          {/* Map files if files are found */}
           {dbFiles && dbFiles?.pages?.[0]?.data?.files.length > 0 && (
             <div className="py-10 lg:px-5 flex justify-center flex-wrap gap-8">
               {dbFiles &&
@@ -562,7 +648,7 @@ const Files = () => {
             </div>
           )}
 
-          {/* If no notes are found */}
+          {/* If no files are found */}
           {dbFiles && dbFiles?.pages?.[0]?.data?.files.length == 0 && (
             <div className="flex flex-col justify-center pt-10">
               <div className="flex justify-center">
