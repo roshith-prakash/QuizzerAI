@@ -154,6 +154,13 @@ const NoteEditor = () => {
     };
   }, []);
 
+  // Set window title.
+  useEffect(() => {
+    if (data?.data?.note?.title) {
+      document.title = `${data?.data?.note?.title} | Quizzer AI`;
+    } else document.title = `Note | Quizzer AI`;
+  }, [data?.data]);
+
   // Delete the note
   const deleteNote = () => {
     setIsDisabled(true);

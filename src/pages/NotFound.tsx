@@ -4,10 +4,17 @@ import { useNavigate } from "react-router-dom";
 import doodle from "@/assets/SitReadingDoodle.svg";
 import doodleDark from "@/assets/SitReadingDoodleDark.svg";
 import { ContextValue, useDarkMode } from "@/context/DarkModeContext";
+import { useEffect } from "react";
 
 const NotFound = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode() as ContextValue;
+
+  //   Title
+  useEffect(() => {
+    document.title = `Not Found | Quizzer AI`;
+  }, []);
+
   return (
     <div className="h-screen font-poppins flex flex-col justify-center items-center gap-8">
       <img

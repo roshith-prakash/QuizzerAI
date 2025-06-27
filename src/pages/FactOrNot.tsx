@@ -52,6 +52,11 @@ const FactOrNot = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
+  // Set window title.
+  useEffect(() => {
+    document.title = `Fact or Not | Quizzer AI`;
+  }, []);
+
   // Fetch data on click of the button
   const handleClick = () => {
     setInputError(0);

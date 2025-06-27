@@ -46,6 +46,13 @@ const Note = () => {
     }
   }, [data?.data]);
 
+  // Set window title.
+  useEffect(() => {
+    if (data?.data?.note?.title) {
+      document.title = `${data?.data?.note?.title} | Quizzer AI`;
+    } else document.title = `Note | Quizzer AI`;
+  }, [data?.data]);
+
   // Loading Note
   if (isLoading) {
     return (

@@ -52,6 +52,11 @@ const MCQQuiz = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
+  //   Title
+  useEffect(() => {
+    document.title = `MCQ | Quizzer AI`;
+  }, []);
+
   // Fetch data on click of the button
   const handleClick = () => {
     setInputError(0);

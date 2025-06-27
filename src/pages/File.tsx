@@ -101,6 +101,13 @@ function File() {
     setInputPage("");
   }
 
+  // Set window title.
+  useEffect(() => {
+    if (data?.data?.file?.fileName) {
+      document.title = `${data?.data?.file?.fileName} | Quizzer AI`;
+    } else document.title = `File | Quizzer AI`;
+  }, [data?.data]);
+
   // Delete the note
   const deleteFile = () => {
     setIsDisabled(true);
