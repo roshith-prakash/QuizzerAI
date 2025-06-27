@@ -24,8 +24,7 @@ import toast from "react-hot-toast";
 import AlertModal from "@/components/reuseit/AlertModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-
-const maxNumberOfNotes = 10;
+import { maxNumberOfNotes } from "@/constants/constants";
 
 const Notes = () => {
   const [noteId, setNoteId] = useState<string>("");
@@ -317,6 +316,7 @@ const Notes = () => {
 
       <div className="min-h-[70vh] dark:bg-darkbg dark:text-darkmodetext md:min-h-[65vh] lg:min-h-[60vh] px-8 lg:px-10 py-10">
         <div>
+          {/* Header */}
           <div className="flex justify-between gap-x-4 items-center">
             <div className="flex items-center flex-wrap gap-4">
               {/* Title */}
@@ -331,6 +331,7 @@ const Notes = () => {
 
             {/* Create a new note */}
             <SecondaryButton
+              disabled={numberOfNotes?.data?.noteCount == maxNumberOfNotes}
               className="border-transparent dark:hover:!text-cta dark:disabled:hover:!text-gray-400 shadow-md"
               text={
                 <div className="flex gap-x-2 items-center">

@@ -27,9 +27,7 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 import dayjs from "dayjs";
 import { AxiosError, AxiosResponse } from "axios";
 import { Trash2 } from "lucide-react";
-
-const maxNumberOfFiles = 5;
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+import { MAX_FILE_SIZE, maxNumberOfFiles } from "@/constants/constants";
 
 const Files = () => {
   const [noteId, setNoteId] = useState<string>("");
@@ -540,7 +538,10 @@ const Files = () => {
             {/* Upload a new file */}
             <SecondaryButton
               className="border-transparent dark:hover:!text-cta dark:disabled:hover:!text-gray-400 shadow-md"
-              disabled={isUploading}
+              disabled={
+                isUploading ||
+                numberOfFiles?.data?.fileCount == maxNumberOfFiles
+              }
               text={
                 <div className="flex gap-x-2 items-center">
                   <IoMdAddCircleOutline className="text-2xl" />

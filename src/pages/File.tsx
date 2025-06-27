@@ -48,7 +48,10 @@ function File() {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
+  const {
+    data,
+    //  isLoading, error
+  } = useQuery({
     queryKey: ["file", fileId],
     queryFn: () => {
       return axiosInstance.post("/file/get-file-by-id", {
@@ -69,8 +72,6 @@ function File() {
       setFileName(data?.data?.file?.fileName);
     }
   }, [data?.data]);
-
-  console.log(isLoading, error);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
@@ -301,7 +302,8 @@ function File() {
       </AlertModal>
 
       {data?.data && (
-        <div className="max-w-3xl mx-auto flex flex-col">
+        <div className="max-w-[95%] md:max-w-3xl mx-auto flex flex-col">
+          {/* Title */}
           <div className="relative w-full mb-10 md:max-w-5xl mx-auto mt-10 px-4 py-6 bg-white dark:bg-white/5 rounded-xl shadow-sm">
             <p className="text-3xl pr-12 font-semibold">
               {data?.data?.file?.fileName}
@@ -338,54 +340,77 @@ function File() {
               </Popover>
             </div>
           </div>
-          <Document
-            // file="https://res.cloudinary.com/dvwdsxirc/image/upload/v1745254564/psych_iyhhu1.pdf"
-            file={data?.data?.file?.fileURL}
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            <div className="pointer-events-none">
-              <Page pageNumber={pageNumber} width={600} />
-            </div>
-          </Document>
-          <div className="flex justify-between items-center py-4 px-4 text-xl">
-            <button
-              className="cursor-pointer flex items-center gap-x-1"
-              onClick={prevPage}
-              disabled={pageNumber <= 1}
-            >
-              <TiArrowSortedUp className="rotate-[270deg]" />
-              Prev
-            </button>
 
-            <div className="flex gap-x-2 items-center">
-              <input
-                type="number"
-                min="1"
-                max={numPages || 1}
-                value={inputPage}
-                onChange={handleInputChange}
-                placeholder="Go to page"
-                className="w-28 px-2 py-1 border border-gray-300 rounded text-base"
-              />
-              <PrimaryButton
-                onClick={handlePageJump}
-                text="Go"
-                className="text-lg py-0.5"
-              ></PrimaryButton>
-            </div>
-
-            <button
-              className="cursor-pointer flex items-center gap-x-1"
-              onClick={nextPage}
-              disabled={pageNumber >= (numPages || 1)}
+          {/* PDF */}
+          <div className="w-fit mx-auto">
+            <Document
+              file={data?.data?.file?.fileURL}
+              onLoadSuccess={onDocumentLoadSuccess}
             >
-              Next
-              <TiArrowSortedUp className="rotate-90" />
-            </button>
+              <div className="pointer-events-none">
+                <Page pageNumber={pageNumber} width={600} />
+              </div>
+            </Document>
           </div>
-          <p className="text-center text-xl">
-            Page {pageNumber} of {numPages}
-          </p>
+
+          {/* Navigation Controls */}
+          <div className="flex flex-col items-center gap-2 py-4 px-4">
+            <div className="flex items-center justify-between w-full max-w-md gap-4">
+              {/* Previous Button */}
+              <button
+                onClick={prevPage}
+                disabled={pageNumber <= 1}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md border text-base transition 
+        ${
+          pageNumber <= 1
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-white hover:bg-gray-50 border-gray-300 text-gray-700 dark:bg-secondary dark:text-white dark:hover:bg-white/15 dark:border-white/1 cursor-pointer"
+        }`}
+              >
+                <TiArrowSortedUp className="rotate-[270deg]" />
+                Prev
+              </button>
+
+              {/* Page Input */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  max={numPages || 1}
+                  value={inputPage}
+                  onChange={handleInputChange}
+                  placeholder="Page"
+                  className="w-20 px-2 py-1 border border-gray-300 rounded-md text-base"
+                />
+                <PrimaryButton
+                  onClick={handlePageJump}
+                  text="Go"
+                  className="py-1 px-3 text-base"
+                />
+              </div>
+
+              {/* Next Button */}
+              <button
+                onClick={nextPage}
+                disabled={pageNumber >= (numPages || 1)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md border text-base transition 
+        ${
+          pageNumber >= (numPages || 1)
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-white hover:bg-gray-50 border-gray-300 text-gray-700 dark:bg-secondary dark:text-white dark:hover:bg-white/15 dark:border-white/1 cursor-pointer"
+        }`}
+              >
+                Next
+                <TiArrowSortedUp className="rotate-90" />
+              </button>
+            </div>
+
+            {/* Page Indicator */}
+            <p className="text-sm text-gray-600 dark:text-gray-200 mt-1">
+              Page <span className="font-medium">{pageNumber}</span> of{" "}
+              <span className="font-medium">{numPages}</span>
+            </p>
+          </div>
         </div>
       )}
     </div>
