@@ -26,6 +26,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import dayjs from "dayjs";
 import { AxiosError, AxiosResponse } from "axios";
+import { Trash2 } from "lucide-react";
+
+const maxNumberOfFiles = 5;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const Files = () => {
   const [noteId, setNoteId] = useState<string>("");
@@ -120,10 +124,17 @@ const Files = () => {
         )
       );
 
-      const filteredNewFiles = newFiles.filter(
-        (file) =>
-          !existing.has(`${file.name}-${file.size}-${file.lastModified}`)
-      );
+      const filteredNewFiles = newFiles.filter((file) => {
+        const uniqueKey = `${file.name}-${file.size}-${file.lastModified}`;
+        const isDuplicate = existing.has(uniqueKey);
+        const isTooLarge = file.size > MAX_FILE_SIZE;
+
+        if (isTooLarge) {
+          toast.error("Max size of file can be 5MB.");
+        }
+
+        return !isDuplicate && !isTooLarge;
+      });
 
       return [...prevFiles, ...filteredNewFiles];
     });
@@ -135,7 +146,7 @@ const Files = () => {
 
   // Upload files
   const handleUpload = async () => {
-    if (files?.length + numberOfFiles?.data?.fileCount > 5) {
+    if (files?.length + numberOfFiles?.data?.fileCount > maxNumberOfFiles) {
       toast.error("File limit exceeded.");
       return;
     }
@@ -245,6 +256,13 @@ const Files = () => {
       });
   };
 
+  // Remove file from list
+  const removeFile = (fileToRemove: File) => {
+    setFiles((prevFiles) =>
+      prevFiles.filter((file) => file.name !== fileToRemove.name)
+    );
+  };
+
   return (
     <>
       {/* Delete File Modal */}
@@ -343,34 +361,49 @@ const Files = () => {
                 Selected Files ({files.length})
               </h3>
               <div className="space-y-2 max-h-32 overflow-y-auto scroller pr-2">
-                {files.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-white/10 rounded-lg border border-gray-200 dark:border-gray-700"
-                  >
-                    <div className="p-1.5 bg-red-100 dark:bg-red-900/20 rounded">
-                      <svg
-                        className="w-4 h-4 text-red-600 dark:text-red-400"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
+                {files.map((file, index) => {
+                  const sizeInMB = file?.size / (1024 * 1024);
+                  const displaySize =
+                    sizeInMB > 0 && sizeInMB < 0.01
+                      ? "0.01"
+                      : sizeInMB.toFixed(2);
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex relative items-center gap-3 p-3 bg-gray-50 dark:bg-white/10 rounded-lg border border-gray-200 dark:border-white/10"
+                    >
+                      <div className="p-1.5 bg-red-100 dark:bg-red-900/20 rounded">
+                        <svg
+                          className="w-4 h-4 text-red-600 dark:text-red-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium line-clamp-1 max-w-xs text-gray-900 dark:text-white truncate">
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {displaySize} MB
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => removeFile(file)}
+                        className="absolute right-2 p-2 bg-red-700 hover:scale-110 transition-all text-white dark:bg-red-800 cursor-pointer rounded"
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                        <Trash2 className="h-5" />
+                      </button>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {file.name}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -509,6 +542,10 @@ const Files = () => {
                 </div>
               }
               onClick={() => {
+                if (numberOfFiles?.data?.fileCount >= maxNumberOfFiles) {
+                  toast.error("Max file limit reached!");
+                  return;
+                }
                 setIsUploadModalOpen(true);
               }}
             ></SecondaryButton>
