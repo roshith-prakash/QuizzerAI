@@ -8,7 +8,7 @@ import {
 } from "../components";
 import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
 import { useInView } from "react-intersection-observer";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { useDBUser } from "@/context/UserContext";
@@ -24,6 +24,8 @@ import toast from "react-hot-toast";
 import AlertModal from "@/components/reuseit/AlertModal";
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+
+const maxNumberOfNotes = 10;
 
 const Notes = () => {
   const [noteId, setNoteId] = useState<string>("");
@@ -51,6 +53,21 @@ const Notes = () => {
   useEffect(() => {
     document.title = "Your Notes | Quizzer AI";
   }, []);
+
+  // Get number of files
+  const { data: numberOfNotes } = useQuery({
+    queryKey: ["numberOfNotes", dbUser?.id],
+    queryFn: () => {
+      return axiosInstance.post("/note/get-number-of-notes", {
+        userId: dbUser?.id,
+      });
+    },
+    gcTime: 0,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+  });
 
   // Fetching searched notes
   const {
@@ -93,6 +110,9 @@ const Notes = () => {
         queryClient.invalidateQueries({
           queryKey: ["notes", dbUser?.id, debouncedSearch],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["numberOfNotes", dbUser?.id],
+        });
         navigate(`/notes/${res?.data?.note?.noteId}`);
       })
       .catch((err: AxiosError) => {
@@ -114,7 +134,10 @@ const Notes = () => {
       ?.post("/note/delete-note", { noteId, userId: dbUser?.id })
       .then(() => {
         queryClient.invalidateQueries({
-          queryKey: ["notes", dbUser?.id, debouncedSearch],
+          queryKey: ["notes", dbUser?.id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["numberOfNotes", dbUser?.id],
         });
         setIsDisabled(false);
         toast("Deleted note.");
@@ -295,10 +318,16 @@ const Notes = () => {
       <div className="min-h-[70vh] dark:bg-darkbg dark:text-darkmodetext md:min-h-[65vh] lg:min-h-[60vh] px-8 lg:px-10 py-10">
         <div>
           <div className="flex justify-between gap-x-4 items-center">
-            {/* Title */}
-            <h1 className="text-hovercta font-title dark:text-darkmodeCTA text-4xl md:text-5xl font-semibold">
-              Notes
-            </h1>
+            <div className="flex items-center flex-wrap gap-4">
+              {/* Title */}
+              <h1 className="text-hovercta font-title dark:text-darkmodeCTA text-4xl md:text-5xl font-semibold">
+                Notes
+              </h1>
+
+              <p className="font-body bg-cta text-white px-4 py-1 rounded-full">
+                {numberOfNotes?.data?.noteCount}/{maxNumberOfNotes} Notes
+              </p>
+            </div>
 
             {/* Create a new note */}
             <SecondaryButton

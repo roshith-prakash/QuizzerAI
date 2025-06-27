@@ -168,6 +168,10 @@ const NoteEditor = () => {
           queryKey: ["note-editor", noteId],
         });
 
+        queryClient.invalidateQueries({
+          queryKey: ["numberOfNotes", dbUser?.id],
+        });
+
         setIsDisabled(false);
         toast("Deleted note.");
         navigate("/notes");

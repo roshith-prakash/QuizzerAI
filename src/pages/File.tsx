@@ -113,6 +113,9 @@ function File() {
           queryKey: ["file", fileId],
         });
         queryClient.invalidateQueries({
+          queryKey: ["numberOfFiles", dbUser?.id],
+        });
+        queryClient.invalidateQueries({
           queryKey: ["files", dbUser?.id],
         });
 

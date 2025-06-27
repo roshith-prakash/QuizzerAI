@@ -203,7 +203,7 @@ const Files = () => {
       ?.post("/file/delete-file", { fileId: noteId, userId: dbUser?.id })
       .then(() => {
         queryClient.invalidateQueries({
-          queryKey: ["files", dbUser?.id, debouncedSearch],
+          queryKey: ["files", dbUser?.id],
         });
 
         queryClient.invalidateQueries({
@@ -526,10 +526,16 @@ const Files = () => {
       <div className="min-h-[70vh] dark:bg-darkbg dark:text-darkmodetext md:min-h-[65vh] lg:min-h-[60vh] px-8 lg:px-10 py-10">
         <div>
           <div className="flex justify-between gap-x-4 items-center">
-            {/* Title */}
-            <h1 className="text-hovercta font-title dark:text-darkmodeCTA text-4xl md:text-5xl font-semibold">
-              Files
-            </h1>
+            <div className="flex flex-wrap items-center gap-4">
+              {/* Title */}
+              <h1 className="text-hovercta font-title dark:text-darkmodeCTA text-4xl md:text-5xl font-semibold">
+                Files
+              </h1>
+
+              <p className="font-body bg-cta text-white px-4 py-1 rounded-full">
+                {numberOfFiles?.data?.fileCount}/{maxNumberOfFiles} Files
+              </p>
+            </div>
 
             {/* Upload a new file */}
             <SecondaryButton
