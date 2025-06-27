@@ -28,7 +28,6 @@ import { Navbar, Footer } from "./components";
 import { Toaster } from "react-hot-toast";
 import { ContextValue, useDarkMode } from "./context/DarkModeContext";
 import Protector from "./components/Protector";
-import PDFViewer from "./pages/PDFViewer";
 
 function App() {
   // Check if server is active / keep server active
@@ -169,8 +168,6 @@ function App() {
 
                 {/* Displays a file */}
                 <Route path="/files/:fileId" element={<File />} />
-
-                <Route path="/test" element={<PDFViewer />} />
               </Routes>
             </main>
             <Footer />
