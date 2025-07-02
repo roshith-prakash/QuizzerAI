@@ -30,7 +30,7 @@ import { Trash2 } from "lucide-react";
 import { MAX_FILE_SIZE, maxNumberOfFiles } from "@/constants/constants";
 
 const Files = () => {
-  const [noteId, setNoteId] = useState<string>("");
+  const [fileId, setFileId] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -171,7 +171,7 @@ const Files = () => {
         loading: "Uploading...",
         success: (res: AxiosResponse) => {
           queryClient.invalidateQueries({
-            queryKey: ["files", dbUser?.id, debouncedSearch],
+            queryKey: ["files", dbUser?.id],
           });
           queryClient.invalidateQueries({
             queryKey: ["numberOfFiles", dbUser?.id],
@@ -198,7 +198,7 @@ const Files = () => {
   const deleteFile = () => {
     setIsDisabled(true);
     axiosInstance
-      ?.post("/file/delete-file", { fileId: noteId, userId: dbUser?.id })
+      ?.post("/file/delete-file", { fileId: fileId, userId: dbUser?.id })
       .then(() => {
         queryClient.invalidateQueries({
           queryKey: ["files", dbUser?.id],
@@ -235,7 +235,7 @@ const Files = () => {
 
     axiosInstance
       ?.post("/file/update-file-name", {
-        fileId: noteId,
+        fileId: fileId,
         userId: dbUser?.id,
         fileName: fileName,
       })
@@ -611,7 +611,7 @@ const Files = () => {
                                   <PopoverClose>
                                     <button
                                       onClick={() => {
-                                        setNoteId(file?.assetId);
+                                        setFileId(file?.assetId);
                                         setIsDeleteModalOpen(true);
                                       }}
                                       className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-red-500 dark:hover:text-red-400 hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
@@ -625,7 +625,7 @@ const Files = () => {
                                   <PopoverClose>
                                     <button
                                       onClick={() => {
-                                        setNoteId(file?.assetId);
+                                        setFileId(file?.assetId);
                                         setFileName(file?.fileName);
                                         setIsRenameModalOpen(true);
                                       }}

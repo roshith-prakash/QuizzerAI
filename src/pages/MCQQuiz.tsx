@@ -23,13 +23,20 @@ const MCQQuiz = () => {
 
   const [inputError, setInputError] = useState(0);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [note, setNote] = useState<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [file, setFile] = useState<any>();
+
   // Fetch Questions from the API
   const { data, isLoading, error, isFetching, refetch } = useQuery({
     queryKey: ["getMCQQuestions", searchTerm, difficulty],
     queryFn: () => {
-      return axiosInstance.post("/getMCQs", {
+      return axiosInstance.post("/quiz/get-mcqs", {
         topic: searchTerm,
         difficulty: difficulty,
+        fileId: file?.assetId,
+        noteId: note?.noteId,
       });
     },
     refetchOnWindowFocus: false,
@@ -93,6 +100,10 @@ const MCQQuiz = () => {
         setSearchTerm={setSearchTerm}
         title={"MCQ Quiz"}
         text={"Your MCQs are ready!"}
+        file={file}
+        setFile={setFile}
+        note={note}
+        setNote={setNote}
       />
 
       {/* Div for MCQs */}

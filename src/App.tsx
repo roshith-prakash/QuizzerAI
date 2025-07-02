@@ -47,6 +47,7 @@ function App() {
     <div
       className={`bg-whitebg dark:bg-darkbg font-body dark:text-darkmodetext dark:placeholder:text-darkmodetext`}
     >
+      {/* Toaster for toasts */}
       <Toaster
         toastOptions={{
           style: {
@@ -156,7 +157,7 @@ function App() {
                 {/* Displays a note (Allows to edit if you're the note owner) */}
                 <Route path="/notes/:noteId" element={<Note />} />
 
-                {/* View all your notes */}
+                {/* View all your files */}
                 <Route
                   path="/files"
                   element={

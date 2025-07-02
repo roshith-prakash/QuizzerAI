@@ -23,13 +23,21 @@ const FactOrNot = () => {
 
   const [inputError, setInputError] = useState(0);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [note, setNote] = useState<any>();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [file, setFile] = useState<any>();
+
   // Fetch Questions from the API
   const { data, isLoading, error, isFetching, refetch } = useQuery({
     queryKey: ["getFactOrNot", searchTerm, difficulty],
     queryFn: () => {
-      return axiosInstance.post("/getFactOrNot", {
+      return axiosInstance.post("/quiz/get-fact-or-not", {
         topic: searchTerm,
         difficulty: difficulty,
+        fileId: file?.assetId,
+        noteId: note?.noteId,
       });
     },
     refetchOnWindowFocus: false,
@@ -93,6 +101,10 @@ const FactOrNot = () => {
         setSearchTerm={setSearchTerm}
         title={"Fact Or Not"}
         text={"Your questions are ready!"}
+        file={file}
+        setFile={setFile}
+        note={note}
+        setNote={setNote}
       />
 
       {/* Div for questions */}

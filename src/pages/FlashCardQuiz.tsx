@@ -11,22 +11,28 @@ const FlashCardQuiz = () => {
 
   // The topic for which flashcards need to be created
   const [searchTerm, setSearchTerm] = useState("");
-
   // The difficulty for the questions
   const [difficulty, setDifficulty] = useState("easy");
-
   // The questions array that is mapped for the flashcards
   const [questions, setQuestions] = useState([]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [note, setNote] = useState<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [file, setFile] = useState<any>();
+
+  // Error state
   const [inputError, setInputError] = useState(0);
 
   // Fetch Questions from the API
   const { data, isLoading, isFetching, error, refetch } = useQuery({
-    queryKey: ["getQuestions", searchTerm, difficulty],
+    queryKey: ["getFlashcards", searchTerm, difficulty],
     queryFn: () => {
-      return axiosInstance.post("/getQuestions", {
+      return axiosInstance.post("/quiz/get-flashcards", {
         topic: searchTerm,
         difficulty: difficulty,
+        fileId: file?.assetId,
+        noteId: note?.noteId,
       });
     },
     refetchOnWindowFocus: false,
@@ -70,77 +76,83 @@ const FlashCardQuiz = () => {
   };
 
   return (
-    <div
-      className={`${
-        isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
-      } bg-no-repeat bg-cover font-body min-h-screen`}
-    >
-      {/* Input for parameters */}
-      <InputBox
-        buttonText={"Generate FlashCards"}
-        difficulty={difficulty}
-        handleClick={handleClick}
-        inputError={inputError}
-        isFetching={isFetching}
-        isLoading={isLoading}
-        questions={questions}
-        searchTerm={searchTerm}
-        setDifficulty={setDifficulty}
-        setSearchTerm={setSearchTerm}
-        title={"FlashCards"}
-        text={"Your Flashcards are ready!"}
-      />
+    <>
+      <div
+        className={`${
+          isDarkMode ? "bg-animatedWaveDark" : "bg-animatedWave"
+        } bg-no-repeat bg-cover font-body min-h-screen`}
+      >
+        {/* Input for parameters */}
+        <InputBox
+          buttonText={"Generate FlashCards"}
+          difficulty={difficulty}
+          handleClick={handleClick}
+          inputError={inputError}
+          isFetching={isFetching}
+          isLoading={isLoading}
+          questions={questions}
+          searchTerm={searchTerm}
+          setDifficulty={setDifficulty}
+          setSearchTerm={setSearchTerm}
+          title={"FlashCards"}
+          text={"Your Flashcards are ready!"}
+          file={file}
+          setFile={setFile}
+          note={note}
+          setNote={setNote}
+        />
 
-      {/* Mapping flashcards */}
-      {!isLoading && questions?.length > 0 && (
-        <>
-          <p className="text-center mt-10  px-2">
-            Note : Questions & answers are created using AI and may be
-            incorrect.
-          </p>
-          <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
-            {questions?.length > 0 &&
-              questions?.map((item: { question: string; answer: string }) => {
-                return (
-                  <FlashCard
-                    key={item?.question}
-                    question={item?.question}
-                    answer={item?.answer}
-                  />
-                );
-              })}
+        {/* Mapping flashcards */}
+        {!isLoading && questions?.length > 0 && (
+          <>
+            <p className="text-center mt-10  px-2">
+              Note : Questions & answers are created using AI and may be
+              incorrect.
+            </p>
+            <div className="flex flex-wrap justify-evenly gap-6 py-10 px-5">
+              {questions?.length > 0 &&
+                questions?.map((item: { question: string; answer: string }) => {
+                  return (
+                    <FlashCard
+                      key={item?.question}
+                      question={item?.question}
+                      answer={item?.answer}
+                    />
+                  );
+                })}
+            </div>
+          </>
+        )}
+
+        {/* Loading Indicator */}
+        {isLoading && (
+          // Loading indicator for questions
+          <div className="mt-12 flex justify-center items-center">
+            <SyncLoader
+              color={"#9b0ced"}
+              loading={isLoading}
+              size={60}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
           </div>
-        </>
-      )}
+        )}
 
-      {/* Loading Indicator */}
-      {isLoading && (
-        // Loading indicator for questions
-        <div className="mt-12 flex justify-center items-center">
-          <SyncLoader
-            color={"#9b0ced"}
-            loading={isLoading}
-            size={60}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
-        </div>
-      )}
+        {/* Error statement */}
+        {error && (
+          <p className="text-center font-medium text-xl drop-shadow-lg">
+            Uh oh! Couldn't create flashcards about "{searchTerm}". Maybe try a
+            different topic?
+          </p>
+        )}
 
-      {/* Error statement */}
-      {error && (
-        <p className="text-center font-medium text-xl drop-shadow-lg">
-          Uh oh! Couldn't create flashcards about "{searchTerm}". Maybe try a
-          different topic?
-        </p>
-      )}
-
-      {/* Button to go back to top */}
-      {questions?.length > 0 && !isLoading && (
-        // Button to go back to the input Div
-        <GoUpButton />
-      )}
-    </div>
+        {/* Button to go back to top */}
+        {questions?.length > 0 && !isLoading && (
+          // Button to go back to the input Div
+          <GoUpButton />
+        )}
+      </div>
+    </>
   );
 };
 
