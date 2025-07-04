@@ -17,6 +17,8 @@ import Notes from "./Notes";
 import Note from "./Note";
 import Files from "./Files";
 import File from "./File";
+import ForgotPassword from "./ForgotPassword";
+import AuthAction from "./AuthAction";
 
 export {
   Home,
@@ -32,6 +34,8 @@ export {
   Login,
   Onboarding,
   Signout,
+  ForgotPassword,
+  AuthAction,
   EditProfile,
   Profile,
   User,

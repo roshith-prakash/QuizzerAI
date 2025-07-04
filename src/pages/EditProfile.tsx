@@ -17,6 +17,7 @@ import Cropper from "react-easy-crop";
 import getCroppedImg from "../utils/cropImage"; // (You'll add this util below)
 import Modal from "@/components/reuseit/Modal"; // optional: modal component for cropping
 import { compressImage } from "@/utils/compressImage";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 const EditProfile = () => {
   const { isDarkMode } = useDarkMode() as ContextValue;
@@ -211,6 +212,18 @@ const EditProfile = () => {
           // Enable button
           setDisabled(false);
         });
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    const auth = getAuth();
+    try {
+      await sendPasswordResetEmail(auth, dbUser?.email); // Replace with your Firebase auth instance & user’s email
+      toast("Password reset email sent!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+      // Maybe show error message too
     }
   };
 
@@ -437,6 +450,16 @@ const EditProfile = () => {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Password Reset Button */}
+          <div className="mt-8 flex justify-center items-center">
+            <button
+              onClick={handlePasswordReset} // 👉 your handler to send the email
+              className="cursor-pointer hover:bg-hovercta dark:hover:bg-cta hover:border-hovercta hover:text-white dark:hover:border-cta border-darkbg/25 dark:border-white/25 border-1 flex gap-x-2 py-2 justify-center items-center px-8 shadow rounded-lg font-medium active:shadow transition-all"
+            >
+              Send Password Reset Email
+            </button>
           </div>
 
           {/* Submit Button */}

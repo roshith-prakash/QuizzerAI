@@ -19,6 +19,8 @@ import {
   Note,
   Files,
   File,
+  ForgotPassword,
+  AuthAction,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -111,6 +113,8 @@ function App() {
                 <Route path="/signin" element={<Login />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/signout" element={<Signout />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/auth-action" element={<AuthAction />} />
                 <Route path="/faq" element={<FAQ />} />
 
                 {/* Protected routes - Logged In User required. */}
