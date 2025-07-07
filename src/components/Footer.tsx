@@ -8,7 +8,7 @@ const Footer = () => {
     <footer className="bg-secondarydarkbg border-t-4 border-darkmodetext/25 relative mt-20 pt-20 pb-12 text-darkmodetext">
       {/* Main Footer Content */}
       <div className="container mx-auto px-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand Column */}
           <div className="flex flex-col items-center md:items-start">
             <div className="flex items-center gap-3 mb-4">
@@ -21,11 +21,12 @@ const Footer = () => {
                 Quizzer AI
               </h2>
             </div>
-            <p className="text-darkmodetext/80 text-center md:text-left  mb-6">
-              Challenge yourself with AI-powered quizzes on any topic you can
-              imagine!
-            </p>
-            <div className="flex space-x-4">
+            <div className="text-center md:text-left">
+              <p className="text-lg text-darkmodetext/80">
+                Give Quizzer a topic and he'll quiz you as best as he can!
+              </p>
+            </div>
+            <div className="flex mt-8 space-x-4">
               <a
                 href="https://x.com/roshith_prakash"
                 className="text-darkmodetext hover:text-white transition-colors"
@@ -85,6 +86,31 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/*Notes + Files*/}
+          <div>
+            <h3 className="text-2xl font-semibold mb-4 text-center md:text-left">
+              Learning Hub
+            </h3>
+            <ul className="space-y-2 text-center md:text-left">
+              <li>
+                <Link
+                  to="/files"
+                  className="text-darkmodetext/80 hover:text-white transition-colors"
+                >
+                  Your Files
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/notes"
+                  className="text-darkmodetext/80 hover:text-white transition-colors"
+                >
+                  Your Notes
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Contact Column */}
           <div>
             <h3 className="text-2xl font-semibold mb-4 text-center md:text-left">
@@ -109,23 +135,6 @@ const Footer = () => {
                 <span className="text-darkmodetext/80">roshith-prakash</span>
               </a>
             </div>
-          </div>
-        </div>
-
-        {/* Mascot and Tagline */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 mt-16 mb-8">
-          <img
-            src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
-            alt="Quizzer AI Owl"
-            className="h-24 md:h-32 pointer-events-none"
-          />
-          <div className="text-center md:text-left">
-            <p className="text-2xl md:text-3xl font-bold font-title mb-2">
-              Want a challenge?
-            </p>
-            <p className="text-lg text-darkmodetext/80">
-              Give Quizzer a topic and he'll quiz you as best as he can!
-            </p>
           </div>
         </div>
 

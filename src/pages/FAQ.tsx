@@ -4,31 +4,32 @@ const faqs = [
   {
     question: "What is Quizzer AI?",
     answer:
-      "Quizzer AI is an intelligent quiz creation platform that helps users create, practice, and master subjects through flashcards, MCQs, and factual questions—powered by AI for speed and simplicity.",
+      "Quizzer AI is a smart quiz creation platform that lets you quickly generate flashcards, MCQs, and factual questions—powered by AI to make learning fast, fun, and effective.",
   },
   {
-    question: "Who is it for?",
+    question: "Who can use it?",
     answer:
-      "Students, teachers, lifelong learners, and anyone who enjoys structured, gamified learning.",
+      "Quizzer AI is perfect for students, teachers, lifelong learners, or anyone who enjoys structured and gamified learning experiences.",
   },
   {
     question: "How does the AI work?",
     answer:
-      "We’ve integrated Gemini AI to auto-generate questions, refine flashcards, and accelerate quiz creation while keeping it personalized.",
+      "Quizzer AI uses advanced models like Gemini AI to instantly generate high-quality questions, flashcards, and summaries—tailored to your input and learning style.",
   },
   {
-    question: "What types of quizzes can I create?",
+    question: "What kinds of quizzes can I create?",
     answer:
-      "Flashcards, multiple-choice questions (MCQs), and factual (direct-answer) questions.",
+      "You can create flashcards, multiple-choice questions (MCQs), and direct-answer factual quizzes from topics, notes, or documents.",
   },
   {
     question: "Is it mobile-friendly?",
     answer:
-      "Yes! Quizzer AI is built with responsive design, ensuring seamless use across devices.",
+      "Absolutely. Quizzer AI is fully responsive and works smoothly on phones, tablets, and desktops.",
   },
   {
-    question: "Is it free?",
-    answer: "Yes, Quizzer AI is currently free to use.",
+    question: "Is it free to use?",
+    answer:
+      "Yes! Quizzer AI is currently free, with generous daily credits to get you started.",
   },
   {
     question: "Any future plans?",

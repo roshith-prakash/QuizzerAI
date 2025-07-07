@@ -291,7 +291,7 @@ const Navbar = () => {
                       <div className="flex py-2 px-3 font-medium justify-between">
                         <p className="pl-3 text-center">Credits</p>
                         <p className="text-center text-black/70 dark:text-white/75">
-                          {dbUser?.dailyCredit}
+                          {dbUser?.dailyCredit + dbUser?.bonusCredit}
                         </p>
                       </div>
                       <hr />
@@ -434,7 +434,7 @@ const Navbar = () => {
                     <div className="flex py-2 px-3 font-medium justify-between">
                       <p className="pl-3 text-center">Credits</p>
                       <p className="text-center text-black/70 dark:text-white/75">
-                        {dbUser?.dailyCredit}
+                        {dbUser?.dailyCredit + dbUser?.bonusCredit}
                       </p>
                     </div>
                     <hr />
