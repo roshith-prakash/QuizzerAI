@@ -4,8 +4,8 @@ import {
   FlashCardQuiz,
   MCQQuiz,
   FactOrNot,
-  SocketPage,
   FAQ,
+  // SocketPage,
 
   // V2 Routes
   Signup,
@@ -32,6 +32,8 @@ import { ContextValue, useDarkMode } from "./context/DarkModeContext";
 import Protector from "./components/Protector";
 
 function App() {
+  const { isDarkMode } = useDarkMode() as ContextValue;
+
   // Check if server is active / keep server active
   const { data, isLoading } = useQuery({
     queryKey: ["check"],
@@ -43,7 +45,17 @@ function App() {
     retry: 10,
   });
 
-  const { isDarkMode } = useDarkMode() as ContextValue;
+  // Update the daily limit if not updated
+  const { data: dailyLimit } = useQuery({
+    queryKey: ["dailyLimitUpdate"],
+    queryFn: () => {
+      return axiosInstance.get("/update-limit");
+    },
+    staleTime: Infinity,
+    retry: 10,
+  });
+
+  console.log(dailyLimit);
 
   return (
     <div
@@ -93,28 +105,15 @@ function App() {
                 {/* Home Page */}
                 <Route path="/" element={<Home />} />
 
-                {/* FlashCard Quiz Page */}
-                <Route path="/flashcard" element={<FlashCardQuiz />} />
-
-                {/* MCQ Quiz Page */}
-                <Route path="/mcq" element={<MCQQuiz />} />
-
-                {/* Fact or Not Page */}
-                <Route path="/fact-or-not" element={<FactOrNot />} />
-
-                {/* Test Page */}
-                <Route path="/multiplayer" element={<SocketPage />} />
-
-                {/* 404 error page */}
-                <Route path="*" element={<NotFound />} />
-
-                {/* V2 Routes */}
+                {/* Auth Routes */}
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/signin" element={<Login />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/signout" element={<Signout />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/auth-action" element={<AuthAction />} />
+
+                {/* FAQ Page */}
                 <Route path="/faq" element={<FAQ />} />
 
                 {/* Protected routes - Logged In User required. */}
@@ -148,6 +147,8 @@ function App() {
                   }
                 />
 
+                {/* ----------------------- NOTES ------------------------- */}
+
                 {/* View all your notes */}
                 <Route
                   path="/notes"
@@ -159,7 +160,16 @@ function App() {
                 />
 
                 {/* Displays a note (Allows to edit if you're the note owner) */}
-                <Route path="/notes/:noteId" element={<Note />} />
+                <Route
+                  path="/notes/:noteId"
+                  element={
+                    <Protector>
+                      <Note />
+                    </Protector>
+                  }
+                />
+
+                {/* ----------------------- FILES ------------------------- */}
 
                 {/* View all your files */}
                 <Route
@@ -172,7 +182,52 @@ function App() {
                 />
 
                 {/* Displays a file */}
-                <Route path="/files/:fileId" element={<File />} />
+                <Route
+                  path="/files/:fileId"
+                  element={
+                    <Protector>
+                      <File />
+                    </Protector>
+                  }
+                />
+
+                {/* ----------------------- QUIZ ------------------------- */}
+
+                {/* FlashCard Quiz Page */}
+                <Route
+                  path="/flashcard"
+                  element={
+                    <Protector>
+                      <FlashCardQuiz />
+                    </Protector>
+                  }
+                />
+
+                {/* MCQ Quiz Page */}
+                <Route
+                  path="/mcq"
+                  element={
+                    <Protector>
+                      <MCQQuiz />
+                    </Protector>
+                  }
+                />
+
+                {/* Fact or Not Page */}
+                <Route
+                  path="/fact-or-not"
+                  element={
+                    <Protector>
+                      <FactOrNot />
+                    </Protector>
+                  }
+                />
+
+                {/* Multiplayer quiz */}
+                {/* <Route path="/multiplayer" element={<SocketPage />} /> */}
+
+                {/* 404 error page */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
             <Footer />

@@ -74,14 +74,14 @@ const Footer = () => {
                   Fact or Not
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/multiplayer"
                   className="text-darkmodetext/80 hover:text-white transition-colors"
                 >
                   Multiplayer Quiz
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 

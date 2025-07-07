@@ -286,6 +286,18 @@ const Navbar = () => {
                     </>
                   )}
 
+                  {dbUser && (
+                    <>
+                      <div className="flex py-2 px-3 font-medium justify-between">
+                        <p className="pl-3 text-center">Credits</p>
+                        <p className="text-center text-black/70 dark:text-white/75">
+                          {dbUser?.dailyCredit}
+                        </p>
+                      </div>
+                      <hr />
+                    </>
+                  )}
+
                   {/* Edit Profile */}
                   {dbUser && (
                     <>
@@ -413,6 +425,18 @@ const Navbar = () => {
                       <p className="text-center">@{dbUser?.username}</p>
                     </Link>
 
+                    <hr />
+                  </>
+                )}
+
+                {dbUser && (
+                  <>
+                    <div className="flex py-2 px-3 font-medium justify-between">
+                      <p className="pl-3 text-center">Credits</p>
+                      <p className="text-center text-black/70 dark:text-white/75">
+                        {dbUser?.dailyCredit}
+                      </p>
+                    </div>
                     <hr />
                   </>
                 )}

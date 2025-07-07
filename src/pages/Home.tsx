@@ -72,13 +72,13 @@ const Home = () => {
         />
 
         {/* Multiplayer Button */}
-        <PrimaryButton
+        {/* <PrimaryButton
           text={"MultiPlayer"}
           className="w-52 border-2 border-darkmodetext hover:scale-105 hover:bg-cta hover:border-cta"
           onClick={() => {
             navigate("/multiplayer");
           }}
-        />
+        /> */}
       </div>
     </div>
   );
