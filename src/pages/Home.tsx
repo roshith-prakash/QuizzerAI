@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { type ContextValue, useDarkMode } from "../context/DarkModeContext";
 import { useEffect } from "react";
 import { Brain, Zap, Target, FileText } from "lucide-react";
+import { PrimaryButton } from "@/components";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -80,8 +81,8 @@ const Home = () => {
                 <div
                   className={`inline-flex items-center px-4 py-2 ${
                     isDarkMode
-                      ? "bg-blue-500/20 text-blue-300"
-                      : "bg-blue-100 text-blue-700"
+                      ? "bg-cta/20 text-darkmodeCTA"
+                      : "bg-cta/10 text-cta"
                   } rounded-full text-sm font-medium`}
                 >
                   <Zap className="w-4 h-4 mr-2" />
@@ -90,8 +91,8 @@ const Home = () => {
                 <h1
                   className={`text-5xl lg:text-7xl font-bold ${
                     isDarkMode
-                      ? "bg-gradient-to-r from-white via-blue-300 to-purple-300"
-                      : "bg-gradient-to-r from-slate-800 to-blue-600"
+                      ? "bg-gradient-to-r to-cta via-white from-darkmodeCTA"
+                      : "bg-gradient-to-r to-hovercta via-slate-800 from-cta"
                   } bg-clip-text text-transparent leading-tight`}
                 >
                   Quizzer AI
@@ -107,12 +108,11 @@ const Home = () => {
               </div>
 
               <div className="flex flex-row flex-wrap gap-4 justify-center lg:justify-start">
-                <button
+                <PrimaryButton
                   onClick={() => navigate("/mcq")}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  Start Quizzing!
-                </button>
+                  text="Start Quizzing!"
+                  className=" text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                ></PrimaryButton>
               </div>
 
               <div
@@ -136,13 +136,12 @@ const Home = () => {
             </div>
 
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-3xl blur-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-cta/15 to-hovercta/15 rounded-3xl blur-3xl"></div>
               <div className="relative">
                 <img
                   src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
                   className="w-full max-w-md mx-auto transform hover:scale-105 transition-transform"
-                  style={{ animationDuration: "3s" }}
-                  alt="Quiz Owl"
+                  alt="Quizzer"
                 />
               </div>
             </div>
@@ -278,12 +277,11 @@ const Home = () => {
               with AI-powered quizzes.
             </p>
             <div className="flex flex-row gap-4 justify-center">
-              <button
+              <PrimaryButton
                 onClick={() => navigate("/mcq")}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-              >
-                Let's Quiz! 🎉
-              </button>
+                text="Start Quizzing!"
+                className=" text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              ></PrimaryButton>
             </div>
           </div>
         </div>

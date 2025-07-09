@@ -5,6 +5,7 @@ import { FlashCard } from "@/components";
 import { SyncLoader } from "react-spinners";
 import { GoUpButton, InputBox } from "../components";
 import { ContextValue, useDarkMode } from "../context/DarkModeContext";
+import { useDBUser } from "@/context/UserContext";
 
 const FlashCardQuiz = () => {
   const { isDarkMode } = useDarkMode() as ContextValue;
@@ -24,6 +25,8 @@ const FlashCardQuiz = () => {
   // Error state
   const [inputError, setInputError] = useState(0);
 
+  const { dbUser } = useDBUser();
+
   // Fetch Questions from the API
   const { data, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: ["getFlashcards", searchTerm, difficulty],
@@ -33,6 +36,7 @@ const FlashCardQuiz = () => {
         difficulty: difficulty,
         fileId: file?.assetId,
         noteId: note?.noteId,
+        userId: dbUser?.id,
       });
     },
     refetchOnWindowFocus: false,
