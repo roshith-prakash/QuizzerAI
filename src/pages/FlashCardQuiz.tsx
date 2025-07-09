@@ -25,7 +25,7 @@ const FlashCardQuiz = () => {
   // Error state
   const [inputError, setInputError] = useState(0);
 
-  const { dbUser } = useDBUser();
+  const { dbUser, fetchUser } = useDBUser();
 
   // Fetch Questions from the API
   const { data, isLoading, isFetching, error, refetch } = useQuery({
@@ -50,8 +50,9 @@ const FlashCardQuiz = () => {
   useEffect(() => {
     if (data?.data?.questions?.length > 0) {
       setQuestions(data?.data?.questions);
+      fetchUser();
     }
-  }, [data?.data]);
+  }, [data?.data, fetchUser]);
 
   //   Scroll to top
   useEffect(() => {
@@ -144,7 +145,7 @@ const FlashCardQuiz = () => {
 
         {/* Error statement */}
         {error && (
-          <p className="text-center font-medium text-xl drop-shadow-lg">
+          <p className="text-center font-medium text-xl px-5 drop-shadow-lg">
             Uh oh! Couldn't create flashcards about "{searchTerm}". Maybe try a
             different topic?
           </p>
