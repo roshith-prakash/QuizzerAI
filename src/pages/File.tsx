@@ -349,12 +349,12 @@ function File() {
           </div>
 
           {/* PDF */}
-          <div className="w-fit mx-auto">
+          <div className="w-fit mx-auto relative z-1 ">
             <Document
               file={data?.data?.file?.fileURL}
               onLoadSuccess={onDocumentLoadSuccess}
             >
-              <div className="pointer-events-none">
+              <div className="">
                 <Page pageNumber={pageNumber} width={600} />
               </div>
             </Document>

@@ -166,7 +166,7 @@ const Home = () => {
         <section className="py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
-              <div className="bg-white dark:bg-gradient-to-br dark:from-white/5 dark:to-white/10 border border-slate-200 dark:border-white/10 rounded-2xl shadow-lg p-10 lg:p-12">
+              <div className="bg-white dark:bg-secondarydarkbg border border-slate-200 dark:border-white/10 rounded-2xl shadow-lg p-10 lg:p-12">
                 <div className="text-center md:text-left space-y-10">
                   <div className="flex gap-x-10 gap-y-5 flex-wrap justify-center items-center">
                     <img
@@ -184,7 +184,7 @@ const Home = () => {
                     </div>
                   </div>
 
-                  <div className="block bg-slate-100 dark:bg-black/50 rounded-xl px-6 py-5 shadow-inner">
+                  <div className="block bg-slate-200 dark:bg-black/25 rounded-xl px-6 py-5 shadow-inner">
                     <p className="font-bold text-center text-lg">
                       Next reset in:
                     </p>

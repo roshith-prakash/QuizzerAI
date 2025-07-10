@@ -10,6 +10,8 @@ import Signup from "./Signup";
 import Login from "./Login";
 import Onboarding from "./Onboarding";
 import Signout from "./Signout";
+import ForgotPassword from "./ForgotPassword";
+import AuthAction from "./AuthAction";
 import EditProfile from "./EditProfile";
 import Profile from "./Profile";
 import User from "./User";
@@ -17,8 +19,8 @@ import Notes from "./Notes";
 import Note from "./Note";
 import Files from "./Files";
 import File from "./File";
-import ForgotPassword from "./ForgotPassword";
-import AuthAction from "./AuthAction";
+import Quizzes from "./Quizzes";
+import Quiz from "./Quiz";
 
 export {
   Home,
@@ -43,4 +45,6 @@ export {
   Note,
   Files,
   File,
+  Quizzes,
+  Quiz,
 };

@@ -1,14 +1,20 @@
 import { Link } from "react-router-dom";
 import { Twitter, Github, Mail, GithubIcon } from "lucide-react";
+import { useDBUser } from "@/context/UserContext";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { dbUser } = useDBUser();
 
   return (
     <footer className="bg-secondarydarkbg border-t-4 border-darkmodetext/25 relative mt-20 pt-20 pb-12 text-darkmodetext">
       {/* Main Footer Content */}
       <div className="container mx-auto px-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2  ${
+            dbUser ? "lg:grid-cols-4" : "lg:grid-cols-3"
+          } gap-10`}
+        >
           {/* Brand Column */}
           <div className="flex flex-col items-center md:items-start">
             <div className="flex items-center gap-3 mb-4">
@@ -45,37 +51,65 @@ const Footer = () => {
             </div>
           </div>
 
+          {/* Sign up / sign in */}
+          {!dbUser && (
+            <div>
+              <h3 className="text-2xl font-semibold mb-4 text-center md:text-left">
+                Get Started
+              </h3>
+              <ul className="space-y-2 text-center md:text-left">
+                <li>
+                  <Link
+                    to="/signup"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    Sign up
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/signin"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    Sign in
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
+
           {/* Quiz Types Column */}
-          <div>
-            <h3 className="text-2xl font-semibold mb-4 text-center md:text-left">
-              Quiz Types
-            </h3>
-            <ul className="space-y-2 text-center md:text-left">
-              <li>
-                <Link
-                  to="/flashcard"
-                  className="text-darkmodetext/80 hover:text-white transition-colors"
-                >
-                  FlashCard Quiz
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/mcq"
-                  className="text-darkmodetext/80 hover:text-white transition-colors"
-                >
-                  Multiple Choice Quiz
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/fact-or-not"
-                  className="text-darkmodetext/80 hover:text-white transition-colors"
-                >
-                  Fact or Not
-                </Link>
-              </li>
-              {/* <li>
+          {dbUser && (
+            <div>
+              <h3 className="text-2xl font-semibold mb-4 text-center md:text-left">
+                Quiz Types
+              </h3>
+              <ul className="space-y-2 text-center md:text-left">
+                <li>
+                  <Link
+                    to="/flashcard"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    FlashCard Quiz
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/mcq"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    Multiple Choice Quiz
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/fact-or-not"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    Fact or Not
+                  </Link>
+                </li>
+                {/* <li>
                 <Link
                   to="/multiplayer"
                   className="text-darkmodetext/80 hover:text-white transition-colors"
@@ -83,33 +117,44 @@ const Footer = () => {
                   Multiplayer Quiz
                 </Link>
               </li> */}
-            </ul>
-          </div>
+              </ul>
+            </div>
+          )}
 
-          {/*Notes + Files*/}
-          <div>
-            <h3 className="text-2xl font-semibold mb-4 text-center md:text-left">
-              Learning Hub
-            </h3>
-            <ul className="space-y-2 text-center md:text-left">
-              <li>
-                <Link
-                  to="/files"
-                  className="text-darkmodetext/80 hover:text-white transition-colors"
-                >
-                  Your Files
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/notes"
-                  className="text-darkmodetext/80 hover:text-white transition-colors"
-                >
-                  Your Notes
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/*Notes + Files + Quizzes*/}
+          {dbUser && (
+            <div>
+              <h3 className="text-2xl font-semibold mb-4 text-center md:text-left">
+                Learning Hub
+              </h3>
+              <ul className="space-y-2 text-center md:text-left">
+                <li>
+                  <Link
+                    to="/files"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    Your Files
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/notes"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    Your Notes
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/quizzes"
+                    className="text-darkmodetext/80 hover:text-white transition-colors"
+                  >
+                    Your Quizzes
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
 
           {/* Contact Column */}
           <div>

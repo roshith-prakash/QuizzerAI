@@ -21,6 +21,8 @@ import {
   File,
   ForgotPassword,
   AuthAction,
+  Quizzes,
+  Quiz,
 } from "./pages";
 import { useQuery } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -207,6 +209,26 @@ function App() {
                   element={
                     <Protector>
                       <FactOrNot />
+                    </Protector>
+                  }
+                />
+
+                {/* View all your Quizzes */}
+                <Route
+                  path="/quizzes"
+                  element={
+                    <Protector>
+                      <Quizzes />
+                    </Protector>
+                  }
+                />
+
+                {/* Displays a note (Allows to edit if you're the note owner) */}
+                <Route
+                  path="/quizzes/:quizId"
+                  element={
+                    <Protector>
+                      <Quiz />
                     </Protector>
                   }
                 />
