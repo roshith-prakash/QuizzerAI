@@ -33,14 +33,16 @@ const ListItem = ({
   className,
   title,
   to,
+  onClick = () => {},
   ...props
 }: {
   className: string;
   title: string;
   to: string;
+  onClick?: () => void;
 }) => {
   return (
-    <NavigationMenuLink asChild>
+    <NavigationMenuLink onClick={onClick} asChild>
       <Link
         to={to}
         className={cn(
@@ -601,16 +603,19 @@ const Navbar = () => {
                       </NavigationMenuTrigger>
                       <NavigationMenuContent className="p-2">
                         <ListItem
+                          onClick={() => setOpen(false)}
                           to="/flashcard"
                           title="FlashCard"
                           className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
                         ></ListItem>
                         <ListItem
+                          onClick={() => setOpen(false)}
                           to="/mcq"
                           title="MCQ"
                           className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
                         ></ListItem>
                         <ListItem
+                          onClick={() => setOpen(false)}
                           to="/fact-or-not"
                           title="Fact or Not"
                           className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"

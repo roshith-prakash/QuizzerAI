@@ -5,6 +5,7 @@ import { MCQ } from "@/components";
 import { SyncLoader } from "react-spinners";
 import { GoUpButton, InputBox } from "../components";
 import { ContextValue, useDarkMode } from "../context/DarkModeContext";
+import { useDBUser } from "@/context/UserContext";
 
 const FactOrNot = () => {
   const { isDarkMode } = useDarkMode() as ContextValue;
@@ -29,6 +30,8 @@ const FactOrNot = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [file, setFile] = useState<any>();
 
+  const { dbUser, fetchUser } = useDBUser();
+
   // Fetch Questions from the API
   const { data, isLoading, error, isFetching, refetch } = useQuery({
     queryKey: ["getFactOrNot", searchTerm, difficulty],
@@ -38,6 +41,7 @@ const FactOrNot = () => {
         difficulty: difficulty,
         fileId: file?.assetId,
         noteId: note?.noteId,
+        userId: dbUser?.id,
       });
     },
     refetchOnWindowFocus: false,
@@ -52,8 +56,9 @@ const FactOrNot = () => {
     if (data?.data?.questions?.length > 0) {
       setCorrectCount(0);
       setQuestions(data?.data?.questions);
+      fetchUser();
     }
-  }, [data?.data]);
+  }, [data?.data, fetchUser]);
 
   //   Scroll to top
   useEffect(() => {

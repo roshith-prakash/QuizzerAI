@@ -80,6 +80,8 @@ const FlashCardQuiz = () => {
     refetch();
   };
 
+  console.log(questions)
+
   return (
     <>
       <div
