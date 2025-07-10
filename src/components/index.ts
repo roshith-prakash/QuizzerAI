@@ -12,6 +12,7 @@ import PrimaryButton from "./reuseit/PrimaryButton";
 import SecondaryButton from "./reuseit/SecondaryButton";
 import Input from "./reuseit/Input";
 import PasswordInput from "./reuseit/PasswordInput";
+import Countdown from "./Countdown";
 
 export {
   FlashCard,
@@ -28,4 +29,5 @@ export {
   SecondaryButton,
   Input,
   PasswordInput,
+  Countdown,
 };

@@ -2,11 +2,16 @@ import { useNavigate } from "react-router-dom";
 import { type ContextValue, useDarkMode } from "../context/DarkModeContext";
 import { useEffect } from "react";
 import { Brain, Zap, Target, FileText } from "lucide-react";
-import { PrimaryButton } from "@/components";
+import { Countdown, PrimaryButton } from "@/components";
+import { useNextCreditUpdate } from "@/context/NextCreditUpdateContext";
+import { useDBUser } from "@/context/UserContext";
 
 const Home = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode() as ContextValue;
+
+  const { nextCreditUpdate } = useNextCreditUpdate();
+  const { dbUser } = useDBUser();
 
   useEffect(() => {
     document.title = `Home | Quizzer AI`;
@@ -88,6 +93,13 @@ const Home = () => {
                   <Zap className="w-4 h-4 mr-2" />
                   AI Quiz Generator
                 </div>
+
+                <img
+                  src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+                  className="lg:hidden block my-4 w-48 max-w-md mx-auto transform hover:scale-105 transition-transform"
+                  alt="Quizzer"
+                />
+
                 <h1
                   className={`text-5xl lg:text-7xl font-bold ${
                     isDarkMode
@@ -100,7 +112,7 @@ const Home = () => {
                 <p
                   className={`text-xl lg:text-2xl ${
                     isDarkMode ? "text-gray-300" : "text-slate-600"
-                  } max-w-2xl`}
+                  }`}
                 >
                   Your friendly AI companion that turns any content into fun,
                   engaging quizzes. Learning made simple! 🎉
@@ -140,7 +152,7 @@ const Home = () => {
               <div className="relative">
                 <img
                   src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
-                  className="w-full max-w-md mx-auto transform hover:scale-105 transition-transform"
+                  className="hidden lg:block w-full max-w-md mx-auto transform hover:scale-105 transition-transform"
                   alt="Quizzer"
                 />
               </div>
@@ -148,6 +160,42 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Next Race Section */}
+      {dbUser && nextCreditUpdate && (
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <div className="bg-white dark:bg-gradient-to-br dark:from-white/5 dark:to-white/10 border border-slate-200 dark:border-white/10 rounded-2xl shadow-lg p-10 lg:p-12">
+                <div className="text-center md:text-left space-y-10">
+                  <div className="flex gap-x-10 gap-y-5 flex-wrap justify-center items-center">
+                    <img
+                      src="https://res.cloudinary.com/do8rpl9l4/image/upload/v1736427090/quiz_imfkoz.png"
+                      className="w-20 transform hover:scale-105 transition-transform"
+                      alt="Quizzer"
+                    />
+                    <div>
+                      <h3 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white tracking-tight">
+                        Daily Credit Reset
+                      </h3>
+                      <p className="mt-2 text-sm md:text-base text-slate-600 dark:text-slate-300">
+                        Your Quizzer AI credits refresh every day.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="block bg-slate-100 dark:bg-black/50 rounded-xl px-6 py-5 shadow-inner">
+                    <p className="font-bold text-center text-lg">
+                      Next reset in:
+                    </p>
+                    <Countdown targetDate={`${nextCreditUpdate}`} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Features Section */}
       <section className="py-20">

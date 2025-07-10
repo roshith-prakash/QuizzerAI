@@ -45,18 +45,6 @@ function App() {
     retry: 10,
   });
 
-  // Update the daily limit if not updated
-  const { data: dailyLimit } = useQuery({
-    queryKey: ["dailyLimitUpdate"],
-    queryFn: () => {
-      return axiosInstance.get("/update-limit");
-    },
-    staleTime: Infinity,
-    retry: 10,
-  });
-
-  console.log(dailyLimit);
-
   return (
     <div
       className={`bg-whitebg dark:bg-darkbg font-body dark:text-darkmodetext dark:placeholder:text-darkmodetext`}
