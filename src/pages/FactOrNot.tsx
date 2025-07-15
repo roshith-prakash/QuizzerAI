@@ -6,6 +6,7 @@ import { SyncLoader } from "react-spinners";
 import { GoUpButton, InputBox } from "../components";
 import { ContextValue, useDarkMode } from "../context/DarkModeContext";
 import { useDBUser } from "@/context/UserContext";
+import toast from "react-hot-toast";
 
 const FactOrNot = () => {
   const { isDarkMode } = useDarkMode() as ContextValue;
@@ -57,8 +58,11 @@ const FactOrNot = () => {
       setCorrectCount(0);
       setQuestions(data?.data?.questions);
       fetchUser();
+      //@ts-expect-error Axios error
+    } else if (error?.response?.status === 403) {
+      toast.error("Insufficient credits to generate flashcards.");
     }
-  }, [data?.data, fetchUser]);
+  }, [data?.data, error, fetchUser]);
 
   //   Scroll to top
   useEffect(() => {

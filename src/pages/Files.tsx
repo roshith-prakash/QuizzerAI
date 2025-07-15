@@ -28,6 +28,7 @@ import dayjs from "dayjs";
 import { AxiosError, AxiosResponse } from "axios";
 import { Trash2 } from "lucide-react";
 import { MAX_FILE_SIZE, maxNumberOfFiles } from "@/constants/constants";
+import { cn } from "@/lib/utils";
 
 const Files = () => {
   const [fileId, setFileId] = useState<string>("");
@@ -128,7 +129,9 @@ const Files = () => {
         const isTooLarge = file.size > MAX_FILE_SIZE;
 
         if (isTooLarge) {
-          toast.error("Max size of file can be 5MB.");
+          toast.error("Max size of file can be 5MB.", {
+            position: "bottom-right",
+          });
         }
 
         return !isDuplicate && !isTooLarge;
@@ -145,7 +148,7 @@ const Files = () => {
   // Upload files
   const handleUpload = async () => {
     if (files?.length + numberOfFiles?.data?.fileCount > maxNumberOfFiles) {
-      toast.error("File limit exceeded.");
+      toast.error("File limit exceeded.", { position: "bottom-right" });
       return;
     }
 
@@ -209,11 +212,11 @@ const Files = () => {
         });
 
         setIsDisabled(false);
-        toast("Deleted file.");
+        toast.success("Deleted file.", { position: "bottom-right" });
         setIsDeleteModalOpen(false);
       })
       .catch((err) => {
-        toast.error("Could not delete file.");
+        toast.error("Could not delete file.", { position: "bottom-right" });
         setIsDisabled(false);
         console.log(err);
       });
@@ -244,11 +247,11 @@ const Files = () => {
           queryKey: ["files", dbUser?.id, debouncedSearch],
         });
         setIsDisabled(false);
-        toast("Renamed file.");
+        toast("Renamed file.", { position: "bottom-right" });
         setIsRenameModalOpen(false);
       })
       .catch((err) => {
-        toast.error("Could not rename file.");
+        toast.error("Could not rename file.", { position: "bottom-right" });
         setIsDisabled(false);
         console.log(err);
       });
@@ -523,29 +526,34 @@ const Files = () => {
 
       <div className="min-h-[70vh] dark:bg-darkbg dark:text-darkmodetext md:min-h-[65vh] lg:min-h-[60vh] px-8 lg:px-10 py-10">
         <div>
-          <div className="flex justify-between gap-x-4 items-center">
-            <div className="flex flex-wrap items-center gap-4">
-              {/* Title */}
-              <h1 className="text-hovercta font-title dark:text-darkmodeCTA text-4xl md:text-5xl font-semibold">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-y-4 md:gap-x-6 mb-6">
+            {/* Title & File Count */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+              <h1 className="text-4xl md:text-5xl font-bold font-title text-hovercta dark:text-darkmodeCTA">
                 Files
               </h1>
 
-              <p className="font-body bg-cta text-white px-4 py-1 rounded-full">
-                {numberOfFiles?.data?.fileCount}/{maxNumberOfFiles} Files
-              </p>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="bg-cta text-white dark:text-white px-4 py-1 rounded-full font-medium">
+                  {numberOfFiles?.data?.fileCount}/{maxNumberOfFiles} Files
+                </div>
+              </div>
             </div>
 
-            {/* Upload a new file */}
+            {/* Upload Button */}
             <SecondaryButton
-              className="border-transparent dark:hover:!text-cta dark:disabled:hover:!text-gray-400 shadow-md"
+              className={cn(
+                "border-transparent shadow-md transition-all",
+                "dark:hover:!text-cta dark:disabled:hover:!text-gray-400"
+              )}
               disabled={
                 isUploading ||
-                numberOfFiles?.data?.fileCount == maxNumberOfFiles
+                numberOfFiles?.data?.fileCount === maxNumberOfFiles
               }
               text={
-                <div className="flex gap-x-2 items-center">
+                <div className="flex items-center gap-2">
                   <IoMdAddCircleOutline className="text-2xl" />
-                  <span className="text-nowrap">Upload File</span>
+                  <span>Upload File</span>
                 </div>
               }
               onClick={() => {
@@ -555,7 +563,7 @@ const Files = () => {
                 }
                 setIsUploadModalOpen(true);
               }}
-            ></SecondaryButton>
+            />
           </div>
 
           {/* Input box */}
@@ -589,7 +597,7 @@ const Files = () => {
                       return (
                         <div
                           key={file?.assetId}
-                          className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer"
+                          className="group bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5 hover:scale-105 duration-150  px-5 py-5 transition-all cursor-pointer"
                           onClick={() => navigate(`/files/${file?.assetId}`)}
                         >
                           <div className="flex pt-5 pb-10 justify-center items-center">
@@ -651,6 +659,8 @@ const Files = () => {
                               .
                             </p>
                           </div>
+                          {/* Animated Footer Bar */}
+                          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cta via-pink-400 to-purple-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
                         </div>
                       );
                     }

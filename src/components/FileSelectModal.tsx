@@ -140,7 +140,7 @@ const FileSelectModal = ({
   // Upload files
   const handleUpload = async () => {
     if (files?.length + numberOfFiles?.data?.fileCount > maxNumberOfFiles) {
-      toast.error("File limit exceeded.");
+      toast.error("File limit exceeded.", { position: "bottom-right" });
       return;
     }
 
@@ -363,7 +363,9 @@ const FileSelectModal = ({
             }
             onClick={() => {
               if (numberOfFiles?.data?.fileCount >= maxNumberOfFiles) {
-                toast.error("Max file limit reached!");
+                toast.error("Max file limit reached!", {
+                  position: "bottom-right",
+                });
                 return;
               }
               setIsUploadModalOpen(true);

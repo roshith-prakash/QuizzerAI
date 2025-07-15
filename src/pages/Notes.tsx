@@ -374,7 +374,7 @@ const Notes = () => {
                       return (
                         <div
                           key={note?.noteId}
-                          className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer hover:scale-105 duration-150"
+                          className="group bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer hover:scale-105 duration-150"
                           onClick={() => navigate(`/notes/${note?.noteId}`)}
                         >
                           <div
@@ -429,6 +429,9 @@ const Notes = () => {
                               {note?.content}
                             </p>
                           </div>
+
+                          {/* Animated Footer Bar */}
+                          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cta via-pink-400 to-purple-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
                         </div>
                       );
                     }

@@ -185,7 +185,12 @@ const Navbar = () => {
                     <NavigationMenuTrigger className="text-2xl font-semibold ">
                       Quizzes
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="p-2">
+                    <NavigationMenuContent className="p-2 px-4">
+                      <ListItem
+                        to="/quizzes"
+                        title="Your Quizzes"
+                        className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                      ></ListItem>
                       <ListItem
                         to="/flashcard"
                         title="FlashCard"
@@ -601,7 +606,13 @@ const Navbar = () => {
                       <NavigationMenuTrigger className="text-3xl font-semibold ">
                         Quizzes
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="p-2">
+                      <NavigationMenuContent className="p-2 px-4">
+                        <ListItem
+                          onClick={() => setOpen(false)}
+                          to="/quizzes"
+                          title="Your Quizzes"
+                          className="!text-2xl font-semibold text-center hover:text-cta dark:hover:text-darkmodeCTA transition-all"
+                        ></ListItem>
                         <ListItem
                           onClick={() => setOpen(false)}
                           to="/flashcard"

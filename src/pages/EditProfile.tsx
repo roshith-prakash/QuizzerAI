@@ -156,11 +156,13 @@ const EditProfile = () => {
                 setDisabled(false);
                 fetchUser();
                 navigate("/profile");
-                toast.success("Profile Updated!");
+                toast.success("Profile Updated!", { position: "bottom-right" });
               })
               .catch(() => {
                 // Display error
-                toast.error("Something went wrong!");
+                toast.error("Something went wrong!", {
+                  position: "bottom-right",
+                });
                 // Enable button
                 setDisabled(false);
               });
@@ -168,7 +170,7 @@ const EditProfile = () => {
         })
         .catch((err) => {
           setDisabled(false);
-          toast.error("Something went wrong.");
+          toast.error("Something went wrong.", { position: "bottom-right" });
           console.log(err);
           return;
         });
@@ -204,11 +206,11 @@ const EditProfile = () => {
           setDisabled(false);
           fetchUser();
           navigate("/profile");
-          toast.success("Profile Updated!");
+          toast.success("Profile Updated!", { position: "bottom-right" });
         })
         .catch(() => {
           // Display error
-          toast.error("Something went wrong!");
+          toast.error("Something went wrong!", { position: "bottom-right" });
           // Enable button
           setDisabled(false);
         });

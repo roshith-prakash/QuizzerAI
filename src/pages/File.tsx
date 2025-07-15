@@ -129,11 +129,11 @@ function File() {
 
         navigate("/files");
         setIsDisabled(false);
-        toast("Deleted file.");
+        toast("Deleted file.", { position: "bottom-right" });
         setIsDeleteModalOpen(false);
       })
       .catch((err) => {
-        toast.error("Could not delete file.");
+        toast.error("Could not delete file.", { position: "bottom-right" });
         setIsDisabled(false);
         console.log(err);
       });
@@ -168,11 +168,11 @@ function File() {
         });
 
         setIsDisabled(false);
-        toast("Renamed file.");
+        toast("Renamed file.", { position: "bottom-right" });
         setIsRenameModalOpen(false);
       })
       .catch((err) => {
-        toast.error("Could not rename file.");
+        toast.error("Could not rename file.", { position: "bottom-right" });
         setIsDisabled(false);
         console.log(err);
       });

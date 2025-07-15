@@ -6,6 +6,7 @@ import { SyncLoader } from "react-spinners";
 import { GoUpButton, InputBox } from "../components";
 import { ContextValue, useDarkMode } from "../context/DarkModeContext";
 import { useDBUser } from "@/context/UserContext";
+import toast from "react-hot-toast";
 
 const FlashCardQuiz = () => {
   const { isDarkMode } = useDarkMode() as ContextValue;
@@ -51,15 +52,21 @@ const FlashCardQuiz = () => {
     if (data?.data?.questions?.length > 0) {
       setQuestions(data?.data?.questions);
       fetchUser();
+      //@ts-expect-error Axios error
+    } else if (error?.response?.status === 403) {
+      toast.error("Insufficient credits to generate flashcards.");
+    } //@ts-expect-error Axios error
+    else if (error?.response?.status === 503) {
+      toast.error("Facing issues with Quizzer's AI. Please try later.");
     }
-  }, [data?.data, fetchUser]);
+  }, [data?.data, error, fetchUser]);
 
   //   Scroll to top
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
-  //   Title
+  // Title
   useEffect(() => {
     document.title = `FlashCards | Quizzer AI`;
   }, []);
@@ -80,7 +87,7 @@ const FlashCardQuiz = () => {
     refetch();
   };
 
-  console.log(questions)
+  console.log(error);
 
   return (
     <>
