@@ -1,4 +1,12 @@
-import { FlashCard, MCQ } from "@/components";
+import {
+  ErrorStatement,
+  FlashCard,
+  Input,
+  MCQ,
+  PrimaryButton,
+  SecondaryButton,
+} from "@/components";
+import AlertModal from "@/components/reuseit/AlertModal";
 import {
   Popover,
   PopoverContent,
@@ -7,8 +15,9 @@ import {
 import { useDBUser } from "@/context/UserContext";
 import { axiosInstance } from "@/utils/axios";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaEye, FaTrash } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
@@ -18,6 +27,14 @@ const Quiz = () => {
   const [correctCount, setCorrectCount] = useState(0);
   const { dbUser } = useDBUser();
   const { quizId } = useParams();
+
+  const [quizTitle, setQuizTitle] = useState<string>("");
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState<boolean>(false);
+  const [quizTitleError, setQuizTitleError] = useState<number>(0);
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["quiz", dbUser?.id],
@@ -40,10 +57,194 @@ const Quiz = () => {
     }
   }, [data?.data]);
 
-  console.log(data?.data, isLoading, error);
+  // Delete the quiz
+  const deleteQuiz = () => {
+    setIsDisabled(true);
+    axiosInstance
+      ?.post("/user-quiz/delete-quiz", { quizId: quizId, userId: dbUser?.id })
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["quizzes", dbUser?.id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["numberOfQuizzes", dbUser?.id],
+        });
+        setIsDisabled(false);
+        toast("Deleted quiz.", { position: "bottom-right" });
+        setIsDeleteModalOpen(false);
+      })
+      .catch((err) => {
+        toast.error("Could not delete quiz.", { position: "bottom-right" });
+        setIsDisabled(false);
+        console.log(err);
+      });
+  };
+
+  // Rename the quiz
+  const renameQuiz = () => {
+    setQuizTitleError(0);
+
+    if (quizTitle == null || quizTitle == undefined || quizTitle.length <= 0) {
+      setQuizTitleError(1);
+      return;
+    } else if (quizTitle?.length > 50) {
+      setQuizTitleError(2);
+      return;
+    }
+
+    setQuizTitleError(0);
+
+    axiosInstance
+      ?.post("/user-quiz/rename-quiz", {
+        quizId: quizId,
+        userId: dbUser?.id,
+        name: quizTitle,
+      })
+      .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["quizzes", dbUser?.id],
+        });
+        setIsDisabled(false);
+        toast("Renamed quiz.", { position: "bottom-right" });
+        setIsRenameModalOpen(false);
+      })
+      .catch((err) => {
+        toast.error("Could not rename quiz.", { position: "bottom-right" });
+        setIsDisabled(false);
+        console.log(err);
+      });
+  };
 
   return (
     <div>
+      {/* Delete Note Modal */}
+      <AlertModal
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+        }}
+        isOpen={isDeleteModalOpen}
+      >
+        <div className="flex flex-col gap-y-2">
+          {/* Title */}
+          <h1 className="dark:text-darkmodetext font-bold text-2xl">
+            Are you sure you want to delete this quiz?
+          </h1>
+
+          {/* Subtitle */}
+          <h2 className="dark:text-darkmodetext mt-1 text-base text-darkbg/80">
+            This action cannot be reversed.
+          </h2>
+
+          {/* Buttons */}
+          <div className="mt-5 flex gap-x-5 justify-end">
+            <PrimaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600 dark:bg-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:hover:border-red-600"
+              onClick={deleteQuiz}
+              text="Delete"
+            />
+            <SecondaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm text-black border-black hover:bg-black hover:border-black"
+              onClick={() => setIsDeleteModalOpen(false)}
+              text="Cancel"
+            />
+          </div>
+        </div>
+      </AlertModal>
+
+      {/* Rename Note Modal */}
+      <AlertModal
+        onClose={() => {
+          setIsRenameModalOpen(false);
+        }}
+        isOpen={isRenameModalOpen}
+      >
+        <div className="flex flex-col gap-y-2">
+          {/* Title */}
+          <h1 className="dark:text-darkmodetext font-bold text-2xl">
+            Rename this quiz
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Give your quiz a new name to help you find it later.
+          </p>
+
+          <Input
+            value={quizTitle}
+            onChange={(e) => {
+              setQuizTitle(e.target.value);
+
+              if (
+                e.target.value != null &&
+                e.target.value != undefined &&
+                e.target.value.length > 0 &&
+                e.target.value?.length < 50
+              ) {
+                setQuizTitleError(0);
+              }
+            }}
+            onBlur={(e) => {
+              if (
+                e.target.value == null ||
+                e.target.value == undefined ||
+                e.target.value.length <= 0
+              ) {
+                setQuizTitleError(1);
+                return;
+              } else if (e.target.value?.length > 50) {
+                setQuizTitleError(2);
+                return;
+              }
+            }}
+            placeholder="Add Note Title..."
+          />
+
+          {/* Error + Length */}
+          <div className="flex w-full justify-between">
+            <div>
+              <ErrorStatement
+                isOpen={quizTitleError == 1}
+                text={"Please enter note title."}
+              />
+
+              <ErrorStatement
+                isOpen={quizTitleError == 2}
+                text={"Note Title cannot exceed 50 characters."}
+              />
+            </div>
+            <p
+              className={`text-right mt-0.5 mr-0.5 ${
+                quizTitle?.length > 50 && "text-red-500"
+              }`}
+            >
+              {quizTitle?.length}/50
+            </p>
+          </div>
+
+          {/* Buttons */}
+          <div className="mt-5 flex gap-x-5 justify-end">
+            <PrimaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm"
+              onClick={renameQuiz}
+              text="Rename"
+            />
+            <SecondaryButton
+              disabled={isDisabled}
+              disabledText="Please Wait..."
+              className="text-sm text-black border-black hover:bg-black hover:border-black"
+              onClick={() => setIsRenameModalOpen(false)}
+              text="Cancel"
+            />
+          </div>
+        </div>
+      </AlertModal>
+
       {data?.data && (
         <div className="max-w-[95%] mx-auto flex flex-col">
           {/* Title */}

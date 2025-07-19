@@ -6,7 +6,10 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "../components";
-import { IoIosSearch, IoMdAddCircleOutline } from "react-icons/io";
+import {
+  IoIosSearch,
+  // , IoMdAddCircleOutline
+} from "react-icons/io";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/axios";
@@ -19,11 +22,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { FaPen, FaTrash } from "react-icons/fa6";
+import { FaEye, FaTrash } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import AlertModal from "@/components/reuseit/AlertModal";
 import { useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+// import { AxiosError } from "axios";
 import { maxNumberOfNotes } from "@/constants/constants";
 import { cn } from "@/lib/utils";
 import { PiCardsBold } from "react-icons/pi";
@@ -33,18 +36,18 @@ import dayjs from "dayjs";
 const QuizCard = ({
   quiz,
   navigate,
-  setNoteId,
+  setQuizId,
   setIsDeleteModalOpen,
   setIsRenameModalOpen,
-  setNoteTitle,
+  setQuizTitle,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   quiz: any;
   navigate: (path: string) => void;
-  setNoteId: (id: string) => void;
+  setQuizId: (id: string) => void;
   setIsDeleteModalOpen: (open: boolean) => void;
   setIsRenameModalOpen: (open: boolean) => void;
-  setNoteTitle: (title: string) => void;
+  setQuizTitle: (title: string) => void;
 }) => {
   const quizType = quiz?.quizType; // or Flashcard
   const quizTypeIcon =
@@ -71,30 +74,30 @@ const QuizCard = ({
           <PopoverTrigger className="flex items-center cursor-pointer">
             <BsThreeDotsVertical className="text-xl dark:text-white/70" />
           </PopoverTrigger>
-          <PopoverContent className="dark:bg-darkgrey dark:border dark:border-white/10 w-auto mt-2 mr-4 py-1 px-1 rounded-lg shadow-md">
-            <div className="flex flex-col gap-1 min-w-[120px]">
+          <PopoverContent className="dark:bg-darkgrey dark:border-2 w-auto mt-2 mr-4 py-0 px-1">
+            <div className="py-1 min-w-32 flex flex-col gap-y-1">
               <PopoverClose>
                 <button
                   onClick={() => {
-                    setNoteId(quiz?.noteId);
+                    setQuizId(quiz?.quizId);
                     setIsDeleteModalOpen(true);
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm hover:bg-red-100 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all"
+                  className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-red-500 dark:hover:text-red-400 hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
                 >
                   <FaTrash />
-                  Delete
+                  <span className="-translate-x-1">Delete</span>
                 </button>
               </PopoverClose>
               <PopoverClose>
                 <button
                   onClick={() => {
-                    setNoteId(quiz?.noteId);
-                    setNoteTitle(quiz?.name);
+                    setQuizTitle(quiz?.name);
+                    setQuizId(quiz?.quizId);
                     setIsRenameModalOpen(true);
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm hover:bg-blue-100 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                  className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA w-full flex items-center gap-x-2 justify-center hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
                 >
-                  <FaPen />
+                  <FaEye />
                   Rename
                 </button>
               </PopoverClose>
@@ -128,8 +131,8 @@ const QuizCard = ({
 };
 
 const Quizzes = () => {
-  const [noteId, setNoteId] = useState<string>("");
-  const [noteTitle, setNoteTitle] = useState<string>("");
+  const [quizId, setQuizId] = useState<string>("");
+  const [quizTitle, setQuizTitle] = useState<string>("");
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState<boolean>(false);
@@ -138,8 +141,8 @@ const Quizzes = () => {
   const [search, setSearch] = useState("");
   // Debouncing the input of the user
   const debouncedSearch = useDebounce(search);
-  // Note title errors
-  const [noteTitleError, setNoteTitleError] = useState<number>(0);
+  // Quiz title errors
+  const [quizTitleError, setQuizTitleError] = useState<number>(0);
 
   const { dbUser } = useDBUser();
   const navigate = useNavigate();
@@ -151,11 +154,11 @@ const Quizzes = () => {
 
   //  Page Title
   useEffect(() => {
-    document.title = "Your Notes | Quizzer AI";
+    document.title = "Your Quizzes | Quizzer AI";
   }, []);
 
   // Get number of quizzes
-  const { data: numberOfNotes } = useQuery({
+  const { data: numberOfQuizzes } = useQuery({
     queryKey: ["numberOfQuizzes", dbUser?.id],
     queryFn: () => {
       return axiosInstance.post("/user-quiz/get-number-of-quizzes", {
@@ -171,10 +174,10 @@ const Quizzes = () => {
 
   // Fetching searched notes
   const {
-    data: notes,
-    isLoading: loadingNotes,
+    data: quizzes,
+    isLoading: loadingQuizzes,
     // error: notesError,
-    fetchNextPage: fetchNextNotes,
+    fetchNextPage: fetchNextQuizzes,
   } = useInfiniteQuery({
     queryKey: ["quizzes", dbUser?.id, debouncedSearch],
     queryFn: ({ pageParam }) => {
@@ -195,97 +198,70 @@ const Quizzes = () => {
     refetchOnReconnect: true,
   });
 
-  // Fetching more notes
+  // Fetching more quizzes
   useEffect(() => {
     if (inView) {
-      fetchNextNotes();
+      fetchNextQuizzes();
     }
-  }, [inView, fetchNextNotes, notes?.pages?.length]);
+  }, [inView, fetchNextQuizzes, quizzes?.pages?.length]);
 
-  // Create a new note
-  const createNote = () => {
-    axiosInstance
-      ?.post("/note/create-note", { userId: dbUser?.id })
-      .then((res) => {
-        queryClient.invalidateQueries({
-          queryKey: ["notes", dbUser?.id, debouncedSearch],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["numberOfNotes", dbUser?.id],
-        });
-        navigate(`/notes/${res?.data?.note?.noteId}`);
-      })
-      .catch((err: AxiosError) => {
-        console.log(err);
-        if (err?.response?.status == 403) {
-          toast.error(
-            "Note limit exceeded. Please delete existing notes to add new ones."
-          );
-        } else {
-          toast.error("Could not create note!");
-        }
-      });
-  };
-
-  // Delete the note
-  const deleteNote = () => {
+  // Delete the quiz
+  const deleteQuiz = () => {
     setIsDisabled(true);
     axiosInstance
-      ?.post("/note/delete-note", { noteId, userId: dbUser?.id })
+      ?.post("/user-quiz/delete-quiz", { quizId: quizId, userId: dbUser?.id })
       .then(() => {
         queryClient.invalidateQueries({
-          queryKey: ["notes", dbUser?.id],
+          queryKey: ["quizzes", dbUser?.id],
         });
         queryClient.invalidateQueries({
-          queryKey: ["numberOfNotes", dbUser?.id],
+          queryKey: ["numberOfQuizzes", dbUser?.id],
         });
         setIsDisabled(false);
-        toast("Deleted note.");
+        toast("Deleted quiz.", { position: "bottom-right" });
         setIsDeleteModalOpen(false);
       })
       .catch((err) => {
-        toast.error("Could not delete note.");
+        toast.error("Could not delete quiz.", { position: "bottom-right" });
         setIsDisabled(false);
         console.log(err);
       });
   };
 
-  // Rename the note
-  const renameNote = () => {
-    setNoteTitleError(0);
+  // Rename the quiz
+  const renameQuiz = () => {
+    setQuizTitleError(0);
 
-    if (noteTitle == null || noteTitle == undefined || noteTitle.length <= 0) {
-      setNoteTitleError(1);
+    if (quizTitle == null || quizTitle == undefined || quizTitle.length <= 0) {
+      setQuizTitleError(1);
       return;
-    } else if (noteTitle?.length > 50) {
-      setNoteTitleError(2);
+    } else if (quizTitle?.length > 50) {
+      setQuizTitleError(2);
       return;
     }
 
-    setNoteTitleError(0);
+    setQuizTitleError(0);
 
     axiosInstance
-      ?.post("/note/rename-note", {
-        noteId,
+      ?.post("/user-quiz/rename-quiz", {
+        quizId: quizId,
         userId: dbUser?.id,
-        title: noteTitle,
+        name: quizTitle,
       })
       .then(() => {
         queryClient.invalidateQueries({
-          queryKey: ["notes", dbUser?.id, debouncedSearch],
+          queryKey: ["quizzes", dbUser?.id, debouncedSearch],
         });
         setIsDisabled(false);
-        toast("Renamed note.");
+        toast("Renamed quiz.", { position: "bottom-right" });
         setIsRenameModalOpen(false);
       })
       .catch((err) => {
-        toast.error("Could not rename note.");
+        toast.error("Could not rename quiz.", { position: "bottom-right" });
         setIsDisabled(false);
         console.log(err);
       });
   };
-
-  console.log(notes);
 
   return (
     <>
@@ -313,7 +289,7 @@ const Quizzes = () => {
               disabled={isDisabled}
               disabledText="Please Wait..."
               className="text-sm bg-red-500 border-red-500 hover:bg-red-600 hover:border-red-600 dark:bg-red-500 dark:border-red-500 dark:hover:bg-red-600 dark:hover:border-red-600"
-              onClick={deleteNote}
+              onClick={deleteQuiz}
               text="Delete"
             />
             <SecondaryButton
@@ -346,9 +322,9 @@ const Quizzes = () => {
           </p>
 
           <Input
-            value={noteTitle}
+            value={quizTitle}
             onChange={(e) => {
-              setNoteTitle(e.target.value);
+              setQuizTitle(e.target.value);
 
               if (
                 e.target.value != null &&
@@ -356,7 +332,7 @@ const Quizzes = () => {
                 e.target.value.length > 0 &&
                 e.target.value?.length < 50
               ) {
-                setNoteTitleError(0);
+                setQuizTitleError(0);
               }
             }}
             onBlur={(e) => {
@@ -365,10 +341,10 @@ const Quizzes = () => {
                 e.target.value == undefined ||
                 e.target.value.length <= 0
               ) {
-                setNoteTitleError(1);
+                setQuizTitleError(1);
                 return;
               } else if (e.target.value?.length > 50) {
-                setNoteTitleError(2);
+                setQuizTitleError(2);
                 return;
               }
             }}
@@ -379,21 +355,21 @@ const Quizzes = () => {
           <div className="flex w-full justify-between">
             <div>
               <ErrorStatement
-                isOpen={noteTitleError == 1}
+                isOpen={quizTitleError == 1}
                 text={"Please enter note title."}
               />
 
               <ErrorStatement
-                isOpen={noteTitleError == 2}
+                isOpen={quizTitleError == 2}
                 text={"Note Title cannot exceed 50 characters."}
               />
             </div>
             <p
               className={`text-right mt-0.5 mr-0.5 ${
-                noteTitle?.length > 50 && "text-red-500"
+                quizTitle?.length > 50 && "text-red-500"
               }`}
             >
-              {noteTitle?.length}/50
+              {quizTitle?.length}/50
             </p>
           </div>
 
@@ -403,7 +379,7 @@ const Quizzes = () => {
               disabled={isDisabled}
               disabledText="Please Wait..."
               className="text-sm"
-              onClick={renameNote}
+              onClick={renameQuiz}
               text="Rename"
             />
             <SecondaryButton
@@ -428,12 +404,12 @@ const Quizzes = () => {
               </h1>
 
               <p className="font-body bg-cta text-white px-4 py-1 rounded-full">
-                {numberOfNotes?.data?.quizCount}/{maxNumberOfNotes} Quizzes
+                {numberOfQuizzes?.data?.quizCount}/{maxNumberOfNotes} Quizzes
               </p>
             </div>
 
             {/* Create a new note */}
-            <SecondaryButton
+            {/* <SecondaryButton
               disabled={numberOfNotes?.data?.noteCount == maxNumberOfNotes}
               className="border-transparent dark:hover:!text-cta dark:disabled:hover:!text-gray-400 shadow-md"
               text={
@@ -443,7 +419,7 @@ const Quizzes = () => {
                 </div>
               }
               onClick={createNote}
-            ></SecondaryButton>
+            ></SecondaryButton> */}
           </div>
 
           {/* Input box */}
@@ -467,10 +443,10 @@ const Quizzes = () => {
           )}
 
           {/* Map notes if notes are found */}
-          {notes && notes?.pages?.[0]?.data?.quizzes.length > 0 && (
+          {quizzes && quizzes?.pages?.[0]?.data?.quizzes.length > 0 && (
             <div className="py-10 lg:px-5 flex justify-center flex-wrap gap-8">
-              {notes &&
-                notes?.pages?.map((page) => {
+              {quizzes &&
+                quizzes?.pages?.map((page) => {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   return page?.data.quizzes?.map((quiz: any) => {
                     return (
@@ -479,67 +455,9 @@ const Quizzes = () => {
                         setIsRenameModalOpen={setIsRenameModalOpen}
                         navigate={navigate}
                         quiz={quiz}
-                        setNoteId={setNoteId}
-                        setNoteTitle={setNoteTitle}
+                        setQuizId={setQuizId}
+                        setQuizTitle={setQuizTitle}
                       />
-                      // <div
-                      //   key={note?.quizId}
-                      //   className=" bg-white relative overflow-hidden shadow-xl max-w-2xs w-full rounded-xl flex flex-col dark:bg-white/5  px-5 py-5 transition-all cursor-pointer hover:scale-105 duration-150"
-                      //   onClick={() => navigate(`/quizzes/${note?.quizId}`)}
-                      // >
-                      //   <div
-                      //     onClick={(e) => {
-                      //       e.stopPropagation();
-                      //     }}
-                      //     className="absolute top-4 right-4 "
-                      //   >
-                      //     <Popover>
-                      //       <PopoverTrigger className="flex items-center cursor-pointer">
-                      //         <BsThreeDotsVertical className="text-2xl" />
-                      //       </PopoverTrigger>
-
-                      //       <PopoverContent className="dark:bg-darkgrey dark:border-2 w-auto mt-2 mr-4 py-0 px-1">
-                      //         <div className="py-1 min-w-32 flex flex-col gap-y-1">
-                      //           <PopoverClose>
-                      //             <button
-                      //               onClick={() => {
-                      //                 setNoteId(note?.noteId);
-                      //                 setIsDeleteModalOpen(true);
-                      //               }}
-                      //               className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-red-500 dark:hover:text-red-400 hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
-                      //             >
-                      //               <FaTrash />
-                      //               <span className="-translate-x-1">
-                      //                 Delete
-                      //               </span>
-                      //             </button>
-                      //           </PopoverClose>
-                      //           <PopoverClose>
-                      //             <button
-                      //               onClick={() => {
-                      //                 setNoteId(note?.noteId);
-                      //                 setNoteTitle(note?.name);
-                      //                 setIsRenameModalOpen(true);
-                      //               }}
-                      //               className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA w-full flex items-center gap-x-2 justify-center hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
-                      //             >
-                      //               <FaEye />
-                      //               Rename
-                      //             </button>
-                      //           </PopoverClose>
-                      //         </div>
-                      //       </PopoverContent>
-                      //     </Popover>
-                      //   </div>
-                      //   <div className="flex-1">
-                      //     <p className="text-xl mb-4 mr-6 line-clamp-2 font-semibold">
-                      //       {note?.name}
-                      //     </p>
-                      //     <p className="text-md text-justify line-clamp-6 dark:text-white/80 text-darkbg/70">
-                      //       {note?.content}
-                      //     </p>
-                      //   </div>
-                      // </div>
                     );
                   });
                 })}
@@ -547,7 +465,7 @@ const Quizzes = () => {
           )}
 
           {/* Quizzes Loader */}
-          {loadingNotes && (
+          {loadingQuizzes && (
             <div className="py-10 lg:px-5 flex justify-center flex-wrap gap-8">
               {Array(4)
                 ?.fill(null)
@@ -580,7 +498,7 @@ const Quizzes = () => {
           )}
 
           {/* If no quizzes are found */}
-          {notes && notes?.pages?.[0]?.data?.quizzes.length == 0 && (
+          {quizzes && quizzes?.pages?.[0]?.data?.quizzes.length == 0 && (
             <div className="flex flex-col justify-center pt-10">
               <div className="flex justify-center">
                 <img

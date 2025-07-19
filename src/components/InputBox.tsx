@@ -96,7 +96,8 @@ const InputBox = ({
       ?.post("/user-quiz/create-quiz", {
         name: quizTitle,
         userId: dbUser?.id,
-        quizType: "Flashcard",
+        //@ts-expect-error possibly undefined but already checked
+        quizType: questions[0]?.options?.length > 0 ? "MCQ" : "Flashcard",
         isPublic: isPublic,
         questions: questions,
       })
@@ -118,6 +119,8 @@ const InputBox = ({
         console.log(err);
       });
   };
+
+  console.log(questions);
 
   return (
     <div className="py-10 flex justify-center ">
@@ -329,7 +332,7 @@ const InputBox = ({
                   <PopoverClose>
                     <button
                       onClick={() => setIsSaveQuizModalOpen(true)}
-                      className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-red-500 dark:hover:text-red-400 hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
+                      className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-cta dark:hover:text-darkmodeCTA hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
                     >
                       <MdOutlineDataSaverOn />
                       <span className="-translate-x-1">Save Quiz</span>
