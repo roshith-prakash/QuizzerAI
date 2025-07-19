@@ -20,14 +20,14 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaEye, FaTrash } from "react-icons/fa6";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SyncLoader } from "react-spinners";
 
 const Quiz = () => {
   const [correctCount, setCorrectCount] = useState(0);
   const { dbUser } = useDBUser();
   const { quizId } = useParams();
-
+  const navigate = useNavigate();
   const [quizTitle, setQuizTitle] = useState<string>("");
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -37,7 +37,7 @@ const Quiz = () => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["quiz", dbUser?.id],
+    queryKey: ["quiz", quizId, dbUser?.id],
     queryFn: () => {
       return axiosInstance.post("/user-quiz/get-quiz-by-id", {
         userId: dbUser?.id,
@@ -69,6 +69,7 @@ const Quiz = () => {
         queryClient.invalidateQueries({
           queryKey: ["numberOfQuizzes", dbUser?.id],
         });
+        navigate("/quizzes");
         setIsDisabled(false);
         toast("Deleted quiz.", { position: "bottom-right" });
         setIsDeleteModalOpen(false);
@@ -101,6 +102,10 @@ const Quiz = () => {
         name: quizTitle,
       })
       .then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["quiz", quizId],
+        });
+
         queryClient.invalidateQueries({
           queryKey: ["quizzes", dbUser?.id],
         });
@@ -263,7 +268,7 @@ const Quiz = () => {
                   <div className="py-1 min-w-32 flex flex-col gap-y-1">
                     <PopoverClose>
                       <button
-                        // onClick={() => setIsDeleteModalOpen(true)}
+                        onClick={() => setIsDeleteModalOpen(true)}
                         className="cursor-pointer w-full flex items-center gap-x-3 justify-center hover:text-red-500 dark:hover:text-red-400 hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
                       >
                         <FaTrash />
@@ -272,7 +277,10 @@ const Quiz = () => {
                     </PopoverClose>
                     <PopoverClose>
                       <button
-                        // onClick={() => setIsRenameModalOpen(true)}
+                        onClick={() => {
+                          setQuizTitle(data?.data?.quiz?.name);
+                          setIsRenameModalOpen(true);
+                        }}
                         className="cursor-pointer hover:text-cta dark:hover:text-darkmodeCTA w-full flex items-center gap-x-2 justify-center hover:bg-grey/50 dark:hover:bg-grey/5 py-1.5 transition-all"
                       >
                         <FaEye />
